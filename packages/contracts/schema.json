@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Universal AI Analyst Contracts",
+  "description": "Standardized schemas for API errors, execution states, analysis plans, and provenance",
+  "definitions": {
+    "ApiError": {
+      "type": "object",
+      "required": ["code", "message", "request_id"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "FILE_NOT_FOUND",
+            "UNSUPPORTED_FILE_TYPE",
+            "INVALID_CREDENTIALS",
+            "UNAUTHORIZED",
+            "FORBIDDEN",
+            "SESSION_NOT_FOUND",
+            "PLAN_INVALID",
+            "EXECUTION_FAILED",
+            "VERIFICATION_FAILED",
+            "INTERNAL_SERVER_ERROR"
+          ]
+        },
+        "message": { "type": "string" },
+        "request_id": { "type": "string" },
+        "details": { "type": "object" }
+      }
+    },
+    "ExecutionState": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "QUEUED",
+        "UNDERSTANDING",
+        "RETRIEVING_CONTEXT",
+        "PLANNING",
+        "VALIDATING_PLAN",
+        "EXECUTING",
+        "VERIFYING",
+        "GENERATING_ANSWER",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED"
+      ]
+    },
+    "UserRole": {
+      "type": "string",
+      "enum": ["employee", "unit_admin", "super_admin", "tech_admin"]
+    },
+    "AnalysisIntent": {
+      "type": "string",
+      "enum": [
+        "GENERAL_CHAT",
+        "DATA_INSPECTION",
+        "DATA_ANALYSIS",
+        "MULTI_FILE_ANALYSIS",
+        "POLICY_LOOKUP",
+        "POLICY_EVALUATION",
+        "UNSUPPORTED"
+      ]
+    }
+  }
+}

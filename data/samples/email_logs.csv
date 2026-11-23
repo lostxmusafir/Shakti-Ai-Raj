@@ -1,0 +1,8 @@
+log_id,sender_email,recipient_domain,subject,timestamp,bytes_sent
+EML-001,alice@company.internal,partner.org,Quarterly Report,2026-03-01T09:12:00,14520
+EML-002,bob@company.internal,suspicious.com,Internal Backup Dump,2026-03-01T10:45:00,854200
+EML-003,carol@company.internal,client.com,Meeting Minutes,2026-03-01T11:20:00,8200
+EML-004,david@company.internal,suspicious.com,Customer Records,2026-03-02T14:05:00,1250000
+EML-005,elena@company.internal,partner.org,Contract Draft,2026-03-02T16:30:00,45000
+EML-006,frank@company.internal,supplier.com,Invoice #4812,2026-03-03T08:15:00,32000
+EML-007,grace@company.internal,suspicious.com,Database Credentials,2026-03-03T19:50:00,4200

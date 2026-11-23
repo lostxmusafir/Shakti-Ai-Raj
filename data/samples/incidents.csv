@@ -1,0 +1,13 @@
+incident_id,department,severity,status,reported_date,resolution_hours
+INC-1001,IT,Critical,Resolved,2026-03-01,4.5
+INC-1002,Operations,High,Resolved,2026-03-02,12.0
+INC-1003,Finance,Low,Closed,2026-03-02,1.2
+INC-1004,IT,Critical,Resolved,2026-03-03,2.0
+INC-1005,Operations,Medium,Resolved,2026-03-04,6.8
+INC-1006,HR,Low,Closed,2026-03-05,0.5
+INC-1007,Finance,High,Resolved,2026-03-06,8.5
+INC-1008,IT,Critical,Investigating,2026-03-07,15.2
+INC-1009,IT,High,Resolved,2026-03-08,5.1
+INC-1010,Operations,Critical,Resolved,2026-03-09,9.0
+INC-1011,Finance,Critical,Resolved,2026-03-10,3.4
+INC-1012,HR,Medium,Closed,2026-03-11,4.0
