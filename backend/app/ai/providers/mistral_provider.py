@@ -2,6 +2,10 @@ import asyncio
 import json
 import logging
 from typing import List, Dict, Any, AsyncGenerator, TypeVar, Type, Optional
+import truststore
+
+truststore.inject_into_ssl()
+
 import httpx
 from pydantic import BaseModel
 from app.core.config import settings

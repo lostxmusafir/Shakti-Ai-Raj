@@ -67,7 +67,17 @@ async def submit_analysis_feedback(
     return feedback.model_dump(mode="json")
 
 @router.get("/{analysis_id}/events")
-async def stream_analysis_events(analysis_id: str, request: Request):
+async def stream_analysis_events(
+    analysis_id: str,
+    request: Request,
+    user: User = Depends(get_current_active_user),
+):
+    run = await analysis_repo.get_by_id(analysis_id)
+    if not run:
+        raise NotFoundError("Analysis run", analysis_id)
+    if run.user_id != user.id and user.role not in {"super_admin", "tech_admin"}:
+        raise ForbiddenError()
+
     async def event_generator():
         # Wait up to 3 seconds for queue to be initialized if run just created
         for _ in range(30):
@@ -78,11 +88,11 @@ async def stream_analysis_events(analysis_id: str, request: Request):
         queue = active_analysis_queues.get(analysis_id)
         if not queue:
             # Check if run already finished
-            run = await analysis_repo.get_by_id(analysis_id)
-            if run:
+            current_run = await analysis_repo.get_by_id(analysis_id)
+            if current_run:
                 yield {
                     "event": "analysis.completed",
-                    "data": json.dumps({"status": run.status, "result": run.result})
+                    "data": json.dumps({"status": current_run.status, "result": current_run.result})
                 }
             return
 

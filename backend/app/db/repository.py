@@ -67,5 +67,9 @@ class BaseRepository(Generic[T]):
         result = await self.collection.delete_one(query)
         return bool(result.deleted_count > 0)
 
+    async def delete_many(self, query: Dict[str, Any]) -> int:
+        result = await self.collection.delete_many(query)
+        return int(result.deleted_count)
+
     async def count(self, query: Optional[Dict[str, Any]] = None) -> int:
         return await self.collection.count_documents(query or {})

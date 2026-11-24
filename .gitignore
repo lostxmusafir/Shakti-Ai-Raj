@@ -47,19 +47,23 @@ out/
 
 # Environment variables & local credentials
 .env
+backend/.env
 apps/backend/.env
 apps/frontend/.env.local
 *.pem
 *.key
 
 # Temporary files & uploads
+.tmp-python/
 data/uploads/*
 !data/uploads/.gitkeep
+backend/data/uploads/*
 data/benchmark/public/*
 !data/benchmark/public/.gitkeep
 data/benchmark/public/extracted/*
 data/benchmark/synthetic/*
 !data/benchmark/synthetic/.gitkeep
+data/benchmark/checkpoints/*
 data/benchmark/golden/*
 !data/benchmark/golden/.gitkeep
 

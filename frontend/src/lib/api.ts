@@ -297,6 +297,12 @@ export const api = {
     });
   },
 
+  async detachFileFromChat(chatId: string, fileId: string): Promise<{ status: string; chat_id: string; file_id: string }> {
+    return fetchWithAuth(`/api/v1/chats/${chatId}/files/${fileId}`, {
+      method: "DELETE",
+    });
+  },
+
   async getMessages(chatId: string): Promise<ChatMessage[]> {
     return fetchWithAuth(`/api/v1/chats/${chatId}/messages`);
   },
@@ -304,10 +310,12 @@ export const api = {
   async sendMessage(
     chatId: string,
     content: string,
-    fileIds: string[] = []
+    fileIds: string[] = [],
+    signal?: AbortSignal
   ): Promise<{ message_id: string; analysis_id: string; status: string }> {
     return fetchWithAuth(`/api/v1/chats/${chatId}/messages`, {
       method: "POST",
+      signal,
       body: JSON.stringify({ content, file_ids: fileIds }),
     });
   },
