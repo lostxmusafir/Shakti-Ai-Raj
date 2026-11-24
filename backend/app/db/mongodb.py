@@ -106,18 +106,6 @@ class MockAsyncCollection:
             deleted_count = deleted
         return DeleteResult()
 
-    async def delete_many(self, query: Dict[str, Any]):
-        matching_ids = []
-        for doc_id, doc in self.docs.items():
-            if all(doc.get(key) == value for key, value in query.items()):
-                matching_ids.append(doc_id)
-        for doc_id in matching_ids:
-            del self.docs[doc_id]
-
-        class DeleteResult:
-            deleted_count = len(matching_ids)
-        return DeleteResult()
-
     async def count_documents(self, query: Optional[Dict[str, Any]] = None) -> int:
         cursor = self.find(query)
         res = await cursor.to_list()

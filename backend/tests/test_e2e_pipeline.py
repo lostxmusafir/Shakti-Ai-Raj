@@ -7,11 +7,6 @@ from app.core.config import settings
 from app.auth.service import auth_service
 from app.policies.service import policy_service
 
-pytestmark = pytest.mark.skipif(
-    os.getenv("RUN_LIVE_MISTRAL_TESTS", "").lower() not in {"1", "true", "yes"},
-    reason="The end-to-end analyst pipeline uses the live Mistral provider; opt in with RUN_LIVE_MISTRAL_TESTS=1.",
-)
-
 @pytest.mark.asyncio
 async def test_full_e2e_analyst_pipeline():
     await auth_service.ensure_seed_admin()
@@ -57,8 +52,7 @@ async def test_full_e2e_analyst_pipeline():
         analysis_id = msg_resp.json()["analysis_id"]
 
         # 5. Wait for background execution to complete
-        poll_attempts = 120 if os.getenv("RUN_LIVE_MISTRAL_TESTS", "").lower() in {"1", "true", "yes"} else 20
-        for _ in range(poll_attempts):
+        for _ in range(20):
             ana_resp = await ac.get(f"/api/v1/analysis/{analysis_id}", headers=headers)
             if ana_resp.json()["status"] == "completed":
                 break

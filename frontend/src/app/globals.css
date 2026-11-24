@@ -3,77 +3,43 @@
 @tailwind utilities;
 
 :root {
-  /* Synapse Palette - Deep near-black with slate-blue & warm copper undertones */
-  --background: #0c1016;
-  --surface: #111722;
-  --surface-raised: #151d2a;
-  --surface-hover: #1b2536;
-  --surface-active: #212c3f;
-  
-  --border: rgba(255, 255, 255, 0.07);
-  --border-subtle: rgba(255, 255, 255, 0.035);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-faint: #475569;
-  
-  /* Primary Accent: Controlled deep electric blue / cobalt */
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-subtle: rgba(59, 130, 246, 0.12);
-  
-  /* Synapse Warm Secondary: Bronze / Copper */
-  --accent-warm: #c87d55;
-  --accent-warm-subtle: rgba(200, 125, 85, 0.12);
-  
-  /* State Accents */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-
-  --foreground: var(--text-primary);
-  --panel: var(--surface);
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --panel: #0f172a;
+  --border: #1e293b;
+  --accent: #4f46e5;
 }
 
 body {
-  color: var(--text-primary);
+  color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
-/* Custom sleek scrollbars */
+/* Custom scrollbars for data tables and logs */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #090d16;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 9999px;
+  background: #334155;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #475569;
 }
 
 ::selection {
-  background: rgba(59, 130, 246, 0.35);
+  background: #4f46e5;
   color: #ffffff;
-}
-
-/* Accessible focus styling */
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }

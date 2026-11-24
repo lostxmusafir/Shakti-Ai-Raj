@@ -1,30 +1,30 @@
 {
   "run_id": "test_exec_run",
-  "start_time": "2026-11-24T07:25:07.135257+00:00",
-  "end_time": "2026-11-24T07:25:07.773285+00:00",
+  "start_time": "2026-11-24T00:54:52.253366+00:00",
+  "end_time": "2026-11-24T00:55:48.120001+00:00",
   "target_duration_minutes": 0.5,
   "checkpoint_interval_minutes": 0.1,
-  "git_revision": "9bb8c04b7c99a38ffc85c265382c0e7993989add",
+  "git_revision": "9e9b5eb0014456bbf62ec74ef4a362a1ee7ca8c4",
   "baseline_accuracy": 100.0,
   "latest_accuracy": 100.0,
   "total_candidates_created": 5,
-  "total_candidates_verified": 4,
-  "total_candidates_rejected": 1,
-  "total_candidates_promoted": 4,
-  "last_verified_checkpoint": "C:\\Users\\23321\\Desktop\\Shakti-Ai-Raj\\data\\benchmark\\checkpoints\\test_exec_run\\checkpoint_v01_072507.json",
+  "total_candidates_verified": 5,
+  "total_candidates_rejected": 0,
+  "total_candidates_promoted": 5,
+  "last_verified_checkpoint": "C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\checkpoints\\test_exec_run\\checkpoint_v01_005548.json",
   "cycles_completed": 1,
   "cycles": [
     {
       "cycle": 1,
-      "timestamp": "2026-11-24T07:25:07.724892+00:00",
+      "timestamp": "2026-11-24T00:55:48.095623+00:00",
       "candidates_created": 5,
-      "candidates_verified": 4,
-      "candidates_rejected": 1,
+      "candidates_verified": 5,
+      "candidates_rejected": 0,
       "decision": "PROMOTED",
       "gate_reasons": [],
       "held_out_accuracy": 100.0,
-      "latency_p50_ms": 0.0,
-      "checkpoint_file": "C:\\Users\\23321\\Desktop\\Shakti-Ai-Raj\\data\\benchmark\\checkpoints\\test_exec_run\\checkpoint_v01_072507.json"
+      "latency_p50_ms": 0.65,
+      "checkpoint_file": "C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\checkpoints\\test_exec_run\\checkpoint_v01_005548.json"
     }
   ]
 }

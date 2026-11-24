@@ -2,59 +2,12 @@ import os
 import json
 import time
 import logging
-import re
 from typing import Dict, Any, List, Optional
 import duckdb
 import pandas as pd
 import numpy as np
 
 logger = logging.getLogger(__name__)
-
-
-def _normalize_sql(sql: str) -> str:
-    return re.sub(r"\s+", " ", sql.strip().lower())
-
-
-class BenchmarkConnection:
-    """DuckDB connection with deterministic held-out fallbacks when source assets are absent."""
-
-    def __init__(self, connection: duckdb.DuckDBPyConnection, fallback_results: Dict[str, Dict[str, Any]]):
-        self._connection = connection
-        self._fallback_results = fallback_results
-
-    def _fallback_execute(self, result: Dict[str, Any]):
-        columns = result.get("columns") or list((result.get("rows") or [{}])[0].keys())
-        rows = result.get("rows") or []
-        if not columns:
-            return self._connection.execute("SELECT 1 WHERE FALSE")
-        if not rows:
-            projection = ", ".join(f'CAST(NULL AS VARCHAR) AS "{column}"' for column in columns)
-            return self._connection.execute(f"SELECT {projection} WHERE FALSE")
-
-        selects = []
-        params: List[Any] = []
-        for row in rows:
-            selects.append(
-                "SELECT " + ", ".join(f'? AS "{column}"' for column in columns)
-            )
-            params.extend(row.get(column) for column in columns)
-        return self._connection.execute(" UNION ALL ".join(selects), params)
-
-    def execute(self, sql: str, parameters: Optional[List[Any]] = None):
-        fallback = self._fallback_results.get(_normalize_sql(sql))
-        if fallback is not None:
-            return self._fallback_execute(fallback)
-        return self._connection.execute(sql, parameters) if parameters is not None else self._connection.execute(sql)
-
-    def register(self, *args, **kwargs):
-        return self._connection.register(*args, **kwargs)
-
-    def close(self):
-        return self._connection.close()
-
-
-def _fallback_result(rows: List[Dict[str, Any]], columns: Optional[List[str]] = None) -> Dict[str, Any]:
-    return {"rows": rows, "columns": columns or list(rows[0].keys()) if rows else columns or []}
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 GOLDEN_FILE = os.path.join(BASE_DIR, "data", "benchmark", "golden", "golden_examples_300.json")
@@ -77,89 +30,6 @@ class EvaluationService:
         return all_examples
 
     @classmethod
-    def _load_fallback_results(cls) -> Dict[str, Dict[str, Any]]:
-        results: Dict[str, Dict[str, Any]] = {}
-        try:
-            with open(GOLDEN_FILE, "r", encoding="utf-8") as handle:
-                for example in json.load(handle):
-                    if example.get("split") == "test" and example.get("sql_query"):
-                        expected = example.get("expected_answer", {})
-                        results[_normalize_sql(example["sql_query"])] = _fallback_result(
-                            expected.get("rows", []), expected.get("columns")
-                        )
-        except (OSError, ValueError) as exc:
-            logger.warning("Could not load golden fallback results: %s", exc)
-
-        results.update({
-            _normalize_sql("SELECT src AS sender, ROUND(SUM(size_kb)/1024.0, 1) AS mb_sent, COUNT(*) AS incidents FROM v WHERE is_ext=1 GROUP BY src ORDER BY mb_sent DESC LIMIT 1"): _fallback_result([
-                {"sender": "NX-ENG086\\Isha Dave", "mb_sent": 500.0, "incidents": 57}
-            ]),
-            _normalize_sql("SELECT id FROM v WHERE action='Blocked' ORDER BY id"): _fallback_result([
-                {"id": value} for value in [550100380, 550100431, 550100855, 550101299, 550104760]
-            ]),
-            _normalize_sql("SELECT Description, ROUND(SUM(Quantity * UnitPrice), 2) AS total_revenue FROM retail WHERE Quantity > 0 AND UnitPrice > 0 GROUP BY Description ORDER BY total_revenue DESC LIMIT 10"): _fallback_result([
-                {"Description": f"Fixture Product {index}", "total_revenue": float(1000 - index)}
-                for index in range(10)
-            ]),
-            _normalize_sql("SELECT Country, ROUND(SUM(Profit), 2) AS total_profit FROM financials GROUP BY Country ORDER BY total_profit DESC LIMIT 1"): _fallback_result([
-                {"Country": "France", "total_profit": 3781020.78}
-            ]),
-            _normalize_sql("SELECT e.employee_id, e.full_name, e.department_id FROM employees e LEFT JOIN payroll p ON e.employee_id = p.employee_id WHERE p.employee_id IS NULL"): _fallback_result([
-                {"employee_id": f"EMP{index:04d}", "full_name": f"Fixture Employee {index}", "department_id": "D01"}
-                for index in range(1, 13)
-            ]),
-            _normalize_sql("SELECT claim_id, employee_id, category, amount FROM expenses WHERE policy_violation_flag = true"): _fallback_result([
-                {"claim_id": "CLM-FIXTURE-001", "employee_id": "EMP0001", "category": "Meals", "amount": 250.0}
-            ]),
-            _normalize_sql("SELECT COUNT(*) AS total_incidents, ROUND(SUM(size_kb)/1048576.0, 2) AS total_gb, SUM(is_ext) AS external_incidents FROM v_rajcom"): _fallback_result([
-                {"total_incidents": 1000, "total_gb": 1.0, "external_incidents": 1}
-            ]),
-        })
-        return results
-
-    @staticmethod
-    def _create_fallback_tables(con: duckdb.DuckDBPyConnection) -> None:
-        for object_name in ("v", "v_nexus", "v_rajcom", "financials", "retail", "employees", "payroll", "departments", "expenses", "sales"):
-            try:
-                con.execute(f"DROP VIEW IF EXISTS {object_name}")
-            except duckdb.CatalogException:
-                con.execute(f"DROP TABLE IF EXISTS {object_name}")
-        con.execute("""
-            CREATE TABLE IF NOT EXISTS v (
-                id BIGINT, src VARCHAR, size_kb DOUBLE, is_ext BOOLEAN, action VARCHAR,
-                policy VARCHAR, severity VARCHAR, dest VARCHAR, matches INTEGER,
-                n_rcpt INTEGER, n_int INTEGER, hr INTEGER, yahoo INTEGER, foreign_aff INTEGER,
-                is_mixed INTEGER, file VARCHAR
-            )
-        """)
-        con.execute("""
-            INSERT INTO v VALUES
-            (550100380, 'NX-ENG086\\Isha Dave', 512000, TRUE, 'Blocked', 'Password', 'High', 'fixture@example.com', 147, 2, 1, 12, 0, 0, 1, 'fixture.txt')
-        """)
-        con.execute("CREATE OR REPLACE VIEW v_nexus AS SELECT * FROM v")
-        con.execute("CREATE TABLE IF NOT EXISTS v_rajcom AS SELECT * FROM v WHERE FALSE")
-        con.execute("INSERT INTO v_rajcom SELECT * FROM v")
-        con.execute("CREATE TABLE IF NOT EXISTS financials (Country VARCHAR, Profit DOUBLE)")
-        con.execute("INSERT INTO financials VALUES ('France', 3781020.78)")
-        con.execute("CREATE TABLE IF NOT EXISTS retail (Description VARCHAR, Quantity INTEGER, UnitPrice DOUBLE, Country VARCHAR, CustomerID INTEGER)")
-        con.executemany("INSERT INTO retail VALUES (?, ?, ?, ?, ?)", [
-            (f"Fixture Product {index}", 1, float(1000 - index), "United Kingdom", index)
-            for index in range(10)
-        ])
-        con.execute("CREATE TABLE IF NOT EXISTS employees (employee_id VARCHAR, full_name VARCHAR, designation VARCHAR, department_id VARCHAR, status VARCHAR, base_salary DOUBLE)")
-        con.executemany("INSERT INTO employees VALUES (?, ?, ?, ?, ?, ?)", [
-            (f"EMP{index:04d}", f"Fixture Employee {index}", "Analyst", "D01", "Active", 50000.0)
-            for index in range(1, 13)
-        ])
-        con.execute("CREATE TABLE IF NOT EXISTS payroll (employee_id VARCHAR, deductions DOUBLE, net_paid DOUBLE)")
-        con.execute("CREATE TABLE IF NOT EXISTS departments (department_id VARCHAR, department_name VARCHAR)")
-        con.execute("INSERT INTO departments VALUES ('D01', 'Fixture Department')")
-        con.execute("CREATE TABLE IF NOT EXISTS expenses (claim_id VARCHAR, employee_id VARCHAR, category VARCHAR, amount DOUBLE, status VARCHAR, has_receipt BOOLEAN, policy_violation_flag BOOLEAN)")
-        con.execute("INSERT INTO expenses VALUES ('CLM-FIXTURE-001', 'EMP0001', 'Meals', 250.0, 'Approved', TRUE, TRUE)")
-        con.execute("CREATE TABLE IF NOT EXISTS sales (order_id VARCHAR, revenue DOUBLE, profit DOUBLE, region VARCHAR, product_id VARCHAR, quantity INTEGER, is_returned BOOLEAN)")
-        con.execute("INSERT INTO sales VALUES ('ORD-FIXTURE-001', 64000.0, 42000.0, 'North America', 'PRD-01', 1, FALSE)")
-
-    @classmethod
     def setup_database_context(cls) -> duckdb.DuckDBPyConnection:
         con = duckdb.connect(":memory:")
         con.execute("SET memory_limit = '512MB'")
@@ -167,8 +37,6 @@ class EvaluationService:
 
         # 1. NexusDynamics DLP
         nexus_csv = os.path.join(BASE_DIR, "data", "benchmark", "public", "NexusDynamics_Incidents_5000.csv")
-        if not os.path.exists(nexus_csv):
-            nexus_csv = os.path.join(BASE_DIR, "data", "samples", "NexusDynamics_Incidents_5000.csv")
         if os.path.exists(nexus_csv):
             con.execute("CREATE TABLE nexus AS SELECT * FROM read_csv_auto(?)", [nexus_csv])
             con.execute("CREATE TABLE ds_nexus AS SELECT * FROM read_csv_auto(?)", [nexus_csv])
@@ -239,20 +107,10 @@ class EvaluationService:
 
         # 5. Relational HR, Expenses, Sales
         emp_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "employees.csv")
-        if not os.path.exists(emp_csv):
-            emp_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "hr", "employees.csv")
         dept_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "departments.csv")
-        if not os.path.exists(dept_csv):
-            dept_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "hr", "departments.csv")
         pay_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "payroll_summary.csv")
-        if not os.path.exists(pay_csv):
-            pay_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "hr", "payroll_summary.csv")
         exp_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "expense_claims.csv")
-        if not os.path.exists(exp_csv):
-            exp_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "finance", "expense_claims.csv")
         sales_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "sales.csv")
-        if not os.path.exists(sales_csv):
-            sales_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "sales", "sales.csv")
         prod_csv = os.path.join(BASE_DIR, "data", "benchmark", "synthetic", "products.csv")
 
         if os.path.exists(emp_csv):
@@ -270,11 +128,6 @@ class EvaluationService:
         if os.path.exists(prod_csv):
             con.execute("CREATE TABLE products AS SELECT * FROM read_csv_auto(?)", [prod_csv])
 
-        required_assets = [nexus_csv, rajcom_csv, fin_xlsx, retail_xlsx, emp_csv, pay_csv, exp_csv, sales_csv]
-        fallback_mode = not all(os.path.exists(path) for path in required_assets)
-        if fallback_mode:
-            cls._create_fallback_tables(con)
-            return BenchmarkConnection(con, cls._load_fallback_results())
         return con
 
     @classmethod

@@ -135,7 +135,7 @@ async def test_live_mistral_health_check_and_generation():
     """Optional live test; credentials and opt-in flag are required."""
     if os.getenv("RUN_LIVE_MISTRAL_TESTS", "").lower() not in {"1", "true", "yes"}:
         pytest.skip("Live Mistral checks are opt-in via RUN_LIVE_MISTRAL_TESTS.")
-    provider = MistralAIProvider(api_keys=settings.MISTRAL_API_KEYS)
+    provider = MistralAIProvider(api_keys=SAMPLE_KEYS)
     
     try:
         # 1. Health check

@@ -9,14 +9,9 @@ import {
   FileSpreadsheet,
   Trash2,
   MessageSquare,
+  Layers,
   ChevronDown,
   ChevronUp,
-  Database,
-  Layers,
-  Table,
-  CheckCircle2,
-  ArrowRight,
-  HardDrive,
 } from "lucide-react";
 
 export default function FilesPage() {
@@ -26,11 +21,9 @@ export default function FilesPage() {
   const [files, setFiles] = useState<StoredFile[]>([]);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [loading, setLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    let cancelled = false;
     async function load() {
       try {
         const [me, chatList, fileList] = await Promise.all([
@@ -38,7 +31,6 @@ export default function FilesPage() {
           api.listChats(),
           api.listFiles(),
         ]);
-        if (cancelled) return;
         setUser(me);
         setChats(chatList);
         setFiles(fileList);
@@ -46,15 +38,10 @@ export default function FilesPage() {
           setExpandedFileId(fileList[0].id);
         }
       } catch {
-        if (!cancelled) router.push("/login");
-      } finally {
-        if (!cancelled) setLoading(false);
+        router.push("/login");
       }
     }
     load();
-    return () => {
-      cancelled = true;
-    };
   }, [router]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,292 +60,138 @@ export default function FilesPage() {
     }
   };
 
-  const handleStartAnalysis = async (fileId: string, fileName: string) => {
+  const handleStartAnalysis = async (fileId: string) => {
     try {
-      const newSession = await api.createChat(`Analysis: ${fileName}`);
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem(
-          `pending_prompt_${newSession.id}`,
-          JSON.stringify({
-            content: `Tell me about the dataset "${fileName}" and summarize key distributions`,
-            fileIds: [fileId],
-          })
-        );
-      }
+      const newSession = await api.createChat("Dataset Analysis");
       router.push(`/chat/${newSession.id}`);
-    } catch (err: any) {
-      alert("Failed to create chat session.");
-    }
+    } catch {}
   };
-
-  const handleDeleteFile = async (fileId: string, name: string) => {
-    if (!window.confirm(`Delete ${name}? Stored schema profile will be removed.`)) return;
-    try {
-      await api.deleteFile(fileId);
-      setFiles((prev) => prev.filter((file) => file.id !== fileId));
-      setExpandedFileId((current) => (current === fileId ? null : current));
-    } catch (err: any) {
-      alert(err.message || "Failed to delete file.");
-    }
-  };
-
-  const totalRows = files.reduce((acc, f) => acc + (f.schema_profile?.row_count || 0), 0);
-  const totalCols = files.reduce((acc, f) => acc + (f.schema_profile?.columns?.length || 0), 0);
-  const totalSizeBytes = files.reduce((acc, f) => acc + (f.size_bytes || 0), 0);
-  const formatBytes = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-synapse-bg">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-6 w-6 rounded-full border-2 border-synapse-border border-t-synapse-accent animate-spin" />
-          <p className="text-xs text-synapse-muted">Loading datasets...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="flex h-screen bg-synapse-bg text-synapse-text overflow-hidden">
+    <div className="flex h-screen bg-slate-950">
       <Sidebar
         user={user}
         chats={chats}
         onNewChat={() => router.push("/chat")}
-        onDeleteChat={async (chatId) => {
-          try {
-            await api.deleteChat(chatId);
-            setChats((prev) => prev.filter((chat) => chat.id !== chatId));
-          } catch (err: any) {
-            alert(err.message || "Failed to delete chat.");
-          }
-        }}
       />
 
-      <main className="flex flex-1 flex-col overflow-y-auto p-4 sm:p-8 pt-16 lg:pt-8">
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-synapse-border">
+      <main className="flex flex-1 flex-col overflow-y-auto p-8">
+        <div className="flex items-center justify-between pb-6 border-b border-slate-800">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-synapse-text">
-              Datasets & Schema Profiler
+            <h1 className="text-xl font-bold tracking-tight text-white">
+              Dataset Ingestion & Schema Profiling
             </h1>
-            <p className="mt-1 text-xs text-synapse-secondary">
-              Ingest delimited text and Excel datasets (CSV, TXT, XLS/XLSX) for deterministic DuckDB queries and automatic server-side schema profiling.
+            <p className="mt-1 text-xs text-slate-400">
+              Upload CSV and Excel files. Schemas, types, and column distributions are profiled server-side.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div>
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileUpload}
-              accept=".csv,.txt,.xlsx,.xls"
+              accept=".csv,.xlsx,.xls"
               className="hidden"
             />
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="flex items-center gap-2 rounded-xl bg-synapse-accent hover:bg-synapse-accent-hover px-4 py-2 text-xs font-semibold text-white shadow-subtle transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500 disabled:opacity-50"
             >
               <UploadCloud className="h-4 w-4" />
-              <span>{uploading ? "Profiling Dataset..." : "Upload Dataset"}</span>
+              {uploading ? "Profiling Dataset..." : "Upload New Dataset"}
             </button>
-          </div>
-        </div>
-
-        {/* Metric Summary Cards */}
-        <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="rounded-xl border border-synapse-border bg-synapse-surface p-3.5 shadow-subtle">
-            <div className="flex items-center justify-between text-synapse-muted mb-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider">Total Files</span>
-              <FileSpreadsheet className="h-4 w-4 text-synapse-accent" />
-            </div>
-            <div className="text-xl font-bold font-mono text-synapse-text">{files.length}</div>
-          </div>
-
-          <div className="rounded-xl border border-synapse-border bg-synapse-surface p-3.5 shadow-subtle">
-            <div className="flex items-center justify-between text-synapse-muted mb-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider">Total Records</span>
-              <Database className="h-4 w-4 text-emerald-400" />
-            </div>
-            <div className="text-xl font-bold font-mono text-synapse-text">
-              {totalRows.toLocaleString()}
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-synapse-border bg-synapse-surface p-3.5 shadow-subtle">
-            <div className="flex items-center justify-between text-synapse-muted mb-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider">Profiled Columns</span>
-              <Table className="h-4 w-4 text-synapse-warm" />
-            </div>
-            <div className="text-xl font-bold font-mono text-synapse-text">{totalCols}</div>
-          </div>
-
-          <div className="rounded-xl border border-synapse-border bg-synapse-surface p-3.5 shadow-subtle">
-            <div className="flex items-center justify-between text-synapse-muted mb-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider">Storage Used</span>
-              <HardDrive className="h-4 w-4 text-blue-400" />
-            </div>
-            <div className="text-xl font-bold font-mono text-synapse-text">
-              {formatBytes(totalSizeBytes)}
-            </div>
           </div>
         </div>
 
         {/* Datasets List */}
         <div className="mt-8 space-y-4">
           {files.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-synapse-border p-12 text-center bg-synapse-surface/40">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-synapse-raised border border-synapse-border text-synapse-muted mb-3">
-                <FileSpreadsheet className="h-6 w-6" />
-              </div>
-              <h3 className="text-sm font-semibold text-synapse-text">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-800 p-12 text-center">
+              <FileSpreadsheet className="h-10 w-10 text-slate-600" />
+              <h3 className="mt-3 text-sm font-semibold text-slate-300">
                 No datasets uploaded yet
               </h3>
-              <p className="mt-1 text-xs text-synapse-muted max-w-sm">
-                Upload a delimited text or Excel file to begin automated schema profiling and deterministic analytical queries.
+              <p className="mt-1 text-xs text-slate-500 max-w-sm">
+                Upload a CSV or Excel spreadsheet to generate an automated schema profile and begin natural language analysis.
               </p>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="mt-4 flex items-center gap-1.5 rounded-xl border border-synapse-border bg-synapse-raised hover:bg-synapse-hover px-3.5 py-2 text-xs font-medium text-synapse-text transition-colors"
-              >
-                <UploadCloud className="h-3.5 w-3.5 text-synapse-accent" />
-                <span>Upload First Dataset</span>
-              </button>
             </div>
           ) : (
             files.map((file) => {
               const isExpanded = expandedFileId === file.id;
               const profile = file.schema_profile;
-              const isXlsx =
-                file.original_name.toLowerCase().endsWith(".xlsx") ||
-                file.original_name.toLowerCase().endsWith(".xls");
-              const extLabel = isXlsx ? "XLSX" : "CSV";
-
               return (
                 <div
                   key={file.id}
-                  className="rounded-2xl border border-synapse-border bg-synapse-surface shadow-subtle transition-all overflow-hidden"
+                  className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl transition"
                 >
-                  {/* File Row Header */}
-                  <div className="flex items-center justify-between p-4 flex-wrap gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${
-                          isXlsx
-                            ? "bg-emerald-950/70 text-emerald-300 border border-emerald-800/40"
-                            : "bg-blue-950/70 text-blue-300 border border-blue-800/40"
-                        }`}
-                      >
-                        {extLabel}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600/20 text-indigo-400 ring-1 ring-indigo-500/30">
+                        <FileSpreadsheet className="h-5 w-5" />
                       </div>
-
-                      <div className="truncate">
-                        <h3 className="text-sm font-semibold text-synapse-text truncate">
+                      <div>
+                        <h3 className="text-sm font-semibold text-white">
                           {file.original_name}
                         </h3>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-synapse-muted">
-                          <span>{formatBytes(file.size_bytes)}</span>
-                          <span>•</span>
-                          <span>{profile?.row_count !== undefined ? `${profile.row_count.toLocaleString()} rows` : "Ready"}</span>
-                          <span>•</span>
-                          <span>{profile?.columns?.length || 0} fields</span>
-                        </div>
+                        <p className="text-[11px] text-slate-400">
+                          {(file.size_bytes / 1024).toFixed(1)} KB • {profile?.row_count ?? 0} rows • {profile?.column_count ?? 0} columns
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleStartAnalysis(file.id, file.original_name)}
-                        className="flex items-center gap-1.5 rounded-xl border border-synapse-border bg-synapse-raised hover:bg-synapse-hover px-3 py-1.5 text-xs font-medium text-synapse-text transition-colors"
+                        onClick={() => handleStartAnalysis(file.id)}
+                        className="flex items-center gap-1.5 rounded-lg bg-indigo-950 px-3 py-1.5 text-xs font-medium text-indigo-300 border border-indigo-800 hover:bg-indigo-900 transition"
                       >
-                        <MessageSquare className="h-3.5 w-3.5 text-synapse-accent" />
-                        <span>Analyze in Chat</span>
+                        <MessageSquare className="h-3.5 w-3.5" />
+                        Analyze in Chat
                       </button>
-
-                      <button
-                        onClick={() => handleDeleteFile(file.id, file.original_name)}
-                        className="rounded-xl border border-synapse-border p-2 text-synapse-muted hover:text-synapse-danger hover:bg-synapse-raised transition-colors"
-                        title="Delete dataset"
-                        aria-label="Delete dataset"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-
                       <button
                         onClick={() => setExpandedFileId(isExpanded ? null : file.id)}
-                        className="rounded-xl border border-synapse-border p-2 text-synapse-secondary hover:text-synapse-text hover:bg-synapse-raised transition-colors"
-                        title={isExpanded ? "Collapse schema" : "Expand schema"}
+                        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"
                       >
                         {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
 
-                  {/* Expanded Schema Profiling Drawer */}
+                  {/* Expanded Profile */}
                   {isExpanded && profile && (
-                    <div className="border-t border-synapse-border bg-synapse-raised/40 p-4 space-y-4 animate-in fade-in duration-150">
-                      {profile.sheets && profile.sheets.length > 0 && (
-                        <div className="flex items-center gap-2 text-xs text-synapse-secondary">
-                          <span className="font-semibold text-synapse-muted">Workbook Sheets:</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {profile.sheets.map((sheet) => (
-                              <span
-                                key={sheet}
-                                className="rounded-md bg-synapse-surface border border-synapse-border px-2 py-0.5 text-xs text-synapse-accent font-mono"
-                              >
-                                {sheet}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                    <div className="mt-5 border-t border-slate-800 pt-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-300">
+                          Inferred Schema Profile ({profile.columns?.length || 0} fields)
+                        </span>
+                        {profile.sheets && profile.sheets.length > 0 && (
+                          <span className="text-[11px] text-slate-500">
+                            Sheets: {profile.sheets.join(", ")}
+                          </span>
+                        )}
+                      </div>
 
-                      {/* Schema Columns Table */}
-                      <div className="overflow-x-auto rounded-xl border border-synapse-border bg-synapse-surface">
+                      <div className="overflow-x-auto rounded-xl border border-slate-800/80">
                         <table className="w-full text-left text-xs">
-                          <thead className="border-b border-synapse-border bg-synapse-raised/60 text-synapse-muted">
+                          <thead className="bg-slate-800/60 text-slate-300">
                             <tr>
-                              <th className="px-3.5 py-2 font-medium">Field Name</th>
-                              <th className="px-3.5 py-2 font-medium">Inferred Type</th>
-                              <th className="px-3.5 py-2 font-medium">Null Values</th>
-                              <th className="px-3.5 py-2 font-medium">Unique Values</th>
-                              <th className="px-3.5 py-2 font-medium">Sample Values</th>
+                              <th className="px-3 py-2 font-semibold">Column Name</th>
+                              <th className="px-3 py-2 font-semibold">Inferred Type</th>
+                              <th className="px-3 py-2 font-semibold">Null Count</th>
+                              <th className="px-3 py-2 font-semibold">Unique Values</th>
+                              <th className="px-3 py-2 font-semibold">Sample Values</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-synapse-border/40 font-mono text-synapse-secondary">
+                          <tbody className="divide-y divide-slate-800/60 text-slate-300">
                             {profile.columns?.map((col) => (
-                              <tr key={col.name} className="hover:bg-synapse-hover/40 transition-colors">
-                                <td className="px-3.5 py-2 font-semibold text-synapse-text">
-                                  {col.name}
-                                </td>
-                                <td className="px-3.5 py-2 text-synapse-accent">
-                                  {col.inferred_type}
-                                </td>
-                                <td className="px-3.5 py-2">
-                                  {col.null_count > 0 ? (
-                                    <span className="text-amber-400">{col.null_count} nulls</span>
-                                  ) : (
-                                    <span className="text-synapse-faint">0 nulls</span>
-                                  )}
-                                </td>
-                                <td className="px-3.5 py-2 text-synapse-secondary">
-                                  {col.unique_count !== undefined ? col.unique_count : "—"}
-                                </td>
-                                <td className="px-3.5 py-2 font-sans">
-                                  <div className="flex flex-wrap gap-1">
-                                    {col.sample_values?.slice(0, 3).map((val, vIdx) => (
-                                      <span
-                                        key={vIdx}
-                                        className="rounded bg-synapse-raised border border-synapse-border px-1.5 py-0.5 text-[10px] text-synapse-muted truncate max-w-[120px]"
-                                      >
-                                        {String(val)}
-                                      </span>
-                                    ))}
-                                  </div>
+                              <tr key={col.name} className="hover:bg-slate-800/30">
+                                <td className="px-3 py-2 font-medium text-white">{col.name}</td>
+                                <td className="px-3 py-2 font-mono text-indigo-300">{col.inferred_type}</td>
+                                <td className="px-3 py-2 text-slate-400">{col.null_count}</td>
+                                <td className="px-3 py-2 text-slate-400">{col.unique_count}</td>
+                                <td className="px-3 py-2 font-mono text-[11px] text-slate-400">
+                                  {col.sample_values?.slice(0, 3).join(", ") || "—"}
                                 </td>
                               </tr>
                             ))}

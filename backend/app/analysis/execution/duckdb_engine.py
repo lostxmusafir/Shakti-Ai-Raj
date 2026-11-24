@@ -51,7 +51,7 @@ class DuckDBEngine:
                 alias = ds.alias
                 ext = os.path.splitext(file_path)[1].lower()
                 
-                if ext in [".csv", ".txt"]:
+                if ext == ".csv":
                     # Register CSV into in-memory table via parameterized read
                     con.execute(f'CREATE TABLE "{alias}" AS SELECT * FROM read_csv_auto(?)', [file_path])
                 elif ext in [".xlsx", ".xls"]:

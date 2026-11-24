@@ -28,15 +28,6 @@ logger = logging.getLogger(__name__)
 
 # In-memory event queues for live SSE subscriptions
 active_analysis_queues: Dict[str, asyncio.Queue] = {}
-active_analysis_tasks: Dict[str, asyncio.Task] = {}
-
-async def cancel_analysis(analysis_id: str) -> None:
-    task = active_analysis_tasks.pop(analysis_id, None)
-    if task and not task.done():
-        task.cancel()
-    queue = active_analysis_queues.pop(analysis_id, None)
-    if queue:
-        await queue.put(None)
 
 class AnalysisOrchestrator:
     def __init__(self):
