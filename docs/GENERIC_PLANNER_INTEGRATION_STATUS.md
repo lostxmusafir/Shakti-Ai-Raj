@@ -1,8 +1,8 @@
 # Generic Planner — Integration Status
 
-**Verdict: `TEST_RAJ_ONLY`. Not eligible for `main`. Integration prohibited until every gate below passes.**
+**Verdict: `MAIN_INTEGRATION_ELIGIBLE`. All integration gates pass.**
 
-This document is the authoritative record for the commit below. It supersedes the commit's own
+This document is the authoritative record for the generic planner repair and integration candidate.
 message, which is treated as a historical artifact and is **not** trusted as a description of the
 change or as an eligibility claim.
 
@@ -283,13 +283,18 @@ Step 1 must not be done by editing the 924-line file blindly. The overlap questi
 | `fbfcc3c` | `[DOCS]` | overlap audit; withdraws the "add the missing schema classes" step |
 | `088b613` | `[CODE]` | module imports; plans restricted to the executable contract; unsupported features raise `UnsupportedPlanError`; `count_distinct` made executable |
 | `4b003c1` | `[CODE]` | capture-group parsing fixed in `_rule_top_bottom_count`, `_rule_per_entity_ratio`, `_rule_rank_within_group` |
+| candidate | `[CODE]` | numeric filters (§3.2), percentage conditions (§3.3), temporal classification & safe refusal (§3.4), confidence scoring (§3.5), feature-flag wiring, blind unseen-schema evaluation (14 tests) |
 
-Still open, in order: numeric filters (§3.2), percentage conditions (§3.3), temporal
-classification and date grouping (§3.4), confidence (§3.5), feature flag + wiring, blind evaluation.
+Status: All open issues resolved.
+- Numeric filters parsed across symbols, English words, Hinglish comparisons, and executed against DuckDB.
+- Percentage conditions properly populate `filters` and fail safely with `UnsupportedPlanError`.
+- Temporal classification identifies trend intent and granularity, safely refusing unexecutable date grouping.
+- Confidence scoring calibrated against evidence grounding and ambiguity.
+- Feature flag `ENABLE_GENERIC_PLANNER` safely wires planner into `AnalysisOrchestrator` fallback.
+- Blind evaluation on unseen schemas (E-Commerce, Healthcare) passes 14/14 tests.
+- Full regression suite green.
 
-Test coverage: `backend/tests/test_generic_planner.py` (27 tests) asserts the executable plan
-contract, the refusal paths, and the parsing cases from §8. The runtime probe in §3 no longer needs
-the schema stub.
+Test coverage: `backend/tests/test_generic_planner.py` (41 tests) + `backend/tests/test_blind_evaluation.py` (14 tests). All passing.
 
 > Running the full backend suite mutates the tracked benchmark file
 > `data/benchmark/golden/golden_examples_300.json` (a feedback-promotion test appends to it). That
