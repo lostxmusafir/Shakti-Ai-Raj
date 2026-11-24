@@ -235,11 +235,11 @@ Additionally: any plan whose `filters` were dropped must not report `confidence 
 
 ## 9. Repair sequence (gated, in order)
 
-1. **Import / schema compatibility** — add `DateGroup`, `DerivedMetric`, `HavingRule`, `RankSpec`,
-   `AggregateOperation.filter`, and the `AnalysisPlan` fields (`derived_metrics`, `having`, `rank`,
-   `date_group`, `clarification`, `confidence`, `assumptions`). Purely additive to `schemas.py`;
-   no existing field renamed or removed. Confirm `PlanValidator` and `QueryCompiler` accept or
-   explicitly reject the new fields.
+1. **Import / schema compatibility** — adapt the planner to the plan contract the executor can
+   already run. **Do not** add `DateGroup`, `DerivedMetric`, `HavingRule`, `RankSpec`,
+   `AggregateOperation.filter` or the extra `AnalysisPlan` fields: they have no validator or compiler
+   implementation, so adding them turns an import failure into a validation failure. Superseded by
+   `docs/GENERIC_PLANNER_OVERLAP_AUDIT.md` §4.
 2. **Regex capture-group bugs** — fix `_rule_top_bottom_count` and `_rule_per_entity_ratio` so group
    indexing is derived per matched pattern, and remove the `ascending`-before-assignment path.
 3. **Numeric filters** — extend `_filter_from` to parse comparisons (`<`, `>`, `<=`, `>=`, `=`,
@@ -256,13 +256,15 @@ Additionally: any plan whose `filters` were dropped must not report `confidence 
    readable by production code.
 9. **Full gate run** — all gates in `AGENTS.md` §3, re-verified against a `main`-based candidate.
 
-Step 1 must not be done by editing the 924-line file blindly. Settle §6 first: reuse in the
-existing flow, or keep as a separate engine behind a flag.
+Step 1 must not be done by editing the 924-line file blindly. The overlap question in §6 is settled
+  in `docs/GENERIC_PLANNER_OVERLAP_AUDIT.md`: keep it as a second planner, narrowed to the executable
+  contract, unreferenced by the orchestrator until the flag step.
 
 ---
 
 ## 10. Current state
 
 - `main` — untouched, still `79279fa13730` locally.
-- `test-raj` — `05a9508`, plus `AGENTS.md` and this document (uncommitted at time of writing).
+- `test-raj` — `05a9508` plus the documentation commits (`AGENTS.md`, this document, and
+  `docs/GENERIC_PLANNER_OVERLAP_AUDIT.md`).
 - `05a9508` — `TEST_RAJ_ONLY`, ineligible, not to be cherry-picked.
