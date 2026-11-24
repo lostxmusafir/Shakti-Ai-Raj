@@ -63,6 +63,21 @@ class ResultVerifier:
             warnings.append("Independent aggregate recomputation was not returned by the execution engine")
         checks.append({"gate": "V3_RECOMPUTE", "name": "aggregate_arithmetic_consistency", "status": recompute_status, "details": recompute_details})
 
+        q = plan.question.lower()
+        if plan.intent == "comparative_count" or ("debit" in q and "credit" in q and any(
+            term in q for term in ("entries", "entry", "transactions", "transaction", "count", "kitne", "kitni", "how many")
+        ) and not any(term in q for term in ("top", "highest", "amounts", "values"))):
+            expected = {"debit_entries", "credit_entries"}
+            shape_ok = (not plan.group_by and not plan.filters and result_row_count == 1 and len(rows) == 1
+                        and set(result.get("columns", [])) == expected
+                        and all(isinstance(rows[0].get(key), int) and rows[0][key] >= 0 for key in expected))
+            independent_ok = shape_ok and isinstance(recompute, dict) and all(
+                recompute.get(key) == rows[0][key] for key in expected
+            )
+            checks.append({"gate": "V7_SEMANTIC", "name": "comparative_count_shape_and_recomputation",
+                           "status": "passed" if independent_ok else "failed",
+                           "details": "Two independent entry counts with no raw-value grouping" if independent_ok else "Expected two scalar entry counts matching independent recomputation"})
+
         source_files = [dataset.file_id for dataset in plan.datasets]
         source_sheets = []
         for file_id in source_files:

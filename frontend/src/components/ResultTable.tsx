@@ -17,6 +17,22 @@ export default function ResultTable({ columns, rows, durationMs }: ResultTablePr
 
   if (!columns || columns.length === 0) return null;
 
+  if (rows.length === 1 && columns.length === 2 &&
+      columns.includes("debit_entries") && columns.includes("credit_entries")) {
+    return (
+      <div className="my-4 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/90 text-xs text-slate-200">
+        <div className="border-b border-slate-800 px-4 py-2.5 font-semibold">Transaction entries</div>
+        <table className="w-full text-left">
+          <thead className="bg-slate-800/60"><tr><th className="px-4 py-2">Type</th><th className="px-4 py-2">Entries</th></tr></thead>
+          <tbody>
+            <tr className="border-t border-slate-800"><td className="px-4 py-2">Debit</td><td className="px-4 py-2">{rows[0].debit_entries}</td></tr>
+            <tr className="border-t border-slate-800"><td className="px-4 py-2">Credit</td><td className="px-4 py-2">{rows[0].credit_entries}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   return (
     <div className="my-4 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/90 shadow-xl">
       <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950/60 px-4 py-2.5">

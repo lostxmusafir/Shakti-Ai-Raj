@@ -14,6 +14,7 @@ from app.ai.orchestration.intent import IntentClassifier
 from app.ai.planning.schemas import AnalysisPlan, DatasetRef, AggregateOperation, Condition, JoinRule, SortRule
 from app.ai.planning.validator import PlanValidator
 from app.analysis.execution.duckdb_engine import DuckDBEngine
+from app.analysis.execution.compiler import escape_identifier
 from app.ai.verification.verifier import ResultVerifier
 from app.policies.service import policy_service
 from app.policies.evaluator import PolicyEvaluator
@@ -34,6 +35,24 @@ class AnalysisOrchestrator:
         self.analysis_repo = BaseRepository("analysis_runs", AnalysisRun)
         self.file_repo = BaseRepository("files", StoredFile)
         self.ai_provider = get_ai_provider()
+
+    @staticmethod
+    def _entry_count_plan(question: str, file_ids: List[str], files_map: Dict[str, StoredFile]) -> Optional[AnalysisPlan]:
+        q = question.lower()
+        if not ("debit" in q and "credit" in q and
+                any(term in q for term in ("entries", "entry", "transactions", "transaction", "count", "kitne", "kitni", "how many")) and
+                not any(term in q for term in ("top", "highest", "amounts", "values")) and len(file_ids) == 1):
+            return None
+        columns = {col["name"].lower(): col["name"] for col in (files_map[file_ids[0]].schema_profile or {}).get("columns", [])}
+        if not {"debit", "credit"} <= columns.keys():
+            return None
+        debit, credit = (escape_identifier(columns[name]) for name in ("debit", "credit"))
+        return AnalysisPlan(
+            intent="comparative_count", question=question,
+            datasets=[DatasetRef(file_id=file_ids[0], alias="ds_1")], limit=1,
+            sql_query=(f"SELECT SUM(CASE WHEN {debit} IS NOT NULL AND {debit} <> 0 THEN 1 ELSE 0 END) AS debit_entries, "
+                       f"SUM(CASE WHEN {credit} IS NOT NULL AND {credit} <> 0 THEN 1 ELSE 0 END) AS credit_entries FROM \"ds_1\""),
+        )
 
     async def _emit_event(self, analysis_id: str, event_type: str, data: Dict[str, Any]):
         if analysis_id in active_analysis_queues:
@@ -275,6 +294,9 @@ class AnalysisOrchestrator:
         available_cols = [c["name"] for c in first_profile.get("columns", [])]
         cols_lower = [c.lower() for c in available_cols]
         q_lower = question.lower().strip()
+        entry_plan = self._entry_count_plan(question, file_ids, files_map)
+        if entry_plan:
+            return entry_plan
         
         # Check if DLP incident dataset (NexusDynamics / email DLP / RajCom)
         is_dlp = any(c in cols_lower for c in ["destination", "policies", "source", "transaction size (kb)"])
@@ -526,6 +548,9 @@ class AnalysisOrchestrator:
     ) -> AnalysisPlan:
         """Invokes AI Provider with dataset schemas to construct a deterministic AnalysisPlan AST."""
         datasets = [DatasetRef(file_id=fid, alias=f"ds_{idx+1}") for idx, fid in enumerate(file_ids)]
+        entry_plan = self._entry_count_plan(question, file_ids, files_map)
+        if entry_plan:
+            return PlanValidator.validate_plan(entry_plan, files_map)
         skill_route = SkillRegistry.route(question, files_map)
         retrieval_context, semantic_mappings = self._learning_context(question, files_map)
         
@@ -752,7 +777,9 @@ class AnalysisOrchestrator:
             r0 = engine_result["rows"][0]
             q_lower = question.lower()
             
-            if "total_incidents" in r0 and "total_gb" in r0:
+            if validated_plan.intent == "comparative_count":
+                executive_answer = f"Debit entries: **{r0['debit_entries']:,}**; Credit entries: **{r0['credit_entries']:,}**."
+            elif "total_incidents" in r0 and "total_gb" in r0:
                 executive_answer = f"**{r0['total_incidents']:,} incidents**, **{r0['total_gb']} GB** total data; **{r0.get('external_incidents', 0):,} incidents** (23.2%) me external recipient hai."
             elif "recipient_type" in r0 or ("is_ext" in r0 and len(engine_result["rows"]) >= 2):
                 int_row = next((r for r in engine_result["rows"] if r.get("is_ext") == 0), {})
@@ -814,7 +841,8 @@ class AnalysisOrchestrator:
             executive_answer = "Analysis executed deterministically across verified records."
 
         explanation = f"{executive_answer.strip()}\n\n"
-        explanation += f"📊 **Verified DuckDB Execution** ({engine_result['duration_ms']}ms, {row_count:,} records analyzed)\n"
+        execution_label = "Verified DuckDB Execution" if verification["passed"] else "DuckDB Execution (verification failed)"
+        explanation += f"📊 **{execution_label}** ({engine_result['duration_ms']}ms, {row_count:,} records analyzed)\n"
         explanation += f"Verification Status: ✅ {verification['provenance']['verification_status'].upper()}"
 
         await self._emit_event(analysis_id, "assistant.delta", {"delta": explanation})

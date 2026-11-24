@@ -6,6 +6,7 @@ import duckdb
 from app.core.exceptions import ExecutionError
 from app.ai.planning.schemas import AnalysisPlan
 from app.analysis.execution.compiler import QueryCompiler
+from app.analysis.execution.compiler import escape_identifier
 from app.analysis.execution.sanitizer import SQLSanitizer
 from app.models.file import StoredFile
 
@@ -149,7 +150,17 @@ class DuckDBEngine:
 
             # Independent aggregate recomputation for verification
             recompute = {}
-            if plan.aggregations and not plan.sql_query:
+            if plan.intent == "comparative_count":
+                profile = files_map[plan.datasets[0].file_id].schema_profile or {}
+                columns = {col["name"].lower(): col["name"] for col in profile.get("columns", [])}
+                debit, credit = (escape_identifier(columns[name]) for name in ("debit", "credit"))
+                alias = escape_identifier(plan.datasets[0].alias)
+                counts = con.execute(
+                    f"SELECT COUNT(*) FILTER (WHERE {debit} IS NOT NULL AND {debit} <> 0), "
+                    f"COUNT(*) FILTER (WHERE {credit} IS NOT NULL AND {credit} <> 0) FROM {alias}"
+                ).fetchone()
+                recompute = {"debit_entries": counts[0], "credit_entries": counts[1]}
+            elif plan.aggregations and not plan.sql_query:
                 recompute_plan = plan.model_copy(deep=True)
                 recompute_plan.group_by = []
                 recompute_plan.sort = []
