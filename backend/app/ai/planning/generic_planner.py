@@ -420,20 +420,25 @@ class QuestionEngine:
     # Rules (ordered, first match wins)
     # ------------------------------------------------------------------
     def _rule_rank_within_group(self, interp, text, tokens) -> Optional[Interpretation]:
+        # Patterns carry their own group maps; two of the three define no direction group.
         patterns = [
-            r"for each (.+?),? which (.+?) has the (highest|lowest|most|least) number of records",
-            r"har (.+?) ke liye kaunsa (.+?) sabse zyada records wala hai",
-            r"for every (.+?),? which (.+?) (?:has|records) the (?:highest|most)",
+            (r"for each (.+?),? which (.+?) has the (highest|lowest|most|least) number of records",
+             {"partition": 1, "target": 2, "order": 3}),
+            (r"har (.+?) ke liye kaun(?:sa|si) (.+?) sabse zyada records wala hai",
+             {"partition": 1, "target": 2, "order": None}),
+            (r"for every (.+?),? which (.+?) (?:has|records) the (?:highest|most)",
+             {"partition": 1, "target": 2, "order": None}),
         ]
-        for pattern in patterns:
+        for pattern, groups in patterns:
             match = re.search(pattern, text)
             if not match:
                 continue
-            partition = self._resolve_dimension(match.group(1))
-            target = self._resolve_dimension(match.group(2))
+            partition = self._resolve_dimension(match.group(groups["partition"]))
+            target = self._resolve_dimension(match.group(groups["target"]))
             if partition is None or target is None:
                 continue
-            ascending = "low" in match.group(3) or "least" in match.group(3)
+            order = match.group(groups["order"]) if groups["order"] else ""
+            ascending = order in {"lowest", "least"}
             interp.intent = "ranked_group_metric"
             interp.group_by = [partition.name, target.name]
             interp.aggregations = [("count", None, None, "record_count")]
@@ -442,7 +447,6 @@ class QuestionEngine:
             interp.sort = [(partition.name, True)]
             interp.limit = 100
             if ascending:
-                interp.rank_order = "record_count"
                 interp.notes.append("rank_ascending")
             return interp
         return None
@@ -451,38 +455,41 @@ class QuestionEngine:
         # English: "which city has the worst average EMI burden per loan?"
         # Hinglish: "Loan wale customers me kaunsi city ka average EMI burden sabse kharab hai?"
         # Hindi: "Loan status ke hisaab se kis city ka average EMI sabse zyada?"
-        # Pattern: [which/what] [entity] [has/have] [measure] per [entity]
-        match = (re.search(r"which (.+?) has the (highest|lowest|most|least) (.+?) per (.+?)$", text)
-                 or re.search(r"kis (.+?) ka (.+?) per (.+?) sabse zyada", text)
-                 or re.search(r"(.+?) ka (.+?) per (.+?) sabse (?:zyada|kam)", text)
-                 or re.search(r"kiske (.+?) par (.+?) sabse (?:zyada|kam)", text))
-        if not match:
-            return None
-        # Determine groups based on pattern
-        if match.group(1) and match.group(4):  # "which X has highest Y per Z"
-            group = self._resolve_dimension(match.group(1))
-            measure = self._resolve_measure(match.group(3))
-            entity = self._resolve_dimension(match.group(4))
-        elif match.group(2) and match.group(5):  # "kis X ka Y per Z"
-            group = self._resolve_dimension(match.group(2))
-            measure = self._resolve_measure(match.group(3))
-            entity = self._resolve_dimension(match.group(5))
-        else:
-            return None
-        if group is None or measure is None or entity is None:
-            return None
-        interp.intent = "ratio"
-        interp.group_by = [group.name]
-        interp.aggregations = [
-            ("sum", measure.name, None, "numerator"),
-            ("count_distinct", entity.name, None, "denominator"),
+        # Every pattern carries its own group map; the previous version read
+        # group(4) and group(5) from three-group patterns.
+        patterns = [
+            (r"which (.+?) has the (highest|lowest|most|least) (.+?) per (.+?)$",
+             {"group": 1, "order": 2, "measure": 3, "entity": 4}),
+            (r"kis (.+?) ka (.+?) per (.+?) sabse (zyada|kam)",
+             {"group": 1, "measure": 2, "entity": 3, "order": 4}),
+            (r"(.+?) ka (.+?) per (.+?) sabse (zyada|kam)",
+             {"group": 1, "measure": 2, "entity": 3, "order": 4}),
         ]
-        interp.derived = [("per_entity_metric", "numerator", "denominator", 1.0, "group")]
-        # Sort direction: "sabse zyada" = desc, "sabse kam" = asc
-        interp.sort = [("per_entity_metric", match.group(2) in {"lowest", "least", "kam"} or match.group(1) in {"kam"})]
-        interp.limit = 1
-        interp.assumptions.append(f"per {entity.name} = sum({measure.name}) / distinct {entity.name}")
-        return interp
+        for pattern, groups in patterns:
+            match = re.search(pattern, text)
+            if not match:
+                continue
+            group = self._resolve_dimension(match.group(groups["group"]) or "")
+            measure = self._resolve_measure(match.group(groups["measure"]) or "")
+            entity = self._resolve_dimension(match.group(groups["entity"]) or "")
+            if group is None or measure is None or entity is None:
+                continue
+            ascending = (match.group(groups["order"]) or "") in {"lowest", "least", "kam"}
+            interp.intent = "ratio"
+            interp.group_by = [group.name]
+            interp.aggregations = [
+                ("sum", measure.name, None, "numerator"),
+                ("count_distinct", entity.name, None, "denominator"),
+            ]
+            interp.derived = [("per_entity_metric", "numerator", "denominator", 1.0, "group")]
+            # Sort direction: "sabse zyada" = desc, "sabse kam" = asc
+            interp.sort = [("per_entity_metric", ascending)]
+            interp.limit = 1
+            interp.assumptions.append(
+                f"per {entity.name} = sum({measure.name}) / distinct {entity.name}"
+            )
+            return interp
+        return None
 
     def _rule_time_series(self, interp, text, tokens) -> Optional[Interpretation]:
         if not (tokens & TREND_WORDS):
@@ -735,40 +742,35 @@ class QuestionEngine:
         # English: "which airline has the highest number of cancellations?"
         # Hinglish: "sabse zyada cancellation kis airline me ho raha hai?"
         # Hindi: "sabse zyada radd k gayi udan kis airline me?"
-        # Pattern variations
-        match = (re.search(r"which (.+?) has the (highest|lowest|most|least) number of records", text)
-                 or re.search(r"sabse (zyada|kam|jyada) records kis (.+?) ke hain", text)
-                 or re.search(r"kis (.+?) me record sabse (jyada|zyada|kam) he", text)
-                 or re.search(r"(.+?) with the (most|least) (?:number of )?records", text)
-                 or re.search(r"sabse (.+?) (.+?) (.+?)$", text))  # "sabse zyada X Y"
-        if not match:
-            return None
-        # Determine group and sort direction
-        # Handle "sabse zyada/kem" patterns
-        if match.group(1) and match.group(2) and text.startswith("sabse "):
-            # "sabse zyada records kis X ke hain"
-            ascending = match.group(2) in {"kam"}
-            group = self._resolve_dimension(match.group(3))
-        elif match.group(1) and text.startswith("kis "):
-            # "kis X me record sabse zyada he"
-            ascending = match.group(2) in {"kam"}
-            group = self._resolve_dimension(match.group(1))
-        elif match.group(2) and match.group(2) in {"jyada", "zyada"} and not ascending:
-            # Default: zyada = top/descending
-            ascending = False
-            group = self._resolve_dimension(match.group(1) or match.group(3))
-        else:
-            # Try to resolve group from available groups
-            ascending = match.group(2) in {"lowest", "least", "kam"} if match.group(2) else False
-            group = self._resolve_dimension(match.group(1) or match.group(3))
-        if group is None:
-            return None
-        interp.intent = "top_n" if not ascending else "bottom_n"
-        interp.group_by = [group.name]
-        interp.aggregations = [("count", None, None, "metric")]
-        interp.sort = [("metric", ascending)]
-        interp.limit = 1
-        return interp
+        # Every pattern carries its own group map. Indexing groups positionally
+        # across patterns of different arity raised IndexError on the Hinglish
+        # phrasing, whose pattern defines two groups, not three.
+        patterns = [
+            (r"which (.+?) has the (highest|lowest|most|least) number of records",
+             {"group": 1, "order": 2}),
+            (r"sabse (zyada|kam|jyada) records kis (.+?) (?:ke|me) hain",
+             {"order": 1, "group": 2}),
+            (r"kis (.+?) me records? sabse (zyada|jyada|kam) h(?:e|ai|ain)",
+             {"group": 1, "order": 2}),
+            (r"(.+?) with the (most|least) (?:number of )?records",
+             {"group": 1, "order": 2}),
+        ]
+        for pattern, groups in patterns:
+            match = re.search(pattern, text)
+            if not match:
+                continue
+            order = match.group(groups["order"]) or ""
+            group = self._resolve_dimension(match.group(groups["group"]) or "")
+            if group is None:
+                continue
+            ascending = order in {"lowest", "least", "kam"}
+            interp.intent = "top_n" if not ascending else "bottom_n"
+            interp.group_by = [group.name]
+            interp.aggregations = [("count", None, None, "metric")]
+            interp.sort = [("metric", ascending)]
+            interp.limit = 1
+            return interp
+        return None
 
     def _rule_distinct(self, interp, text, tokens) -> Optional[Interpretation]:
         if not (tokens & DISTINCT_WORDS):

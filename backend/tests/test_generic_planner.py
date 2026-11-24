@@ -13,6 +13,7 @@ from app.ai.planning.generic_planner import (
     EXECUTABLE_AGGREGATES,
     GenericPlanner,
     Interpretation,
+    QuestionEngine,
     UnsupportedPlanError,
 )
 from app.ai.planning.schemas import AggregateOperation, AnalysisPlan, Condition, DatasetRef
@@ -26,6 +27,8 @@ PROFILE = {
         {"name": "loan_id", "inferred_type": "string", "unique_count": 6, "null_count": 0},
         {"name": "city", "inferred_type": "string", "unique_count": 3, "null_count": 0,
          "top_values": {"Pune": 3, "Mumbai": 2, "Delhi": 1}},
+        {"name": "branch", "inferred_type": "string", "unique_count": 4, "null_count": 0,
+         "top_values": {"North": 2, "South": 2, "East": 1, "West": 1}},
         {"name": "emi", "inferred_type": "float", "unique_count": 6, "null_count": 0},
         {"name": "cancellation", "inferred_type": "string", "unique_count": 2, "null_count": 0,
          "top_values": {"yes": 2, "no": 4}},
@@ -175,6 +178,87 @@ def test_count_distinct_validates_compiles_and_executes():
     sql, _ = QueryCompiler.compile(plan)
     assert 'COUNT(DISTINCT "city")' in sql
     assert _execute(plan) == [(3,)]
+
+
+# ---------------------------------------------------------------------------
+# Capture-group parsing
+# ---------------------------------------------------------------------------
+
+def test_hinglish_top_n_count_parses_with_its_own_groups():
+    interp = QuestionEngine(PROFILE).analyze("sabse zyada records kis city ke hain")
+
+    assert interp.intent == "top_n"
+    assert interp.group_by == ["city"]
+    assert interp.aggregations == [("count", None, None, "metric")]
+    assert interp.sort == [("metric", False)]
+
+
+def test_hinglish_bottom_n_count_sorts_ascending():
+    interp = QuestionEngine(PROFILE).analyze("sabse kam records kis city ke hain")
+
+    assert interp.intent == "bottom_n"
+    assert interp.sort == [("metric", True)]
+
+
+def test_english_record_count_phrasings_still_parse():
+    engine = QuestionEngine(PROFILE)
+    highest = engine.analyze("which city has the highest number of records")
+    least = engine.analyze("which city has the least number of records")
+
+    assert (highest.intent, highest.sort) == ("top_n", [("metric", False)])
+    assert (least.intent, least.sort) == ("bottom_n", [("metric", True)])
+    assert highest.group_by == least.group_by == ["city"]
+
+
+@pytest.mark.parametrize("question", [
+    "sabse zyada records kis city ke hain",
+    "sabse kam records kis city ke hain",
+    "kis city me records sabse zyada hai",
+    "kis city ka emi per branch sabse zyada",
+    "kis city ka emi per branch sabse kam",
+    "which city has the highest emi per branch",
+    "har branch ke liye kaunsa city sabse zyada records wala hai",
+    "for every branch which city has the most records",
+    "for each branch which city has the lowest number of records",
+])
+def test_rule_parsing_never_raises(question):
+    interp = QuestionEngine(PROFILE).analyze(question)
+
+    assert isinstance(interp, Interpretation)
+    assert 0.0 <= interp.confidence <= 1.0
+
+
+def test_per_entity_ratio_resolves_group_measure_and_entity():
+    interp = QuestionEngine(PROFILE).analyze("which city has the highest emi per branch")
+
+    assert interp.intent == "ratio"
+    assert interp.group_by == ["city"]
+    assert interp.aggregations == [
+        ("sum", "emi", None, "numerator"),
+        ("count_distinct", "branch", None, "denominator"),
+    ]
+    assert interp.derived == [
+        ("per_entity_metric", "numerator", "denominator", 1.0, "group")
+    ]
+
+
+def test_rank_within_group_parses_when_the_pattern_defines_no_direction_group():
+    engine = QuestionEngine(PROFILE)
+    hinglish = engine.analyze("har branch ke liye kaunsa city sabse zyada records wala hai")
+    lowest = engine.analyze("for each branch which city has the lowest number of records")
+
+    assert hinglish.intent == "ranked_group_metric"
+    assert hinglish.rank_partition == ["branch"]
+    assert hinglish.group_by == ["branch", "city"]
+    assert "rank_ascending" not in hinglish.notes
+    assert "rank_ascending" in lowest.notes
+
+
+def test_parsed_ratio_is_refused_because_derived_metrics_are_unexecutable():
+    interp = QuestionEngine(PROFILE).analyze("which city has the highest emi per branch")
+
+    with pytest.raises(UnsupportedPlanError, match="derived metric"):
+        _build(interp)
 
 
 def test_count_distinct_without_a_column_is_rejected_by_the_validator():
