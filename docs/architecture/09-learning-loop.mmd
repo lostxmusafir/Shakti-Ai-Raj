@@ -1,0 +1,7 @@
+flowchart LR
+  Examples[Approved examples] --> Train[Offline split]
+  Train --> Evaluate[Held-out evaluation]
+  Evaluate --> Report[Evidence report]
+  Feedback[User feedback] --> Review[Human review]
+  Review --> Examples
+  Report --> Gate[Release gate]

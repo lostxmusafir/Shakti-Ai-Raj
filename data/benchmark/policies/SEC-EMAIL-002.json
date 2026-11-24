@@ -1,0 +1,33 @@
+{
+  "policy_code": "SEC-EMAIL-002",
+  "title": "Corporate Email Security & Recipient Policy",
+  "department": "Cybersecurity",
+  "version": 2,
+  "effective_from": "2026-01-01",
+  "marker": "SYNTHETIC_TEST_POLICY",
+  "description": "Rules governing external emails, personal webmail forwarding, and recipient domain controls.",
+  "rules": [
+    {
+      "rule_id": "R-EMAIL-01",
+      "description": "No company confidential data may be sent to personal email domains (@gmail.com, @yahoo.com, @outlook.com).",
+      "condition": {
+        "field": "personal",
+        "operator": "equals",
+        "value": 1
+      },
+      "action": "BLOCK_OR_QUARANTINE",
+      "severity": "High"
+    },
+    {
+      "rule_id": "R-EMAIL-02",
+      "description": "Password, credential, or authentication files sent to external domains must be immediately blocked.",
+      "condition": {
+        "field": "policy",
+        "operator": "contains",
+        "value": "Password"
+      },
+      "action": "BLOCK",
+      "severity": "Critical"
+    }
+  ]
+}

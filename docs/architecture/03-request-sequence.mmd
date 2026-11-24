@@ -1,0 +1,14 @@
+sequenceDiagram
+  participant U as User
+  participant F as Frontend
+  participant A as API
+  participant O as Orchestrator
+  participant E as Engine
+  U->>F: Ask question / upload file
+  F->>A: Authenticated request
+  A->>O: Intent + policy context
+  O->>E: Verified deterministic operation
+  E-->>O: Result + metadata
+  O-->>A: Explanation and status
+  A-->>F: JSON response
+  F-->>U: Render answer

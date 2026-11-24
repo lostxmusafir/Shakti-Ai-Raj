@@ -10,7 +10,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -55,6 +55,13 @@ apps/frontend/.env.local
 # Temporary files & uploads
 data/uploads/*
 !data/uploads/.gitkeep
+data/benchmark/public/*
+!data/benchmark/public/.gitkeep
+data/benchmark/public/extracted/*
+data/benchmark/synthetic/*
+!data/benchmark/synthetic/.gitkeep
+data/benchmark/golden/*
+!data/benchmark/golden/.gitkeep
 
 # System & IDE
 .DS_Store

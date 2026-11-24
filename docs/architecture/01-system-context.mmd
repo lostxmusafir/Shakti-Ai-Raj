@@ -1,0 +1,8 @@
+flowchart LR
+  User[Analyst] --> Web[Next.js web app]
+  Web --> API[FastAPI /api/v1]
+  API --> Data[Files and datasets]
+  API --> DB[MongoDB adapter]
+  API --> AI[AI provider / orchestration]
+  API --> Engine[DuckDB + Polars]
+  API --> Policy[Policy and DLP]

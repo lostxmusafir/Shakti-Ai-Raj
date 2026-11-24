@@ -1,0 +1,231 @@
+{
+  "cycle": 1,
+  "timestamp": "2026-11-23T18:17:34.002432+00:00",
+  "verified_examples": [
+    {
+      "example_id": "cand-c01-0f73bc",
+      "domain": "DLP / Security",
+      "dataset_name": "NexusDynamics",
+      "question": "Top 3 external data senders with tie-breaker (Cycle 1)",
+      "language": "english",
+      "sql_query": "SELECT src, ROUND(SUM(size_kb)/1024.0, 1) AS data_mb FROM v WHERE is_ext=1 GROUP BY src ORDER BY data_mb DESC, src ASC LIMIT 3",
+      "created_at": "2026-11-23T18:17:12.080765+00:00",
+      "expected_answer": {
+        "columns": [
+          "src",
+          "data_mb"
+        ],
+        "row_count": 3,
+        "rows": [
+          {
+            "src": "NX-ENG086\\Isha Dave",
+            "data_mb": 500.0
+          },
+          {
+            "src": "NX-AVI176\\Aarti Joshi",
+            "data_mb": 228.3
+          },
+          {
+            "src": "ZN-TRD100\\Arjun Reddy",
+            "data_mb": 201.2
+          }
+        ],
+        "primary_metric": {
+          "src": "NX-ENG086\\Isha Dave",
+          "data_mb": 500.0
+        }
+      },
+      "verification": {
+        "status": "verified",
+        "method": "dual_deterministic_execution",
+        "duration_ms": 4.39,
+        "verified_at": "2026-11-23T18:17:12.085321+00:00"
+      }
+    },
+    {
+      "example_id": "cand-c01-464fc8",
+      "domain": "Finance / Sales",
+      "dataset_name": "Financial_Sample",
+      "question": "Average profit by country (Cycle 1)",
+      "language": "english",
+      "sql_query": "SELECT Country, ROUND(AVG(Profit), 2) AS avg_profit FROM financials GROUP BY Country ORDER BY avg_profit DESC LIMIT 3",
+      "created_at": "2026-11-23T18:17:12.080818+00:00",
+      "expected_answer": {
+        "columns": [
+          "Country",
+          "avg_profit"
+        ],
+        "row_count": 3,
+        "rows": [
+          {
+            "Country": "France",
+            "avg_profit": 27007.29
+          },
+          {
+            "Country": "Germany",
+            "avg_profit": 26288.49
+          },
+          {
+            "Country": "Canada",
+            "avg_profit": 25208.78
+          }
+        ],
+        "primary_metric": {
+          "Country": "France",
+          "avg_profit": 27007.29
+        }
+      },
+      "verification": {
+        "status": "verified",
+        "method": "dual_deterministic_execution",
+        "duration_ms": 4.46,
+        "verified_at": "2026-11-23T18:17:12.089814+00:00"
+      }
+    },
+    {
+      "example_id": "cand-c01-15589b",
+      "domain": "Retail Operations",
+      "dataset_name": "Online_Retail",
+      "question": "Top 3 countries by unique customer count (Cycle 1)",
+      "language": "english",
+      "sql_query": "SELECT Country, COUNT(DISTINCT CustomerID) AS unique_customers FROM retail WHERE CustomerID IS NOT NULL GROUP BY Country ORDER BY unique_customers DESC, Country ASC LIMIT 3",
+      "created_at": "2026-11-23T18:17:12.080873+00:00",
+      "expected_answer": {
+        "columns": [
+          "Country",
+          "unique_customers"
+        ],
+        "row_count": 3,
+        "rows": [
+          {
+            "Country": "United Kingdom",
+            "unique_customers": 3950
+          },
+          {
+            "Country": "Germany",
+            "unique_customers": 95
+          },
+          {
+            "Country": "France",
+            "unique_customers": 87
+          }
+        ],
+        "primary_metric": {
+          "Country": "United Kingdom",
+          "unique_customers": 3950
+        }
+      },
+      "verification": {
+        "status": "verified",
+        "method": "dual_deterministic_execution",
+        "duration_ms": 43.55,
+        "verified_at": "2026-11-23T18:17:12.133665+00:00"
+      }
+    },
+    {
+      "example_id": "cand-c01-117a5e",
+      "domain": "HR Operations",
+      "dataset_name": "Relational_HR",
+      "question": "Department headcount breakdown (Cycle 1)",
+      "language": "english",
+      "sql_query": "SELECT d.department_name, COUNT(e.employee_id) AS active_headcount FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id GROUP BY d.department_name ORDER BY active_headcount DESC, d.department_name ASC",
+      "created_at": "2026-11-23T18:17:12.080887+00:00",
+      "expected_answer": {
+        "columns": [
+          "department_name",
+          "active_headcount"
+        ],
+        "row_count": 5,
+        "rows": [
+          {
+            "department_name": "Human Resources",
+            "active_headcount": 25
+          },
+          {
+            "department_name": "Operations",
+            "active_headcount": 23
+          },
+          {
+            "department_name": "Engineering",
+            "active_headcount": 21
+          },
+          {
+            "department_name": "Finance",
+            "active_headcount": 19
+          },
+          {
+            "department_name": "Sales",
+            "active_headcount": 12
+          }
+        ],
+        "primary_metric": {
+          "department_name": "Human Resources",
+          "active_headcount": 25
+        }
+      },
+      "verification": {
+        "status": "verified",
+        "method": "dual_deterministic_execution",
+        "duration_ms": 4.44,
+        "verified_at": "2026-11-23T18:17:12.138162+00:00"
+      }
+    },
+    {
+      "example_id": "cand-c01-5bd49a",
+      "domain": "Expense Policy",
+      "dataset_name": "Expense_Claims",
+      "question": "Compliant expense totals by category (Cycle 1)",
+      "language": "english",
+      "sql_query": "SELECT category, ROUND(SUM(amount), 2) AS total_expense FROM expenses WHERE policy_violation_flag = false GROUP BY category ORDER BY total_expense DESC",
+      "created_at": "2026-11-23T18:17:12.080898+00:00",
+      "expected_answer": {
+        "columns": [
+          "category",
+          "total_expense"
+        ],
+        "row_count": 4,
+        "rows": [
+          {
+            "category": "Software",
+            "total_expense": 64900.99
+          },
+          {
+            "category": "Travel",
+            "total_expense": 61712.89
+          },
+          {
+            "category": "Equipment",
+            "total_expense": 59832.95
+          },
+          {
+            "category": "Entertainment",
+            "total_expense": 2486.71
+          }
+        ],
+        "primary_metric": {
+          "category": "Software",
+          "total_expense": 64900.99
+        }
+      },
+      "verification": {
+        "status": "verified",
+        "method": "dual_deterministic_execution",
+        "duration_ms": 2.66,
+        "verified_at": "2026-11-23T18:17:12.140863+00:00"
+      }
+    }
+  ],
+  "eval_metrics": {
+    "evaluation_split": "test",
+    "total_evaluated": 93,
+    "intent_accuracy": 100.0,
+    "column_mapping_accuracy": 100.0,
+    "execution_success_rate": 100.0,
+    "numerical_accuracy": 100.0,
+    "latency_p50_ms": 0.69,
+    "latency_p95_ms": 21.03,
+    "failures_count": 0,
+    "failures_sample": []
+  },
+  "baseline_accuracy": 100.0
+}

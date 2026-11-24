@@ -1,0 +1,6 @@
+flowchart TB
+  Code[Source changes] --> Tests[Backend + frontend tests]
+  Tests --> Security[Secret / dependency checks]
+  Security --> Bench[Benchmark and evidence audit]
+  Bench --> Review[Human review]
+  Review --> Release[Release or hold]

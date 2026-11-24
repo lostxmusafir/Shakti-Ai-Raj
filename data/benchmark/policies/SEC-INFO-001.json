@@ -1,0 +1,22 @@
+{
+  "policy_code": "SEC-INFO-001",
+  "title": "Information Classification & Data Handling Policy",
+  "department": "Legal & Compliance",
+  "version": 1,
+  "effective_from": "2026-01-01",
+  "marker": "SYNTHETIC_TEST_POLICY",
+  "description": "Four-tier information classification (Public, Internal, Confidential, Restricted).",
+  "rules": [
+    {
+      "rule_id": "R-INFO-01",
+      "description": "PII and sensitive customer records must have Maximum Matches below 100 for unencrypted transfers.",
+      "condition": {
+        "field": "matches",
+        "operator": "greater_than",
+        "value": 100
+      },
+      "action": "FLAG_PII_OVERFLOW",
+      "severity": "High"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+flowchart TB
+  Files[Uploaded files] --> Scan[Required production scan]
+  Scan --> Store[Storage directory / object store]
+  Store --> Metadata[(Mongo metadata)]
+  Metadata --> Audit[Audit and retention policy]
+  Audit --> Delete[Approved deletion]

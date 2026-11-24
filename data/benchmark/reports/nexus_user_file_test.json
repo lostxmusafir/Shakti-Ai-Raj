@@ -1,0 +1,88 @@
+{
+  "csv": "C:\\Users\\DREAM\\Downloads\\NexusDynamics_Incidents_5000.csv",
+  "sql_helpers": "C:\\Users\\DREAM\\Downloads\\NexusDynamics_Verification_Helpers.sql",
+  "checks": {
+    "source_rows": 5000,
+    "view_rows": 5000,
+    "external_rows": 1158,
+    "mixed_rows": 92,
+    "blocked_rows": 5,
+    "top_external_sender": [
+      "NX-ENG086\\Isha Dave",
+      511995.0
+    ]
+  },
+  "profile": {
+    "row_count": 5000,
+    "columns": [
+      "ID",
+      "Incident Time",
+      "Source",
+      "Policies",
+      "Channel",
+      "Destination",
+      "Severity",
+      "Action",
+      "Maximum Matches",
+      "Transaction Size (KB)",
+      "File Name",
+      "Status"
+    ]
+  },
+  "semantic_mapping": {
+    "external_question": {
+      "intent": "DATA_ANALYSIS",
+      "target_concept": "total_size",
+      "mapped_columns": {
+        "entity": "Source",
+        "external": "Destination",
+        "data_size": "Transaction Size (KB)"
+      },
+      "suggested_aggregates": [
+        {
+          "function": "sum",
+          "column": "Transaction Size (KB)",
+          "alias": "total_size"
+        }
+      ],
+      "suggested_filters": [],
+      "suggested_sort": {
+        "column": "total_size",
+        "ascending": false,
+        "limit": 1
+      },
+      "suggested_group_by": [
+        "Source"
+      ],
+      "confidence": 1.0,
+      "notes": [
+        "Mapped entity to column 'Source'",
+        "Mapped external transfer to 'Destination'",
+        "Mapped volume to 'Transaction Size (KB)'",
+        "Sort descending by total_size"
+      ]
+    },
+    "blocked_question": {
+      "intent": "DATA_ANALYSIS",
+      "target_concept": "record_count",
+      "mapped_columns": {
+        "action": "Action"
+      },
+      "suggested_aggregates": [],
+      "suggested_filters": [
+        {
+          "column": "Action",
+          "operator": "equals",
+          "value": "Blocked"
+        }
+      ],
+      "suggested_sort": null,
+      "suggested_group_by": [],
+      "confidence": 1.0,
+      "notes": [
+        "Filtered 'Action' = 'Blocked'"
+      ]
+    }
+  },
+  "verification_status": "passed"
+}

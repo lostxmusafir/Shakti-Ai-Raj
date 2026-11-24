@@ -1,0 +1,6 @@
+flowchart LR
+  Request[Request] --> JWT[JWT validation]
+  JWT --> Identity[User identity]
+  Identity --> Policy[Policy evaluation]
+  Policy -->|allowed| Tool[Analysis / file / chat tool]
+  Policy -->|blocked| Deny[Standard error]
