@@ -9,7 +9,7 @@ SUPPORTED_OPERATORS = {
     "in", "not_in", "contains", "is_null", "is_not_null"
 }
 
-SUPPORTED_AGGREGATES = {"count", "sum", "avg", "min", "max", "median"}
+SUPPORTED_AGGREGATES = {"count", "sum", "avg", "min", "max", "median", "count_distinct"}
 
 class PlanValidator:
     @staticmethod
@@ -60,6 +60,8 @@ class PlanValidator:
         for agg in plan.aggregations:
             if agg.function.lower() not in SUPPORTED_AGGREGATES:
                 raise PlanValidationError(f"Unsupported aggregate function '{agg.function}'. Supported: {SUPPORTED_AGGREGATES}")
+            if agg.function.lower() == "count_distinct" and (not agg.column or agg.column == "*"):
+                raise PlanValidationError("Aggregate 'count_distinct' requires a column.")
             if agg.column and agg.column != "*":
                 if agg.column not in all_columns:
                     match = [c for c in all_columns if c.lower() == agg.column.lower()]

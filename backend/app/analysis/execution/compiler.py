@@ -81,13 +81,18 @@ class QueryCompiler:
             fn = agg.function.upper()
             if fn == "COUNT":
                 col_expr = "*" if not agg.column or agg.column == "*" else escape_identifier(agg.column)
+            elif fn == "COUNT_DISTINCT":
+                if not agg.column or agg.column == "*":
+                    raise ValueError("count_distinct requires a column.")
+                col_expr = f"DISTINCT {escape_identifier(agg.column)}"
             elif fn == "MEDIAN":
                 col_expr = escape_identifier(agg.column)
             else:
                 col_expr = escape_identifier(agg.column)
                 
+            sql_fn = "COUNT" if fn == "COUNT_DISTINCT" else fn
             alias_name = agg.alias or f"{agg.function.lower()}_{agg.column or 'all'}"
-            select_parts.append(f"{fn}({col_expr}) AS {escape_identifier(alias_name)}")
+            select_parts.append(f"{sql_fn}({col_expr}) AS {escape_identifier(alias_name)}")
 
         # If no group_by and no aggregations, select *
         if not select_parts:

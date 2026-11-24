@@ -24,13 +24,20 @@ from app.ai.planning.schemas import (
     AggregateOperation,
     AnalysisPlan,
     Condition,
-    DateGroup,
     DatasetRef,
-    DerivedMetric,
-    HavingRule,
-    RankSpec,
     SortRule,
 )
+
+# Aggregates the plan executor can actually run: PlanValidator.SUPPORTED_AGGREGATES
+# plus the QueryCompiler implementations. Anything outside this set must be refused
+# loudly rather than emitted as an unrunnable AnalysisPlan.
+EXECUTABLE_AGGREGATES = {
+    "count", "sum", "avg", "min", "max", "median", "count_distinct",
+}
+
+
+class UnsupportedPlanError(ValueError):
+    """An interpretation needs a plan feature the executor cannot run yet."""
 
 # ---------------------------------------------------------------------------
 # Language lexicon
@@ -874,51 +881,64 @@ class QuestionEngine:
 # ---------------------------------------------------------------------------
 
 class GenericPlanner:
+    """Translates an Interpretation into a plan the existing executor can run.
+
+    The plan contract (planning/schemas.py) and its executor (PlanValidator +
+    QueryCompiler) support filters, group_by, aggregations, sort, limit and joins.
+    Derived ratios, HAVING, per-group ranking and date grouping are not expressible
+    yet, so an interpretation needing them is refused with UnsupportedPlanError
+    instead of being flattened into a plan that answers a different question.
+    """
+
     @staticmethod
     def build_plan(interpretation: Interpretation, question: str, file_ids: List[str],
                    profile: Dict[str, Any]) -> AnalysisPlan:
+        if interpretation.clarification:
+            raise UnsupportedPlanError(interpretation.clarification)
+        if interpretation.derived:
+            raise UnsupportedPlanError(
+                "derived metric (ratio, share or percentage) is not supported by the plan executor"
+            )
+        if interpretation.having:
+            raise UnsupportedPlanError("HAVING is not supported by the plan executor")
+        if interpretation.rank_partition or interpretation.rank_order:
+            raise UnsupportedPlanError("per-group ranking is not supported by the plan executor")
+        if interpretation.date_column:
+            raise UnsupportedPlanError("date grouping is not supported by the plan executor")
+
         datasets = [DatasetRef(file_id=fid, alias=f"ds_{index + 1}")
                     for index, fid in enumerate(file_ids)]
 
-        aggregations = [
-            AggregateOperation(function=function, column=column, alias=alias, filter=condition)
-            for function, column, condition, alias in interpretation.aggregations
-        ]
-        derived = [
-            DerivedMetric(name=name, numerator=numerator, denominator=denominator,
-                          multiply_by=multiplier, denominator_scope=scope)
-            for name, numerator, denominator, multiplier, scope in interpretation.derived
-        ]
-        having = [
-            HavingRule(metric=metric, operator=operator, value=value, reference=reference)
-            for metric, operator, value, reference in interpretation.having
-        ]
-        rank: List[RankSpec] = []
-        if interpretation.rank_partition and interpretation.rank_order:
-            rank = [RankSpec(
-                partition_by=interpretation.rank_partition,
-                order_by=interpretation.rank_order,
-                ascending="rank_ascending" in interpretation.notes,
-                limit_per_group=1,
-            )]
+        filters = list(interpretation.filters)
+        aggregations: List[AggregateOperation] = []
+        for function, column, condition, alias in interpretation.aggregations:
+            if function not in EXECUTABLE_AGGREGATES:
+                raise UnsupportedPlanError(
+                    f"aggregate '{function}' is not supported by the plan executor"
+                )
+            if condition is not None:
+                # AggregateOperation carries no per-aggregate predicate, so a
+                # conditional aggregate can only be expressed by hoisting the
+                # condition to the whole query - valid only for a single aggregate.
+                if len(interpretation.aggregations) > 1:
+                    raise UnsupportedPlanError(
+                        "a per-aggregate filter with multiple aggregations is not supported "
+                        "by the plan executor"
+                    )
+                if condition not in filters:
+                    filters.append(condition)
+            aggregations.append(
+                AggregateOperation(function=function, column=column, alias=alias)
+            )
 
         return AnalysisPlan(
             intent=interpretation.intent,
             question=question,
             datasets=datasets,
-            filters=list(interpretation.filters),
+            filters=filters,
             group_by=list(interpretation.group_by),
             aggregations=aggregations,
-            derived_metrics=derived,
-            having=having,
-            rank=rank,
-            date_group=DateGroup(column=interpretation.date_column,
-                                 granularity=interpretation.granularity)
-            if interpretation.date_column else None,
             sort=[SortRule(column=column, ascending=ascending)
                   for column, ascending in interpretation.sort],
             limit=interpretation.limit or 100,
-            clarification=interpretation.clarification,
-            confidence=interpretation.confidence,
-            assumptions=list(interpretation.assumptions),
         )
