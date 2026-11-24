@@ -1,0 +1,98 @@
+{
+  "dataset_count": 6,
+  "datasets": [
+    {
+      "source_name": "Microsoft Financial Sample",
+      "dataset_id": "Microsoft Financial Sample",
+      "exists": true,
+      "checksum_ok": true,
+      "row_count": 700,
+      "column_count": 16,
+      "approval_status": "approved"
+    },
+    {
+      "source_name": "UCI Online Retail",
+      "dataset_id": "UCI Online Retail",
+      "exists": true,
+      "checksum_ok": true,
+      "row_count": 5000,
+      "column_count": 8,
+      "approval_status": "approved"
+    },
+    {
+      "source_name": "UCI Bank Marketing",
+      "dataset_id": "UCI Bank Marketing",
+      "exists": true,
+      "checksum_ok": true,
+      "row_count": 1000,
+      "column_count": 17,
+      "approval_status": "approved"
+    },
+    {
+      "source_name": "NYC Taxi Trip Records (Sampled)",
+      "dataset_id": "NYC Taxi Trip Records (Sampled)",
+      "exists": true,
+      "checksum_ok": true,
+      "row_count": 10000,
+      "column_count": 18,
+      "approval_status": "approved"
+    },
+    {
+      "source_name": "RajCom Cybersecurity Incidents (1000 records)",
+      "dataset_id": "RajCom Cybersecurity Incidents (1000 records)",
+      "exists": true,
+      "checksum_ok": true,
+      "row_count": 1000,
+      "column_count": 12,
+      "approval_status": "approved"
+    },
+    {
+      "source_name": "NexusDynamics DLP Incidents (5000 records)",
+      "dataset_id": "NexusDynamics DLP Incidents (5000 records)",
+      "exists": true,
+      "checksum_ok": true,
+      "row_count": 5000,
+      "column_count": 12,
+      "approval_status": "approved"
+    }
+  ],
+  "golden_example_count": 328,
+  "complete_example_count": 310,
+  "verified_example_count": 310,
+  "approved_example_count": 310,
+  "split_counts": {
+    "train": 114,
+    "val": 103,
+    "test": 93
+  },
+  "source_type_counts": {
+    "public": 140,
+    "synthetic": 170,
+    "private_tenant": 0
+  },
+  "evidence_coverage": 0.02258064516129032,
+  "missing_evidence_examples": [
+    "gold-rajcom-0001",
+    "gold-rajcom-0002",
+    "gold-rajcom-0003",
+    "gold-rajcom-0004",
+    "gold-rajcom-0005",
+    "gold-rajcom-0006",
+    "gold-rajcom-0007",
+    "gold-rajcom-0008",
+    "gold-rajcom-0009",
+    "gold-rajcom-0011",
+    "gold-rajcom-0012",
+    "gold-rajcom-0013",
+    "gold-rajcom-0014",
+    "gold-rajcom-0015",
+    "gold-rajcom-0016",
+    "gold-rajcom-0017",
+    "gold-rajcom-0018",
+    "gold-rajcom-0019",
+    "gold-rajcom-0020",
+    "gold-rajcom-0021"
+  ],
+  "all_dataset_files_present": true,
+  "all_dataset_checksums_valid": true
+}

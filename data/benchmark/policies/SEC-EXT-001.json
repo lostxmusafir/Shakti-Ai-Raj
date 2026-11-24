@@ -1,0 +1,33 @@
+{
+  "policy_code": "SEC-EXT-001",
+  "title": "External Data Sharing & Large File Transfer Policy",
+  "department": "Information Security",
+  "version": 1,
+  "effective_from": "2026-01-01",
+  "marker": "SYNTHETIC_TEST_POLICY",
+  "description": "Limits external data sharing volume per transaction and prohibits unencrypted engineering blueprints.",
+  "rules": [
+    {
+      "rule_id": "R-EXT-01",
+      "description": "Single external transfer exceeding 20,000 KB requires explicit VP approval.",
+      "condition": {
+        "field": "size_kb",
+        "operator": "greater_than",
+        "value": 20000.0
+      },
+      "action": "REQUIRE_EXCEPTION",
+      "severity": "High"
+    },
+    {
+      "rule_id": "R-EXT-02",
+      "description": "CAD drawings and engineering blueprints cannot be transferred outside approved partner domains.",
+      "condition": {
+        "field": "policy",
+        "operator": "contains",
+        "value": "CAD"
+      },
+      "action": "AUDIT_AND_FLAG",
+      "severity": "High"
+    }
+  ]
+}

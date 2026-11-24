@@ -1,0 +1,14 @@
+flowchart TB
+  subgraph Browser
+    Pages[Chat / Files / Policies / Login]
+    Client[API client]
+  end
+  subgraph Backend
+    Routes[FastAPI routes]
+    Services[Auth, chat, file, analysis, policy services]
+    Learn[Learning and evaluation]
+  end
+  Pages --> Client --> Routes --> Services
+  Services --> Learn
+  Services --> DB[(Mongo adapter)]
+  Services --> Compute[Deterministic compute]

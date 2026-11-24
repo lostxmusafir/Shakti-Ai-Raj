@@ -1,0 +1,6 @@
+flowchart LR
+  Upload[Upload] --> Validate[Size/type validation]
+  Validate --> Store[Configured upload storage]
+  Store --> Profile[Schema and quality profile]
+  Profile --> Register[Dataset metadata]
+  Register --> Analyze[Analysis request]

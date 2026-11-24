@@ -1,0 +1,898 @@
+{
+  "mode": "offline_example_based_learning",
+  "weights_updated": false,
+  "duration_minutes": 120.0,
+  "interval_minutes": 5.0,
+  "started_at": "2026-11-23T18:17:14.390131+00:00",
+  "latest_status": "passed",
+  "checkpoints": [
+    {
+      "cycle": 1,
+      "started_at": "2026-11-23T18:17:14.390131+00:00",
+      "elapsed_seconds": 22.04,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 325,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.78 ms\nExecution Latency P95: 20.93 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 2,
+      "started_at": "2026-11-23T18:22:36.433316+00:00",
+      "elapsed_seconds": 343.19,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 325,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.69 ms\nExecution Latency P95: 22.68 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 3,
+      "started_at": "2026-11-23T18:27:57.582860+00:00",
+      "elapsed_seconds": 664.71,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.64 ms\nExecution Latency P95: 22.12 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 4,
+      "started_at": "2026-11-23T18:33:19.109105+00:00",
+      "elapsed_seconds": 985.26,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.71 ms\nExecution Latency P95: 22.05 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 5,
+      "started_at": "2026-11-23T18:38:39.656926+00:00",
+      "elapsed_seconds": 1306.03,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.73 ms\nExecution Latency P95: 21.93 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 6,
+      "started_at": "2026-11-23T18:44:00.417106+00:00",
+      "elapsed_seconds": 1626.82,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.67 ms\nExecution Latency P95: 22.41 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 7,
+      "started_at": "2026-11-23T18:49:21.210120+00:00",
+      "elapsed_seconds": 1947.57,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.7 ms\nExecution Latency P95: 22.32 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 8,
+      "started_at": "2026-11-23T18:54:41.966119+00:00",
+      "elapsed_seconds": 2267.97,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.69 ms\nExecution Latency P95: 21.98 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 9,
+      "started_at": "2026-11-23T19:00:02.364346+00:00",
+      "elapsed_seconds": 2590.77,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.74 ms\nExecution Latency P95: 22.24 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 10,
+      "started_at": "2026-11-23T19:05:25.156551+00:00",
+      "elapsed_seconds": 2911.54,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.74 ms\nExecution Latency P95: 21.28 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 11,
+      "started_at": "2026-11-23T19:10:45.934261+00:00",
+      "elapsed_seconds": 3232.26,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.67 ms\nExecution Latency P95: 22.32 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 12,
+      "started_at": "2026-11-23T19:16:06.648100+00:00",
+      "elapsed_seconds": 3552.86,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.69 ms\nExecution Latency P95: 20.99 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 13,
+      "started_at": "2026-11-23T19:21:27.250227+00:00",
+      "elapsed_seconds": 3873.5,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.67 ms\nExecution Latency P95: 21.52 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 14,
+      "started_at": "2026-11-23T19:26:47.886791+00:00",
+      "elapsed_seconds": 4194.58,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.7 ms\nExecution Latency P95: 20.94 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 15,
+      "started_at": "2026-11-23T19:32:08.971188+00:00",
+      "elapsed_seconds": 4515.51,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.72 ms\nExecution Latency P95: 22.11 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 16,
+      "started_at": "2026-11-23T19:37:29.904481+00:00",
+      "elapsed_seconds": 4836.31,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.67 ms\nExecution Latency P95: 22.05 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 17,
+      "started_at": "2026-11-23T19:42:50.699562+00:00",
+      "elapsed_seconds": 5156.87,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.73 ms\nExecution Latency P95: 22.74 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 18,
+      "started_at": "2026-11-23T19:48:11.261034+00:00",
+      "elapsed_seconds": 5477.55,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.67 ms\nExecution Latency P95: 22.3 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 19,
+      "started_at": "2026-11-23T19:53:31.938950+00:00",
+      "elapsed_seconds": 5798.11,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.71 ms\nExecution Latency P95: 22.22 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 20,
+      "started_at": "2026-11-23T19:58:52.504901+00:00",
+      "elapsed_seconds": 6118.79,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.69 ms\nExecution Latency P95: 21.86 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 21,
+      "started_at": "2026-11-23T20:04:13.183405+00:00",
+      "elapsed_seconds": 6439.54,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.68 ms\nExecution Latency P95: 22.04 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 22,
+      "started_at": "2026-11-23T20:09:33.931300+00:00",
+      "elapsed_seconds": 6760.07,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.69 ms\nExecution Latency P95: 21.44 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 23,
+      "started_at": "2026-11-23T20:14:54.465886+00:00",
+      "elapsed_seconds": 7080.97,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.72 ms\nExecution Latency P95: 21.63 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    },
+    {
+      "cycle": 24,
+      "started_at": "2026-11-23T20:17:14.390505+00:00",
+      "elapsed_seconds": 7220.66,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/test_nexus_files.py",
+            "--output",
+            "data/benchmark/reports/nexus_user_file_test.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"csv\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Incidents_5000.csv\",\n  \"sql_helpers\": \"C:\\\\Users\\\\DREAM\\\\Downloads\\\\NexusDynamics_Verification_Helpers.sql\",\n  \"checks\": {\n    \"source_rows\": 5000,\n    \"view_rows\": 5000,\n    \"external_rows\": 1158,\n    \"mixed_rows\": 92,\n    \"blocked_rows\": 5,\n    \"top_external_sender\": [\n      \"NX-ENG086\\\\Isha Dave\",\n      511995.0\n    ]\n  },\n  \"profile\": {\n    \"row_count\": 5000,\n    \"columns\": [\n      \"ID\",\n      \"Incident Time\",\n      \"Source\",\n      \"Policies\",\n      \"Channel\",\n      \"Destination\",\n      \"Severity\",\n      \"Action\",\n      \"Maximum Matches\",\n      \"Transaction Size (KB)\",\n      \"File Name\",\n      \"Status\"\n    ]\n  },\n  \"semantic_mapping\": {\n    \"external_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"total_size\",\n      \"mapped_columns\": {\n        \"entity\": \"Source\",\n        \"external\": \"Destination\",\n        \"data_size\": \"Transaction Size (KB)\"\n      },\n      \"suggested_aggregates\": [\n        {\n          \"function\": \"sum\",\n          \"column\": \"Transaction Size (KB)\",\n          \"alias\": \"total_size\"\n        }\n      ],\n      \"suggested_filters\": [],\n      \"suggested_sort\": {\n        \"column\": \"total_size\",\n        \"ascending\": false,\n        \"limit\": 1\n      },\n      \"suggested_group_by\": [\n        \"Source\"\n      ],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Mapped entity to column 'Source'\",\n        \"Mapped external transfer to 'Destination'\",\n        \"Mapped volume to 'Transaction Size (KB)'\",\n        \"Sort descending by total_size\"\n      ]\n    },\n    \"blocked_question\": {\n      \"intent\": \"DATA_ANALYSIS\",\n      \"target_concept\": \"record_count\",\n      \"mapped_columns\": {\n        \"action\": \"Action\"\n      },\n      \"suggested_aggregates\": [],\n      \"suggested_filters\": [\n        {\n          \"column\": \"Action\",\n          \"operator\": \"equals\",\n          \"value\": \"Blocked\"\n        }\n      ],\n      \"suggested_sort\": null,\n      \"suggested_group_by\": [],\n      \"confidence\": 1.0,\n      \"notes\": [\n        \"Filtered 'Action' = 'Blocked'\"\n      ]\n    }\n  },\n  \"verification_status\": \"passed\"\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/audit_benchmark.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "{\n  \"dataset_count\": 6,\n  \"datasets\": [\n    {\n      \"source_name\": \"Microsoft Financial Sample\",\n      \"dataset_id\": \"Microsoft Financial Sample\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 700,\n      \"column_count\": 16,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Online Retail\",\n      \"dataset_id\": \"UCI Online Retail\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 8,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"UCI Bank Marketing\",\n      \"dataset_id\": \"UCI Bank Marketing\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 17,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NYC Taxi Trip Records (Sampled)\",\n      \"dataset_id\": \"NYC Taxi Trip Records (Sampled)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 10000,\n      \"column_count\": 18,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"dataset_id\": \"RajCom Cybersecurity Incidents (1000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 1000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    },\n    {\n      \"source_name\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"dataset_id\": \"NexusDynamics DLP Incidents (5000 records)\",\n      \"exists\": true,\n      \"checksum_ok\": true,\n      \"row_count\": 5000,\n      \"column_count\": 12,\n      \"approval_status\": \"approved\"\n    }\n  ],\n  \"golden_example_count\": 326,\n  \"complete_example_count\": 310,\n  \"verified_example_count\": 310,\n  \"approved_example_count\": 310,\n  \"split_counts\": {\n    \"train\": 114,\n    \"val\": 103,\n    \"test\": 93\n  },\n  \"source_type_counts\": {\n    \"public\": 140,\n    \"synthetic\": 170,\n    \"private_tenant\": 0\n  },\n  \"evidence_coverage\": 0.02258064516129032,\n  \"missing_evidence_examples\": [\n    \"gold-rajcom-0001\",\n    \"gold-rajcom-0002\",\n    \"gold-rajcom-0003\",\n    \"gold-rajcom-0004\",\n    \"gold-rajcom-0005\",\n    \"gold-rajcom-0006\",\n    \"gold-rajcom-0007\",\n    \"gold-rajcom-0008\",\n    \"gold-rajcom-0009\",\n    \"gold-rajcom-0011\",\n    \"gold-rajcom-0012\",\n    \"gold-rajcom-0013\",\n    \"gold-rajcom-0014\",\n    \"gold-rajcom-0015\",\n    \"gold-rajcom-0016\",\n    \"gold-rajcom-0017\",\n    \"gold-rajcom-0018\",\n    \"gold-rajcom-0019\",\n    \"gold-rajcom-0020\",\n    \"gold-rajcom-0021\"\n  ],\n  \"all_dataset_files_present\": true,\n  \"all_dataset_checksums_valid\": true\n}\n",
+          "stderr_tail": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\DREAM\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+            "backend/scripts/evaluate_orchestrator.py"
+          ],
+          "returncode": 0,
+          "stdout_tail": "============================================================\nUNIVERSAL AI ANALYST \ufffd OFFLINE ORCHESTRATOR EVALUATION\n============================================================\n\nEvaluation Split: test\nTotal Evaluated Test Cases: 93\nIntent Classification Accuracy: 100.0%\nColumn Mapping Accuracy: 100.0%\nExecution Success Rate: 100.0%\nDeterministic Numerical Accuracy: 100.0%\nExecution Latency P50: 0.73 ms\nExecution Latency P95: 21.68 ms\nTotal Failures: 0\n\nDetailed evaluation report saved to: C:\\Users\\DREAM\\Desktop\\AI\\data\\benchmark\\reports\\evaluation_report.json\n============================================================\n",
+          "stderr_tail": ""
+        }
+      ]
+    }
+  ]
+}

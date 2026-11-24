@@ -1,0 +1,25 @@
+{
+  "policy_code": "HR-ATT-001",
+  "title": "Employee Attendance & Core Working Hours Policy",
+  "department": "Human Resources",
+  "version": 1,
+  "effective_from": "2026-01-01",
+  "marker": "SYNTHETIC_TEST_POLICY",
+  "description": "Defines core working hours between 09:00 AM and 06:00 PM and after-hours notifications.",
+  "rules": [
+    {
+      "rule_id": "R-ATT-01",
+      "description": "Transfers conducted outside core hours (before 09:00 or after 18:00) require secondary audit logging.",
+      "condition": {
+        "field": "hr",
+        "operator": "outside_range",
+        "range": [
+          9,
+          18
+        ]
+      },
+      "action": "LOG_AUDIT",
+      "severity": "Low"
+    }
+  ]
+}

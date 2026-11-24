@@ -1,0 +1,538 @@
+[
+  {
+    "dataset": "synthetic-dlp-100",
+    "source_rows": 100,
+    "question": "Bahar sabse zyada data kisne bheja?",
+    "selected_skills": [],
+    "plan": {
+      "operation": "validated_duckdb_sql",
+      "sql": "SELECT employee_name, SUM(data_size_bytes) AS data_size_bytes FROM dlp WHERE is_external = TRUE AND action <> 'BLOCKED' GROUP BY employee_name ORDER BY data_size_bytes DESC, employee_name ASC LIMIT 1"
+    },
+    "executed_operation": "duckdb_select",
+    "expected_result": [
+      {
+        "employee_name": "Aarav Mehta 84",
+        "data_size_bytes": 6835924
+      }
+    ],
+    "actual_result": [
+      {
+        "employee_name": "Aarav Mehta 84",
+        "data_size_bytes": 6835924
+      }
+    ],
+    "verification_status": "passed",
+    "evidence_rows": [
+      81,
+      36,
+      40,
+      84,
+      65,
+      24,
+      11,
+      87,
+      4,
+      92,
+      37,
+      72,
+      99,
+      51,
+      34,
+      59,
+      67,
+      86,
+      28,
+      16
+    ],
+    "duration_ms": 6.0
+  },
+  {
+    "dataset": "synthetic-dlp-100",
+    "source_rows": 100,
+    "question": "Blocked incidents kitne hain?",
+    "selected_skills": [],
+    "plan": {
+      "operation": "validated_duckdb_sql",
+      "sql": "SELECT COUNT(*) AS blocked_incidents FROM dlp WHERE action = 'BLOCKED'"
+    },
+    "executed_operation": "duckdb_select",
+    "expected_result": [
+      {
+        "blocked_incidents": 4
+      }
+    ],
+    "actual_result": [
+      {
+        "blocked_incidents": 4
+      }
+    ],
+    "verification_status": "passed",
+    "evidence_rows": [
+      31,
+      47,
+      95,
+      96
+    ],
+    "duration_ms": 0.86
+  },
+  {
+    "dataset": "microsoft-financial-sample",
+    "source_rows": 700,
+    "question": "Which country generated the highest profit?",
+    "selected_skills": [
+      "microsoft-excel"
+    ],
+    "plan": {
+      "operation": "validated_duckdb_sql",
+      "sql": "SELECT Country, ROUND(SUM(Profit), 2) AS total_profit FROM financials GROUP BY Country ORDER BY total_profit DESC, Country ASC LIMIT 1"
+    },
+    "executed_operation": "duckdb_select",
+    "expected_result": [
+      {
+        "Country": "France",
+        "total_profit": 3781020.78
+      }
+    ],
+    "actual_result": [
+      {
+        "Country": "France",
+        "total_profit": 3781020.78
+      }
+    ],
+    "verification_status": "passed",
+    "evidence_rows": [
+      194,
+      47,
+      142,
+      126,
+      127,
+      135,
+      104,
+      119,
+      355,
+      84,
+      69,
+      208,
+      205,
+      138,
+      28,
+      481,
+      212,
+      295,
+      305,
+      154
+    ],
+    "duration_ms": 7.94
+  },
+  {
+    "dataset": "uci-online-retail",
+    "source_rows": 541909,
+    "question": "Top 10 products by revenue batao.",
+    "selected_skills": [
+      "microsoft-excel"
+    ],
+    "plan": {
+      "operation": "validated_duckdb_sql",
+      "sql": "SELECT Description, ROUND(SUM(Quantity * UnitPrice), 2) AS total_revenue FROM retail WHERE Quantity > 0 GROUP BY Description ORDER BY total_revenue DESC, Description ASC LIMIT 10"
+    },
+    "executed_operation": "duckdb_select",
+    "expected_result": [
+      {
+        "Description": "DOTCOM POSTAGE",
+        "total_revenue": 206248.77
+      },
+      {
+        "Description": "REGENCY CAKESTAND 3 TIER",
+        "total_revenue": 174484.74
+      },
+      {
+        "Description": "PAPER CRAFT , LITTLE BIRDIE",
+        "total_revenue": 168469.6
+      },
+      {
+        "Description": "WHITE HANGING HEART T-LIGHT HOLDER",
+        "total_revenue": 106292.77
+      },
+      {
+        "Description": "PARTY BUNTING",
+        "total_revenue": 99504.33
+      },
+      {
+        "Description": "JUMBO BAG RED RETROSPOT",
+        "total_revenue": 94340.05
+      },
+      {
+        "Description": "MEDIUM CERAMIC TOP STORAGE JAR",
+        "total_revenue": 81700.92
+      },
+      {
+        "Description": "Manual",
+        "total_revenue": 78112.82
+      },
+      {
+        "Description": "POSTAGE",
+        "total_revenue": 78101.88
+      },
+      {
+        "Description": "RABBIT NIGHT LIGHT",
+        "total_revenue": 66964.99
+      }
+    ],
+    "actual_result": [
+      {
+        "Description": "DOTCOM POSTAGE",
+        "total_revenue": 206248.77
+      },
+      {
+        "Description": "REGENCY CAKESTAND 3 TIER",
+        "total_revenue": 174484.74
+      },
+      {
+        "Description": "PAPER CRAFT , LITTLE BIRDIE",
+        "total_revenue": 168469.6
+      },
+      {
+        "Description": "WHITE HANGING HEART T-LIGHT HOLDER",
+        "total_revenue": 106292.77
+      },
+      {
+        "Description": "PARTY BUNTING",
+        "total_revenue": 99504.33
+      },
+      {
+        "Description": "JUMBO BAG RED RETROSPOT",
+        "total_revenue": 94340.05
+      },
+      {
+        "Description": "MEDIUM CERAMIC TOP STORAGE JAR",
+        "total_revenue": 81700.92
+      },
+      {
+        "Description": "Manual",
+        "total_revenue": 78112.82
+      },
+      {
+        "Description": "POSTAGE",
+        "total_revenue": 78101.88
+      },
+      {
+        "Description": "RABBIT NIGHT LIGHT",
+        "total_revenue": 66964.99
+      }
+    ],
+    "verification_status": "passed",
+    "evidence_rows": [
+      540423,
+      61621,
+      222682,
+      15019,
+      299984,
+      173384,
+      348327,
+      52713,
+      160548,
+      421603,
+      52711,
+      467806,
+      160544,
+      52774,
+      297725,
+      244421,
+      268030,
+      160546,
+      291251,
+      422378
+    ],
+    "duration_ms": 86.79
+  },
+  {
+    "dataset": "hr_relational",
+    "source_rows": 60,
+    "question": "Employees master mein hain but payroll mein missing hain.",
+    "selected_skills": [],
+    "plan": {
+      "operation": "validated_duckdb_sql",
+      "sql": "SELECT e.employee_id, e.employee_name FROM employees e LEFT JOIN payroll p ON e.employee_id = p.employee_id WHERE p.employee_id IS NULL"
+    },
+    "executed_operation": "duckdb_select",
+    "expected_result": [
+      {
+        "employee_id": "EMP-0006",
+        "employee_name": "Aarav Mehta 6"
+      },
+      {
+        "employee_id": "EMP-0026",
+        "employee_name": "Kabir Rao 26"
+      },
+      {
+        "employee_id": "EMP-0039",
+        "employee_name": "Mira Iyer 39"
+      },
+      {
+        "employee_id": "EMP-0052",
+        "employee_name": "Rohan Sen 52"
+      },
+      {
+        "employee_id": "EMP-0054",
+        "employee_name": "Aarav Mehta 54"
+      },
+      {
+        "employee_id": "EMP-0060",
+        "employee_name": "Aarav Mehta 60"
+      }
+    ],
+    "actual_result": [
+      {
+        "employee_id": "EMP-0006",
+        "employee_name": "Aarav Mehta 6"
+      },
+      {
+        "employee_id": "EMP-0026",
+        "employee_name": "Kabir Rao 26"
+      },
+      {
+        "employee_id": "EMP-0039",
+        "employee_name": "Mira Iyer 39"
+      },
+      {
+        "employee_id": "EMP-0052",
+        "employee_name": "Rohan Sen 52"
+      },
+      {
+        "employee_id": "EMP-0054",
+        "employee_name": "Aarav Mehta 54"
+      },
+      {
+        "employee_id": "EMP-0060",
+        "employee_name": "Aarav Mehta 60"
+      }
+    ],
+    "verification_status": "passed",
+    "evidence_rows": [
+      6,
+      26,
+      39,
+      52,
+      54,
+      60
+    ],
+    "duration_ms": 1.37
+  },
+  {
+    "dataset": "expense_claims",
+    "source_rows": 250,
+    "question": "Kaunse claims policy limit se upar hain?",
+    "selected_skills": [],
+    "plan": {
+      "operation": "validated_duckdb_sql",
+      "sql": "SELECT claim_id, employee_id, amount FROM expenses WHERE amount > 1000 AND receipt_present = FALSE ORDER BY amount DESC"
+    },
+    "executed_operation": "duckdb_select",
+    "expected_result": [
+      {
+        "claim_id": "CLM-000003",
+        "employee_id": "EMP-0007",
+        "amount": 2448.77
+      },
+      {
+        "claim_id": "CLM-000216",
+        "employee_id": "EMP-0031",
+        "amount": 2384.52
+      },
+      {
+        "claim_id": "CLM-000066",
+        "employee_id": "EMP-0058",
+        "amount": 2358.85
+      },
+      {
+        "claim_id": "CLM-000105",
+        "employee_id": "EMP-0034",
+        "amount": 2268.19
+      },
+      {
+        "claim_id": "CLM-000027",
+        "employee_id": "EMP-0028",
+        "amount": 2236.12
+      },
+      {
+        "claim_id": "CLM-000019",
+        "employee_id": "EMP-0022",
+        "amount": 2233.04
+      },
+      {
+        "claim_id": "CLM-000004",
+        "employee_id": "EMP-0019",
+        "amount": 2014.49
+      },
+      {
+        "claim_id": "CLM-000026",
+        "employee_id": "EMP-0051",
+        "amount": 1920.25
+      },
+      {
+        "claim_id": "CLM-000108",
+        "employee_id": "EMP-0013",
+        "amount": 1877.6
+      },
+      {
+        "claim_id": "CLM-000164",
+        "employee_id": "EMP-0004",
+        "amount": 1814.92
+      },
+      {
+        "claim_id": "CLM-000218",
+        "employee_id": "EMP-0056",
+        "amount": 1714.21
+      },
+      {
+        "claim_id": "CLM-000153",
+        "employee_id": "EMP-0004",
+        "amount": 1436.2
+      },
+      {
+        "claim_id": "CLM-000016",
+        "employee_id": "EMP-0020",
+        "amount": 1361.69
+      },
+      {
+        "claim_id": "CLM-000078",
+        "employee_id": "EMP-0031",
+        "amount": 1352.56
+      },
+      {
+        "claim_id": "CLM-000240",
+        "employee_id": "EMP-0018",
+        "amount": 1201.73
+      },
+      {
+        "claim_id": "CLM-000106",
+        "employee_id": "EMP-0020",
+        "amount": 1085.19
+      },
+      {
+        "claim_id": "CLM-000114",
+        "employee_id": "EMP-0060",
+        "amount": 1056.21
+      },
+      {
+        "claim_id": "CLM-000040",
+        "employee_id": "EMP-0004",
+        "amount": 1048.09
+      }
+    ],
+    "actual_result": [
+      {
+        "claim_id": "CLM-000003",
+        "employee_id": "EMP-0007",
+        "amount": 2448.77
+      },
+      {
+        "claim_id": "CLM-000216",
+        "employee_id": "EMP-0031",
+        "amount": 2384.52
+      },
+      {
+        "claim_id": "CLM-000066",
+        "employee_id": "EMP-0058",
+        "amount": 2358.85
+      },
+      {
+        "claim_id": "CLM-000105",
+        "employee_id": "EMP-0034",
+        "amount": 2268.19
+      },
+      {
+        "claim_id": "CLM-000027",
+        "employee_id": "EMP-0028",
+        "amount": 2236.12
+      },
+      {
+        "claim_id": "CLM-000019",
+        "employee_id": "EMP-0022",
+        "amount": 2233.04
+      },
+      {
+        "claim_id": "CLM-000004",
+        "employee_id": "EMP-0019",
+        "amount": 2014.49
+      },
+      {
+        "claim_id": "CLM-000026",
+        "employee_id": "EMP-0051",
+        "amount": 1920.25
+      },
+      {
+        "claim_id": "CLM-000108",
+        "employee_id": "EMP-0013",
+        "amount": 1877.6
+      },
+      {
+        "claim_id": "CLM-000164",
+        "employee_id": "EMP-0004",
+        "amount": 1814.92
+      },
+      {
+        "claim_id": "CLM-000218",
+        "employee_id": "EMP-0056",
+        "amount": 1714.21
+      },
+      {
+        "claim_id": "CLM-000153",
+        "employee_id": "EMP-0004",
+        "amount": 1436.2
+      },
+      {
+        "claim_id": "CLM-000016",
+        "employee_id": "EMP-0020",
+        "amount": 1361.69
+      },
+      {
+        "claim_id": "CLM-000078",
+        "employee_id": "EMP-0031",
+        "amount": 1352.56
+      },
+      {
+        "claim_id": "CLM-000240",
+        "employee_id": "EMP-0018",
+        "amount": 1201.73
+      },
+      {
+        "claim_id": "CLM-000106",
+        "employee_id": "EMP-0020",
+        "amount": 1085.19
+      },
+      {
+        "claim_id": "CLM-000114",
+        "employee_id": "EMP-0060",
+        "amount": 1056.21
+      },
+      {
+        "claim_id": "CLM-000040",
+        "employee_id": "EMP-0004",
+        "amount": 1048.09
+      }
+    ],
+    "verification_status": "passed",
+    "evidence_rows": [
+      3,
+      216,
+      66,
+      105,
+      27,
+      19,
+      4,
+      26,
+      108,
+      164,
+      218,
+      153,
+      16,
+      78,
+      240,
+      106,
+      114,
+      40
+    ],
+    "duration_ms": 2.07
+  }
+]

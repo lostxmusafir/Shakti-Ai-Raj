@@ -1,0 +1,34 @@
+{
+  "policy_code": "FIN-EXP-001",
+  "title": "Corporate Expense Reimbursement Policy",
+  "department": "Finance",
+  "version": 1,
+  "effective_from": "2026-01-01",
+  "marker": "SYNTHETIC_TEST_POLICY",
+  "description": "Specifies expense limits per claim category and receipt submission thresholds.",
+  "rules": [
+    {
+      "rule_id": "R-EXP-01",
+      "description": "Meal expenses cannot exceed $150.00 per claim.",
+      "condition": {
+        "field": "category",
+        "operator": "equals",
+        "value": "Meals",
+        "max_amount": 150.0
+      },
+      "action": "REJECT",
+      "severity": "Medium"
+    },
+    {
+      "rule_id": "R-EXP-02",
+      "description": "Any single claim exceeding $3,000.00 requires Chief Financial Officer (CFO) pre-authorization.",
+      "condition": {
+        "field": "amount",
+        "operator": "greater_than",
+        "value": 3000.0
+      },
+      "action": "ESCALATE",
+      "severity": "High"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "policy_code": "HR-TRF-001",
+  "title": "Inter-Department Employee Transfer Policy",
+  "department": "Human Resources",
+  "version": 1,
+  "effective_from": "2026-01-01",
+  "marker": "SYNTHETIC_TEST_POLICY",
+  "description": "Rules for cross-unit employee role transfers and payroll record reconciliation.",
+  "rules": [
+    {
+      "rule_id": "R-TRF-01",
+      "description": "Active employees in employee master must have matching active record in monthly payroll summary.",
+      "condition": {
+        "field": "payroll_matched",
+        "operator": "equals",
+        "value": false
+      },
+      "action": "FLAG_PAYROLL_DEFICIENCY",
+      "severity": "High"
+    }
+  ]
+}

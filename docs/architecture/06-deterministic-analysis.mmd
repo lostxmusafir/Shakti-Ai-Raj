@@ -1,0 +1,6 @@
+flowchart TB
+  Question[User question] --> Mapping[Schema + metric mapping]
+  Mapping --> SQL[DuckDB SQL / Polars operation]
+  SQL --> Verify[Verification and reconciliation]
+  Verify --> Result[Result table / metric]
+  Result --> Explain[Human-readable synthesis]

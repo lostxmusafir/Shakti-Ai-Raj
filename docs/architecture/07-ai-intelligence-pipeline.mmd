@@ -1,0 +1,7 @@
+flowchart LR
+  Prompt[Prompt] --> Intent[Intent detection]
+  Intent --> Semantic[Semantic mapping]
+  Semantic --> Retrieve[Example retrieval]
+  Retrieve --> Plan[Tool plan]
+  Plan --> Execute[Deterministic execution]
+  Execute --> Synthesize[Insight synthesis]

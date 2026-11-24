@@ -1,0 +1,7 @@
+flowchart LR
+  Browser[Browser] --> Frontend[Next.js]
+  Frontend --> Backend[FastAPI]
+  Backend --> DB[(MongoDB)]
+  Backend --> Provider[Mistral provider]
+  Backend --> Disk[Upload / benchmark disk]
+  Note[Hardware sizing is environment-specific] -.-> Backend

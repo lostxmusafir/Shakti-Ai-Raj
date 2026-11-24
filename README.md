@@ -40,27 +40,26 @@ An enterprise-grade, policy-aware internal AI Data Analyst with a deterministic 
 
 ```
 SHAKTI-AI/
-├── apps/
-│   ├── backend/             # FastAPI, Python 3.12, Motor, DuckDB, Polars
-│   │   ├── app/
-│   │   │   ├── api/v1/      # REST API endpoints & SSE streaming
-│   │   │   ├── auth/        # RBAC, JWT, Password hashing
-│   │   │   ├── core/        # Config, logging, exceptions
-│   │   │   ├── db/          # Mongo client & repositories
-│   │   │   ├── models/      # MongoDB document domain models
-│   │   │   ├── schemas/     # Pydantic v2 schemas
-│   │   │   ├── ai/          # Orchestrator, providers, planner, explainer
-│   │   │   ├── analysis/    # Profiler, query compiler, DuckDB engine
-│   │   │   ├── policies/    # Policy ingestion, versioning, evaluation
-│   │   │   ├── storage/     # Storage engine
-│   │   │   └── audit/       # Security & analytical audit logging
-│   │   └── tests/           # Comprehensive Pytest test suite
-│   │
-│   └── frontend/            # Next.js 15, TypeScript, Tailwind CSS
-│       ├── src/
-│       │   ├── app/         # App router (login, chat, files, policies)
-│       │   ├── components/  # Chat, Results, Tables, Status, Sidebar
-│       │   └── lib/         # API client & types
+├── backend/             # FastAPI, Python 3.12+, Motor/PyMongo, DuckDB, Polars
+│   ├── app/
+│   │   ├── api/v1/      # REST API endpoints & SSE streaming
+│   │   ├── auth/        # RBAC, JWT, Password hashing
+│   │   ├── core/        # Config, logging, exceptions
+│   │   ├── db/          # Mongo client & repositories
+│   │   ├── models/      # MongoDB document domain models
+│   │   ├── schemas/     # Pydantic v2 schemas
+│   │   ├── ai/          # Orchestrator, providers, planner, explainer
+│   │   ├── analysis/    # Profiler, query compiler, DuckDB engine
+│   │   ├── policies/    # Policy ingestion, versioning, evaluation
+│   │   ├── storage/     # Storage engine
+│   │   └── audit/       # Security & analytical audit logging
+│   └── tests/           # Comprehensive Pytest test suite
+│
+├── frontend/            # Next.js 15, TypeScript, Tailwind CSS
+│   ├── src/
+│   │   ├── app/         # App router (login, chat, files, policies)
+│   │   ├── components/  # Chat, Results, Tables, Status, Sidebar
+│   │   └── lib/         # API client & types
 │
 ├── data/
 │   ├── samples/             # Sample datasets (incidents.csv, email_logs.csv, departments.csv)
@@ -77,11 +76,11 @@ SHAKTI-AI/
 
 ### 1. Backend Setup
 ```bash
-cd apps/backend
+cd backend
 
 # Create virtualenv and install dependencies
-uv venv
-uv pip install -r requirements.txt # or uv pip install fastapi duckdb polars pyarrow openpyxl motor pymongo pyjwt bcrypt sse-starlette httpx email-validator pydantic-settings pytest pytest-asyncio pytest-cov
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
 
 # Start backend server
 .venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
@@ -90,7 +89,7 @@ API Documentation & Interactive Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
 ```bash
-cd apps/frontend
+cd frontend
 
 # Install dependencies
 npm install
@@ -111,7 +110,7 @@ Access the application at `http://localhost:3000`
 
 ### Backend Test Suite
 ```bash
-apps\backend\.venv\Scripts\python.exe -m pytest apps/backend/tests -v
+python -m pytest backend/tests -v
 ```
 All 13 automated unit, integration, and end-to-end tests verify:
 - Authentication, JWT, and password hashing
