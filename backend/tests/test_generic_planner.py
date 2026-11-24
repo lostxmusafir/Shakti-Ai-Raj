@@ -272,3 +272,122 @@ def test_count_distinct_without_a_column_is_rejected_by_the_validator():
 
     with pytest.raises(PlanValidationError, match="count_distinct"):
         PlanValidator.validate_plan(plan, FILES_MAP)
+
+
+# ---------------------------------------------------------------------------
+# Section 8 assertions & feature tests
+# ---------------------------------------------------------------------------
+
+def test_numeric_filter_compiles_and_executes():
+    engine = QuestionEngine(PROFILE)
+    interp = engine.analyze("how many records have emi > 500")
+
+    assert interp.intent == "conditional_count"
+    assert interp.filters == [Condition(column="emi", operator="greater_than", value=500)]
+    assert interp.confidence >= 0.9
+
+    plan = _build(interp)
+    assert plan.filters == [Condition(column="emi", operator="greater_than", value=500)]
+    sql, params = QueryCompiler.compile(plan)
+    assert 'WHERE "emi" > ?' in sql
+    assert params == [500]
+    assert _execute(plan) == [(2,)]  # L5: 600, L6: 700
+
+
+@pytest.mark.parametrize("query,op,val", [
+    ("how many records have emi >= 500", "greater_than_or_equal", 500),
+    ("how many records have emi < 300", "less_than", 300),
+    ("how many records have emi <= 200", "less_than_or_equal", 200),
+    ("how many records have emi greater than 400", "greater_than", 400),
+    ("how many records have emi less than 400", "less_than", 400),
+    ("emi 500 se zyada kitne records hain", "greater_than", 500),
+    ("emi 300 se kam kitne records hain", "less_than", 300),
+])
+def test_numeric_filter_operator_variations(query, op, val):
+    engine = QuestionEngine(PROFILE)
+    interp = engine.analyze(query)
+
+    assert interp.intent == "conditional_count"
+    assert interp.filters == [Condition(column="emi", operator=op, value=val)]
+    plan = _build(interp)
+    assert plan.filters == [Condition(column="emi", operator=op, value=val)]
+
+
+def test_percentage_condition_populates_filters_and_fails_safely():
+    engine = QuestionEngine(PROFILE)
+    interp = engine.analyze("percentage of records have cancellation = yes")
+
+    assert interp.intent == "percentage"
+    assert interp.filters == [Condition(column="cancellation", operator="equals", value="yes")]
+
+    with pytest.raises(UnsupportedPlanError, match="derived metric"):
+        _build(interp)
+
+
+def test_temporal_trend_without_date_column_clarifies():
+    engine = QuestionEngine(PROFILE)
+    interp = engine.analyze("monthly total emi trend")
+
+    assert interp.intent == "time_series"
+    assert interp.granularity == "month"
+    assert interp.clarification is not None
+    assert "date" in interp.clarification.lower()
+    assert interp.confidence <= 0.4
+
+    with pytest.raises(UnsupportedPlanError, match="No date or timestamp"):
+        _build(interp)
+
+
+def test_temporal_trend_with_date_column_classifies_and_fails_safely():
+    prof = dict(PROFILE)
+    prof["columns"] = list(PROFILE["columns"]) + [
+        {"name": "disbursed_on", "inferred_type": "date", "unique_count": 5, "null_count": 0, "sample_values": ["2024-01-01"]}
+    ]
+    engine = QuestionEngine(prof)
+    interp = engine.analyze("monthly total emi trend")
+
+    assert interp.intent == "time_series"
+    assert interp.date_column == "disbursed_on"
+    assert interp.granularity == "month"
+
+    with pytest.raises(UnsupportedPlanError, match="date grouping"):
+        _build(interp)
+
+
+def test_ambiguous_question_returns_clarification_and_low_confidence():
+    engine = QuestionEngine(PROFILE)
+    interp = engine.analyze("which city is the best")
+
+    assert interp.clarification is not None
+    assert interp.confidence <= 0.4
+    with pytest.raises(UnsupportedPlanError):
+        _build(interp)
+
+
+def test_unresolved_filter_hint_never_returns_unfiltered_scalar_with_high_confidence():
+    engine = QuestionEngine(PROFILE)
+    interp = engine.analyze("how many records where unknown_column > 999")
+
+    # Must NOT return an unfiltered scalar count with confidence >= 0.9
+    if not interp.filters:
+        assert interp.confidence <= 0.5
+
+
+@pytest.mark.asyncio
+async def test_orchestrator_feature_flag_wiring():
+    from unittest.mock import AsyncMock, MagicMock
+    from app.core.config import settings
+    from app.ai.orchestration.orchestrator import AnalysisOrchestrator
+
+    fmap = {"f1": SimpleNamespace(schema_profile=PROFILE, original_name="test.csv")}
+    orch = AnalysisOrchestrator()
+    orch.ai_provider = MagicMock()
+    orch.ai_provider.generate_structured = AsyncMock(side_effect=Exception("AI provider offline"))
+
+    settings.ENABLE_GENERIC_PLANNER = True
+    try:
+        plan = await orch._plan_with_ai("how many records have emi > 500", ["f1"], fmap, "DATA_ANALYSIS")
+        assert plan.filters == [Condition(column="emi", operator="greater_than", value=500)]
+    finally:
+        settings.ENABLE_GENERIC_PLANNER = False
+

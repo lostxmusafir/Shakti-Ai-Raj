@@ -90,7 +90,7 @@ IDENTIFIER_HINTS = {"id", "code", "no", "num", "number", "pnr", "txn", "ref", "u
 
 def normalize_text(text: str) -> str:
     text = str(text).lower().replace("%", " percent ")
-    text = re.sub(r"[^a-z0-9@.\- ]+", " ", text)
+    text = re.sub(r"[^a-z0-9@.\- ><=!]+", " ", text)
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -238,12 +238,14 @@ class SchemaView:
                 if hits == len(value_tokens):
                     score = 1.0 + 0.1 * len(value_tokens)
                 else:
+                    reserved = STOPWORDS | RANK_ASC | RANK_DESC | COUNT_WORDS | SUM_WORDS | AVG_WORDS | DISTINCT_WORDS | TREND_WORDS
+                    eligible = [other for other in tokens if len(other) >= 3 and other not in reserved]
                     fuzzy = max(
-                        (max(similarity(t, other) for other in tokens if len(other) >= 3)
+                        (max((similarity(t, other) for other in eligible), default=0.0)
                          for t in value_tokens),
                         default=0.0,
                     )
-                    score = fuzzy if fuzzy >= 0.84 else 0.0
+                    score = fuzzy if (fuzzy >= 0.85 if col_hit else fuzzy >= 0.92) else 0.0
                 # Values that are ordinary words ("no", "yes") need the column
                 # itself to be present, otherwise every question would filter.
                 if len(value_tokens) == 1 and value_tokens[0] in STOPWORDS and not col_hit:
@@ -325,8 +327,21 @@ class QuestionEngine:
             if result is not None:
                 if result.clarification:
                     result.confidence = min(result.confidence, 0.4)
+                elif not result.filters and self._has_unresolved_filter_hint(self.text):
+                    result.confidence = min(result.confidence, 0.5)
                 result.confidence = round(max(0.0, min(1.0, result.confidence)), 2)
                 return result
+
+        # Ambiguity check: terms like 'best', 'worst', 'good', 'quality' without an explicit measure
+        if token_set & AMBIGUOUS_TERMS:
+            measure, mscore = self.schema.find_column(self.text, roles=("measure",))
+            if measure is None or mscore < 0.6:
+                interp.clarification = (
+                    "That question can be read more than one way. Which measure should decide it "
+                    "- record count, a monetary amount, or an explicit rate?"
+                )
+                interp.confidence = 0.3
+                return interp
 
         # Nothing matched the phrasing templates: try a looser structural read
         # (measure + dimension + aggregation keyword) before giving up.
@@ -334,14 +349,6 @@ class QuestionEngine:
         if loose is not None:
             loose.confidence = round(max(0.0, min(1.0, loose.confidence)), 2)
             return loose
-
-        if token_set & AMBIGUOUS_TERMS:
-            interp.clarification = (
-                "That question can be read more than one way. Which measure should decide it "
-                "- record count, a monetary amount, or an explicit rate?"
-            )
-            interp.confidence = 0.3
-            return interp
 
         interp.notes.append("unmapped")
         interp.confidence = 0.3
@@ -359,8 +366,12 @@ class QuestionEngine:
         vocab_list = sorted(vocab)
         repaired: List[str] = []
         corrections = 0
+        reserved = (
+            STOPWORDS | RANK_ASC | RANK_DESC | PERCENT_WORDS | COUNT_WORDS |
+            SUM_WORDS | AVG_WORDS | DISTINCT_WORDS | TREND_WORDS | AMBIGUOUS_TERMS | NEGATION_WORDS
+        )
         for token in tokens:
-            if len(token) < 4 or token in vocab:
+            if len(token) < 4 or token in vocab or token in reserved:
                 repaired.append(token)
                 continue
             best, score = None, 0.0
@@ -384,30 +395,131 @@ class QuestionEngine:
         fragment = re.sub(r"\b(equal to|equals|is|are|equals to)\b.*$", "", fragment)
         return fragment.strip(" ?.,")
 
-    def _resolve_dimension(self, phrase: str) -> Optional[Column]:
+    def _resolve_dimension(self, phrase: str, interp: Optional[Interpretation] = None) -> Optional[Column]:
         column, score = self.schema.find_column(phrase, roles=("dimension", "flag", "time"))
-        return column if score >= 0.58 else None
+        if column is not None and score >= 0.58:
+            if interp is not None and score < 0.85:
+                interp.confidence -= round(0.2 * (1.0 - score), 2)
+            return column
+        return None
 
-    def _resolve_measure(self, phrase: str) -> Optional[Column]:
+    def _resolve_measure(self, phrase: str, interp: Optional[Interpretation] = None) -> Optional[Column]:
         column, score = self.schema.find_column(phrase, roles=("measure",))
         if column is not None and score >= 0.5:
+            if interp is not None and score < 0.85:
+                interp.confidence -= round(0.2 * (1.0 - score), 2)
             return column
         if len(self.schema.measures) == 1:
+            if interp is not None:
+                interp.assumptions.append(f"defaulted to only available measure '{self.schema.measures[0].name}'")
+                interp.confidence -= 0.12
             return self.schema.measures[0]
         return None
 
     def _filter_from(self, phrase: str) -> Tuple[Optional[Condition], Optional[Column]]:
-        """Extract '<column> = <observed value>' from free text."""
+        """Extract a Condition (<column> <operator> <value>) from free text.
+
+        Supports:
+        - Numeric comparisons: >, >=, <, <=, =, != and English/Hinglish comparison phrases
+        - Explicit categorical comparisons: col = 'value', col != 'value'
+        - Observed categorical values: finds known category in top_values
+        """
+        # 1. Numeric / symbol comparisons: e.g. "emi > 5000", "emi >= 5000", "emi <= 500"
+        op_map = {
+            ">=": "greater_than_or_equal",
+            "<=": "less_than_or_equal",
+            "!=": "not_equals",
+            "<>": "not_equals",
+            "==": "equals",
+            "=": "equals",
+            ">": "greater_than",
+            "<": "less_than",
+        }
+
+        sym_match = re.search(
+            r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s*(?P<op>>=|<=|!=|<>|==|=|>|<)\s*(?P<val>-?[0-9]+(?:\.[0-9]+)?)",
+            phrase,
+        )
+        if sym_match:
+            col_str = sym_match.group("col").strip()
+            op_str = sym_match.group("op")
+            val_str = sym_match.group("val")
+            col, score = self.schema.find_column(col_str, roles=("measure", "dimension", "time", "flag", "identifier"))
+            if col is not None and score >= 0.5:
+                val = float(val_str) if "." in val_str else int(val_str)
+                return Condition(column=col.name, operator=op_map[op_str], value=val), col
+
+        # 2. English word comparisons:
+        word_patterns = [
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?:is\s+)?(?:greater than or equal to|at least|no less than)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)", "greater_than_or_equal"),
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?:is\s+)?(?:less than or equal to|at most|no more than)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)", "less_than_or_equal"),
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?:is\s+)?(?:greater than|more than|above|exceeding|higher than|over)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)", "greater_than"),
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?:is\s+)?(?:less than|fewer than|below|under|lower than)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)", "less_than"),
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?:is\s+)?(?:equal to|equals to|equals)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)", "equals"),
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?:is\s+)?(?:not equal to|not equals)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)", "not_equals"),
+        ]
+        for pat, op_name in word_patterns:
+            m = re.search(pat, phrase, re.IGNORECASE)
+            if m:
+                col_str = m.group("col").strip()
+                col, score = self.schema.find_column(col_str, roles=("measure", "dimension", "time", "flag", "identifier"))
+                if col is not None and score >= 0.5:
+                    val_str = m.group("val")
+                    val = float(val_str) if "." in val_str else int(val_str)
+                    return Condition(column=col.name, operator=op_name, value=val), col
+
+        # 3. Hinglish / Hindi comparisons:
+        hinglish_patterns = [
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)\s*(?:se\s+)?(?:zyada|jyada|upar|bada)", "greater_than"),
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)\s*(?:se\s+)?(?:kam|neeche|chhota)", "less_than"),
+            (r"(?P<val>-?[0-9]+(?:\.[0-9]+)?)\s*(?:se\s+)?(?:zyada|jyada|upar|bada)\s+(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*)", "greater_than"),
+            (r"(?P<val>-?[0-9]+(?:\.[0-9]+)?)\s*(?:se\s+)?(?:kam|neeche|chhota)\s+(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*)", "less_than"),
+            (r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s+(?P<val>-?[0-9]+(?:\.[0-9]+)?)\s*(?:ke\s+)?barabar", "equals"),
+        ]
+        for pat, op_name in hinglish_patterns:
+            m = re.search(pat, phrase, re.IGNORECASE)
+            if m:
+                col_str = m.group("col").strip()
+                col, score = self.schema.find_column(col_str, roles=("measure", "dimension", "time", "flag", "identifier"))
+                if col is not None and score >= 0.5:
+                    val_str = m.group("val")
+                    val = float(val_str) if "." in val_str else int(val_str)
+                    return Condition(column=col.name, operator=op_name, value=val), col
+
+        # 4. Explicit categorical comparison: e.g. "cancellation = yes" or "cancellation == yes"
+        cat_eq = re.search(r"(?P<col>[a-zA-Z_][a-zA-Z0-9_ ]*?)\s*(?:==|=|!=|<>|\b(?:is|equals|equal to|not equal to)\b)\s*['\"]?(?P<val>[a-zA-Z0-9_]+)['\"]?", phrase)
+        if cat_eq:
+            col_str = cat_eq.group("col").strip()
+            val_str = cat_eq.group("val").strip()
+            if len(val_str) >= 2 and val_str.lower() not in STOPWORDS:
+                col, score = self.schema.find_column(col_str, roles=("dimension", "flag", "text", "identifier"))
+                if col is not None and score >= 0.5:
+                    matched_val = val_str
+                    for tv in col.top_values:
+                        if tv.lower() == val_str.lower():
+                            matched_val = tv
+                            break
+                    return Condition(column=col.name, operator="equals", value=matched_val), col
+
+        # 5. Observed categorical value fallback:
         negated = bool(set(tokenize(phrase)) & NEGATION_WORDS)
         column, value, score = self.schema.find_value(phrase)
-        if column is None or value is None:
-            return None, None
-        condition = Condition(
-            column=column.name,
-            operator="not_equals" if negated else "equals",
-            value=value,
-        )
-        return condition, column
+        if column is not None and value is not None and score >= 0.8:
+            return Condition(
+                column=column.name,
+                operator="not_equals" if negated else "equals",
+                value=value,
+            ), column
+
+        return None, None
+
+    def _has_unresolved_filter_hint(self, text: str) -> bool:
+        return any(re.search(pat, text, re.IGNORECASE) for pat in [
+            r"\b(where|jahan|whose)\b",
+            r"\b(have|has|having|with)\b\s+(?:an?\s+)?\w+\s*(?:>|<|=|se|at least|greater|less)",
+            r"[><=]",
+            r"\bse\s+(?:zyada|kam|upar|neeche|bada|chhota)\b",
+        ])
 
     def _as_condition(self, column: Column, value: str) -> Condition:
         return Condition(column=column.name, operator="equals", value=value)
@@ -494,34 +606,61 @@ class QuestionEngine:
     def _rule_time_series(self, interp, text, tokens) -> Optional[Interpretation]:
         if not (tokens & TREND_WORDS):
             return None
+        date_col = None
         match = (re.search(r"using (.+?)$", text)
                  or re.search(r"by (.+?)$", text)
-                 or re.search(r"(.+?) ke hisab se monthly", text))
-        if not match:
-            return None
-        date_col, score = self.schema.find_column(match.group(1), roles=("time", "dimension"))
-        if date_col is None or score < 0.55:
+                 or re.search(r"(.+?) ke hisab se", text))
+        if match:
+            date_col, score = self.schema.find_column(match.group(1), roles=("time", "dimension"))
+            if score < 0.55:
+                date_col = None
+
+        if date_col is None:
             candidates = self.schema.times
-            if not candidates:
-                return None
-            date_col = candidates[0]
+            if candidates:
+                date_col = candidates[0]
+            else:
+                for c in self.schema.columns:
+                    if c.role == "time" or any(k in c.name.lower() for k in ("date", "time", "day", "month", "year", "created", "disbursed")):
+                        date_col = c
+                        break
+
         granularity = "month"
-        if "yearly" in tokens or "year" in tokens:
+        if "yearly" in tokens or "year" in tokens or "saal" in tokens:
             granularity = "year"
-        elif "weekly" in tokens or "week" in tokens:
+        elif "weekly" in tokens or "week" in tokens or "hafte" in tokens or "hafta" in tokens:
             granularity = "week"
-        elif "daily" in tokens or "day" in tokens:
+        elif "daily" in tokens or "day" in tokens or "din" in tokens or "roz" in tokens:
             granularity = "day"
+        elif "quarterly" in tokens or "quarter" in tokens:
+            granularity = "quarter"
+
+        if date_col is None:
+            interp.intent = "time_series"
+            interp.granularity = granularity
+            interp.clarification = "No date or timestamp column found in dataset for trend analysis."
+            interp.confidence = 0.3
+            return interp
 
         measure = None
-        measure_match = re.search(r"(?:monthly total|total) (.+?) trend", text)
+        measure_match = (
+            re.search(r"(?:monthly|yearly|weekly|daily|quarterly)?\s*(?:total|sum|avg|average)?\s*(.+?)\s+trend", text)
+            or re.search(r"trend of (?:monthly|yearly|weekly|daily|quarterly)?\s*(?:total|sum|avg|average)?\s*(.+?)$", text)
+            or re.search(r"trend\s+(?:in|of|for)\s+(.+?)$", text)
+        )
         if measure_match:
-            measure = self._resolve_measure(measure_match.group(1))
+            measure = self._resolve_measure(measure_match.group(1), interp=interp)
+        if measure is None:
+            measure, mscore = self.schema.find_column(text, roles=("measure",))
+            if mscore < 0.5:
+                measure = None
+
+        fn = "avg" if (tokens & AVG_WORDS) else "sum"
         interp.intent = "time_series"
         interp.group_by = [date_col.name]
         interp.date_column = date_col.name
         interp.granularity = granularity
-        interp.aggregations = [("sum", measure.name, None, "metric")] if measure \
+        interp.aggregations = [(fn, measure.name, None, f"{fn}_metric")] if measure \
             else [("count", None, None, "metric")]
         interp.sort = [(date_col.name, True)]
         interp.limit = 60
@@ -590,34 +729,29 @@ class QuestionEngine:
     def _rule_overall_percentage(self, interp, text, tokens) -> Optional[Interpretation]:
         if not (tokens & PERCENT_WORDS):
             return None
-        # English: "percentage of records have X"
-        # Hinglish: "percent records me X hai"
-        # Hindi: "pratishat record me X hai"
-        # Pattern: percentage/percent/pratishat [of X] [me/ke] [column] hai
-        match = (re.search(r"percentage of records have (.+?)$", text)
-                 or re.search(r"percent records me (.+?) hai$", text)
-                 or re.search(r"pratishat record me (.+?) he$", text)
-                 or re.search(r"percentage of records where (.+?)$", text)
-                 or re.search(r"(.+?) ka (.+?) percent hai", text)
-                 or re.search(r"(.+?) ki (.+?) pratishat hai", text))
-        if not match:
-            return None
-        # Determine condition from the matched group
-        if match.group(1):  # "percentage of records have X"
-            condition, _ = self._filter_from(match.group(1))
-        elif match.group(2):  # "percent records me X hai"
-            condition, _ = self._filter_from(match.group(2))
-        elif match.group(3):  # "pratishat record me X hai"
-            condition, _ = self._filter_from(match.group(3))
-        elif match.group(4):  # "percentage of records where X"
-            condition, _ = self._filter_from(match.group(4))
-        elif match.group(5):  # "X ka Y percent hai"
-            condition, _ = self._filter_from(f"{match.group(2)} {match.group(3)}")
-        else:
-            return None
+        patterns = [
+            r"percentage of records (?:have|where|with) (.+?)$",
+            r"percent records me (.+?) h(?:e|ai|ain)$",
+            r"pratishat records? me (.+?) h(?:e|ai|ain)$",
+            r"percentage of records where (.+?)$",
+            r"percentage of (.+?)$",
+            r"(.+?) ka (.+?) percent",
+            r"(.+?) ki (.+?) pratishat",
+        ]
+        condition = None
+        for pat in patterns:
+            m = re.search(pat, text)
+            if m:
+                phrase = f"{m.group(1)} {m.group(2)}" if m.lastindex and m.lastindex >= 2 else m.group(1)
+                condition, _ = self._filter_from(phrase)
+                if condition is not None:
+                    break
+        if condition is None:
+            condition, _ = self._filter_from(text)
         if condition is None:
             return None
         interp.intent = "percentage"
+        interp.filters = [condition]
         interp.aggregations = [
             ("count", None, None, "total"),
             ("count", None, condition, "numerator"),
@@ -651,23 +785,27 @@ class QuestionEngine:
         # English: "how many records have EMI > 5000?"
         # Hinglish: "kitne records hain jahan EMI > 5000?"
         # Hindi: "kitne records hain jahan EMI > 5000?"
-        # Pattern: [how many/kitne] [records] [have/jo] [condition]
-        match = (re.search(r"how many records have (.+?)$", text)
-                 or re.search(r"(.+?) kitne records hain$", text)
-                 or re.search(r"(.+?) kitne log (>=|<=|>|<) (.+?)$", text)
-                 or re.search(r"(.+?) se kitne records", text)
-                 or re.search(r"kis (.+?) par kitne records hain", text))
-        if not match:
-            return None
-        # Determine condition from the matched group
-        if match.group(1):  # "how many records have X"
-            condition, _ = self._filter_from(match.group(1))
-        elif match.group(2):  # "(.+?) kitne records hain"
-            condition, _ = self._filter_from(match.group(1) or match.group(2))
-        elif match.group(3):  # "(.+?) se kitne records" or "kis X par kitne"
-            condition, _ = self._filter_from(f"{match.group(2)} {match.group(3)}")
-        else:
-            condition, _ = self._filter_from(match.group(0) if match.group(0) else "")
+        patterns = [
+            r"how many records (?:have|with|where) (.+?)$",
+            r"how many rows (?:have|with|where) (.+?)$",
+            r"how many (.+?) records have (.+?)$",
+            r"kitne records (?:hain jahan|me|hai jahan) (.+?)$",
+            r"jahan (.+?) kitne records",
+            r"(.+?) kitne records hain$",
+            r"(.+?) kitne log (?:hain|ho)?\s*(.+?)$",
+            r"(.+?) se kitne records",
+            r"kis (.+?) par kitne records hain",
+        ]
+        condition = None
+        for pat in patterns:
+            m = re.search(pat, text)
+            if m:
+                phrase = f"{m.group(1)} {m.group(2)}" if m.lastindex and m.lastindex >= 2 else m.group(1)
+                condition, _ = self._filter_from(phrase)
+                if condition is not None:
+                    break
+        if condition is None:
+            condition, _ = self._filter_from(text)
         if condition is None:
             return None
         interp.intent = "conditional_count"
@@ -701,12 +839,13 @@ class QuestionEngine:
         return interp
 
     def _rule_group_sum(self, interp, text, tokens) -> Optional[Interpretation]:
-        match = (re.search(r"(?:show|show me|give|list)(?: me)? (?:the )?total (.+?) by (.+?)$", text)
-                 or re.search(r"(.+?) wise total (.+?) dikhao", text)
-                 or re.search(r"total (.+?) by (.+?)$", text))
+        match = (re.search(r"(?:show|show me|give|list|what is the)(?: me)? (?:the )?(?:total|sum|average|avg) (.+?) by (.+?)$", text)
+                 or re.search(r"(.+?) wise (?:total|sum|average|avg) (.+?)(?: dikhao)?$", text)
+                 or re.search(r"(?:total|sum|average|avg) (.+?) by (.+?)$", text))
         if not match:
             return None
-        if "wise total" in text and text.find("wise total") < text.find("by"):
+        fn = "avg" if ("average" in text or "avg" in text or "ausat" in text) else "sum"
+        if "wise " in text:
             group = self._resolve_dimension(match.group(1))
             measure = self._resolve_measure(match.group(2))
         else:
@@ -714,10 +853,10 @@ class QuestionEngine:
             group = self._resolve_dimension(match.group(2))
         if group is None or measure is None:
             return None
-        interp.intent = "group_sum"
+        interp.intent = "grouped_metric" if fn == "avg" else "group_sum"
         interp.group_by = [group.name]
-        alias = f"sum_{measure.name}"
-        interp.aggregations = [("sum", measure.name, None, alias)]
+        alias = f"{fn}_{measure.name}"
+        interp.aggregations = [(fn, measure.name, None, alias)]
         interp.sort = [(alias, False)]
         interp.limit = 10
         return interp
@@ -794,12 +933,14 @@ class QuestionEngine:
     def _rule_scalar_average(self, interp, text, tokens) -> Optional[Interpretation]:
         if not (tokens & AVG_WORDS):
             return None
+        if self._has_unresolved_filter_hint(text):
+            return None
         match = (re.search(r"average (?:of )?(.+?)$", text)
                  or re.search(r"(.+?) ka ausat", text))
-        measure = self._resolve_measure(match.group(1)) if match else None
+        measure = self._resolve_measure(match.group(1), interp=interp) if match else None
         if measure is None:
             if len(self.schema.measures) == 1:
-                measure = self.schema.measures[0]
+                measure = self._resolve_measure("", interp=interp)
             else:
                 interp.clarification = self._measure_question()
                 return interp
@@ -811,9 +952,11 @@ class QuestionEngine:
     def _rule_scalar_sum(self, interp, text, tokens) -> Optional[Interpretation]:
         if not (tokens & SUM_WORDS) and "kul " not in text:
             return None
+        if self._has_unresolved_filter_hint(text):
+            return None
         match = (re.search(r"total (.+?)$", text)
                  or re.search(r"kul (.+?) kitna", text))
-        measure = self._resolve_measure(match.group(1)) if match else None
+        measure = self._resolve_measure(match.group(1), interp=interp) if match else None
         if measure is None:
             return None
         interp.intent = "scalar_metric"
@@ -823,6 +966,8 @@ class QuestionEngine:
 
     def _rule_scalar_count(self, interp, text, tokens) -> Optional[Interpretation]:
         if not (tokens & COUNT_WORDS):
+            return None
+        if self._has_unresolved_filter_hint(text):
             return None
         interp.intent = "scalar_metric"
         interp.aggregations = [("count", None, None, "total_records")]

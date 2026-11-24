@@ -55,4 +55,7 @@ class Settings(BaseSettings):
     SEED_ADMIN_PASSWORD: str = "AdminSecret123!"
     SEED_ADMIN_NAME: str = "Super Administrator"
 
+    # Feature Flags
+    ENABLE_GENERIC_PLANNER: bool = False
+
 settings = Settings()
