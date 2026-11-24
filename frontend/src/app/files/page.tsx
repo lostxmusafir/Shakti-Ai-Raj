@@ -21,6 +21,7 @@ export default function FilesPage() {
   const [files, setFiles] = useState<StoredFile[]>([]);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [deletingFileId, setDeletingFileId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -65,6 +66,20 @@ export default function FilesPage() {
       const newSession = await api.createChat("Dataset Analysis");
       router.push(`/chat/${newSession.id}`);
     } catch {}
+  };
+
+  const handleDeleteFile = async (file: StoredFile) => {
+    if (!window.confirm(`Delete "${file.original_name}"? This cannot be undone.`)) return;
+    setDeletingFileId(file.id);
+    try {
+      await api.deleteFile(file.id);
+      setFiles((prev) => prev.filter((item) => item.id !== file.id));
+      if (expandedFileId === file.id) setExpandedFileId(null);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Dataset deletion failed");
+    } finally {
+      setDeletingFileId(null);
+    }
   };
 
   return (
@@ -148,6 +163,16 @@ export default function FilesPage() {
                       >
                         <MessageSquare className="h-3.5 w-3.5" />
                         Analyze in Chat
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFile(file)}
+                        disabled={deletingFileId === file.id}
+                        aria-label={`Delete ${file.original_name}`}
+                        title={`Delete ${file.original_name}`}
+                        className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-950/50 hover:text-red-300 disabled:cursor-wait disabled:opacity-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setExpandedFileId(isExpanded ? null : file.id)}
