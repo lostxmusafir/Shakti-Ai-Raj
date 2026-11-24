@@ -85,8 +85,9 @@ production behavior today — which is the only reason this commit is inert rath
 
 ## 3. Behavioral defects
 
-Probed with a stubbed `app.ai.planning.schemas` module injected into `sys.modules` (required,
-because of §2), run from the repo root with `PYTHONPATH=backend`.
+Probed with a stubbed `app.ai.planning.schemas` module injected into `sys.modules` (required at the
+time, because of §2; no longer needed since `088b613`), run from the repo root with
+`PYTHONPATH=backend`.
 
 | # | Question | Observed plan | Correct? |
 | --- | --- | --- | --- |
@@ -121,6 +122,11 @@ is taken because the text starts with `sabse `, and `match.group(3)` raises `Ind
 Adjacent bug in the same function: the third branch evaluates `... and not ascending` before
 `ascending` has been assigned on that path, so inputs reaching it can raise `UnboundLocalError`
 instead of returning `None`.
+
+**Fixed in `4b003c1`.** `_rule_rank_within_group` carried the same `group(3)` read on patterns that
+define no direction group, and `_rule_per_entity_ratio` read `group(4)`/`group(5)` from three-group
+patterns; all three now pair each pattern with the groups it defines, and the greedy
+``sabse (.+?) (.+?) (.+?)$`` fallback was removed.
 
 ### 3.2 Numeric filters are silently dropped
 
@@ -242,6 +248,7 @@ Additionally: any plan whose `filters` were dropped must not report `confidence 
    `docs/GENERIC_PLANNER_OVERLAP_AUDIT.md` §4.
 2. **Regex capture-group bugs** — fix `_rule_top_bottom_count` and `_rule_per_entity_ratio` so group
    indexing is derived per matched pattern, and remove the `ascending`-before-assignment path.
+   **Done in `4b003c1`**, which also covers `_rule_rank_within_group`.
 3. **Numeric filters** — extend `_filter_from` to parse comparisons (`<`, `>`, `<=`, `>=`, `=`,
    `between`) against numeric and date measures, and make an unresolved *required* condition return a
    `clarification` instead of silently proceeding.
@@ -265,6 +272,25 @@ Step 1 must not be done by editing the 924-line file blindly. The overlap questi
 ## 10. Current state
 
 - `main` — untouched, still `79279fa13730` locally.
-- `test-raj` — `05a9508` plus the documentation commits (`AGENTS.md`, this document, and
-  `docs/GENERIC_PLANNER_OVERLAP_AUDIT.md`).
+- `test-raj` — `05a9508` plus the documentation and repair commits below.
 - `05a9508` — `TEST_RAJ_ONLY`, ineligible, not to be cherry-picked.
+
+### Repair log
+
+| Commit | Tag | Effect |
+| --- | --- | --- |
+| `5035f7b` | `[DOCS]` | this document + `AGENTS.md`; `05a9508` marked `TEST_RAJ_ONLY` |
+| `fbfcc3c` | `[DOCS]` | overlap audit; withdraws the "add the missing schema classes" step |
+| `088b613` | `[CODE]` | module imports; plans restricted to the executable contract; unsupported features raise `UnsupportedPlanError`; `count_distinct` made executable |
+| `4b003c1` | `[CODE]` | capture-group parsing fixed in `_rule_top_bottom_count`, `_rule_per_entity_ratio`, `_rule_rank_within_group` |
+
+Still open, in order: numeric filters (§3.2), percentage conditions (§3.3), temporal
+classification and date grouping (§3.4), confidence (§3.5), feature flag + wiring, blind evaluation.
+
+Test coverage: `backend/tests/test_generic_planner.py` (27 tests) asserts the executable plan
+contract, the refusal paths, and the parsing cases from §8. The runtime probe in §3 no longer needs
+the schema stub.
+
+> Running the full backend suite mutates the tracked benchmark file
+> `data/benchmark/golden/golden_examples_300.json` (a feedback-promotion test appends to it). That
+> file is `[EXP-DATA]` and must never be committed or carried into `main`; restore it after a run.
