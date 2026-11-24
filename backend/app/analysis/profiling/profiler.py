@@ -13,7 +13,7 @@ class DataProfiler:
     @staticmethod
     def profile_file(file_path: str, filename: str) -> Dict[str, Any]:
         ext = os.path.splitext(filename)[1].lower()
-        if ext in [".csv", ".txt"]:
+        if ext == ".csv":
             return DataProfiler._profile_csv(file_path)
         elif ext in [".xlsx", ".xls"]:
             return DataProfiler._profile_excel(file_path)

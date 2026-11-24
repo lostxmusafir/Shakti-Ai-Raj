@@ -1,6 +1,6 @@
 import asyncio
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from app.auth.dependencies import get_current_active_user
 from app.models.user import User
 from app.models.chat import ChatSession
@@ -13,7 +13,7 @@ from app.schemas.chat import (
     SendMessageRequest, MessageResponse
 )
 from app.ai.orchestration.context import AIContext
-from app.ai.orchestration.orchestrator import orchestrator, active_analysis_tasks, cancel_analysis
+from app.ai.orchestration.orchestrator import orchestrator
 from app.audit.service import audit_service
 
 router = APIRouter()
@@ -101,48 +101,8 @@ async def delete_chat(chat_id: str, user: User = Depends(get_current_active_user
     if not can_delete:
         raise ForbiddenError("You cannot delete this chat session.")
 
-    analyses = await analysis_repo.find_many({"chat_id": chat_id})
-    for analysis in analyses:
-        await cancel_analysis(analysis.id)
-
-    await message_repo.delete_many({"chat_id": chat_id})
-    await analysis_repo.delete_many({"chat_id": chat_id})
     await chat_repo.delete(chat_id)
-    await audit_service.log_event("chat.deleted", user_id=user.id, unit_id=user.unit_id, details={"chat_id": chat_id})
     return {"status": "deleted", "id": chat_id}
-
-@router.delete("/{chat_id}/files/{file_id}")
-async def detach_file(
-    chat_id: str,
-    file_id: str,
-    user: User = Depends(get_current_active_user),
-):
-    session = await chat_repo.get_by_id(chat_id)
-    if not session:
-        raise NotFoundError("Chat session", chat_id)
-    if session.user_id != user.id and user.role not in {"unit_admin", "super_admin", "tech_admin"}:
-        raise ForbiddenError("You cannot modify this chat session.")
-    if user.role == "unit_admin" and session.unit_id != user.unit_id:
-        raise ForbiddenError("You cannot modify this chat session.")
-
-    messages = await message_repo.find_many({"chat_id": chat_id})
-    for message in messages:
-        if file_id in message.attachments:
-            await message_repo.collection.update_one(
-                {"_id": message.id, "chat_id": chat_id},
-                {"$set": {"attachments": [fid for fid in message.attachments if fid != file_id]}},
-            )
-
-    analyses = await analysis_repo.find_many({"chat_id": chat_id})
-    for analysis in analyses:
-        if file_id in analysis.input_file_ids:
-            await analysis_repo.collection.update_one(
-                {"_id": analysis.id, "chat_id": chat_id},
-                {"$set": {"input_file_ids": [fid for fid in analysis.input_file_ids if fid != file_id]}},
-            )
-
-    await audit_service.log_event("chat.file_detached", user_id=user.id, unit_id=user.unit_id, details={"chat_id": chat_id, "file_id": file_id})
-    return {"status": "detached", "chat_id": chat_id, "file_id": file_id}
 
 @router.get("/{chat_id}/messages", response_model=List[MessageResponse])
 async def list_messages(chat_id: str, user: User = Depends(get_current_active_user)):
@@ -181,6 +141,7 @@ async def list_messages(chat_id: str, user: User = Depends(get_current_active_us
 async def send_message(
     chat_id: str,
     req: SendMessageRequest,
+    background_tasks: BackgroundTasks,
     user: User = Depends(get_current_active_user)
 ):
     session = await chat_repo.get_by_id(chat_id)
@@ -189,26 +150,13 @@ async def send_message(
     if session.user_id != user.id and user.role != "super_admin":
         raise ForbiddenError()
 
-    file_ids = list(dict.fromkeys(req.file_ids))
-    for file_id in file_ids:
-        record = await orchestrator.file_repo.get_by_id(file_id)
-        if not record:
-            raise NotFoundError("File", file_id)
-        can_use = (
-            user.role in {"tech_admin", "super_admin"}
-            or record.owner_user_id == user.id
-            or (user.role == "unit_admin" and record.unit_id == user.unit_id)
-        )
-        if not can_use:
-            raise ForbiddenError("You cannot attach this file to the chat.")
-
     # 1. Save user message
     user_msg = ChatMessage(
         chat_id=chat_id,
         user_id=user.id,
         role="user",
         content=req.content,
-        attachments=file_ids
+        attachments=req.file_ids
     )
     saved_user_msg = await message_repo.create(user_msg)
 
@@ -219,7 +167,7 @@ async def send_message(
         user_id=user.id,
         unit_id=user.unit_id,
         question=req.content,
-        input_file_ids=file_ids,
+        input_file_ids=req.file_ids,
         status="queued"
     )
     saved_analysis = await analysis_repo.create(analysis)
@@ -230,7 +178,7 @@ async def send_message(
         unit_id=user.unit_id or "default_unit",
         role=user.role,
         chat_id=chat_id,
-        file_ids=file_ids
+        file_ids=req.file_ids
     )
 
     async def execute_and_save_assistant_reply():
@@ -239,7 +187,7 @@ async def send_message(
                 analysis_id=saved_analysis.id,
                 ctx=ctx,
                 question=req.content,
-                file_ids=file_ids
+                file_ids=req.file_ids
             )
             # Create assistant message in history with full metadata
             assistant_msg = ChatMessage(
@@ -259,9 +207,7 @@ async def send_message(
         except Exception:
             pass
 
-    task = asyncio.create_task(execute_and_save_assistant_reply())
-    active_analysis_tasks[saved_analysis.id] = task
-    task.add_done_callback(lambda _: active_analysis_tasks.pop(saved_analysis.id, None))
+    background_tasks.add_task(execute_and_save_assistant_reply)
 
     return {
         "message_id": saved_user_msg.id,

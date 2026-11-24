@@ -38,10 +38,6 @@ class ForbiddenError(AppException):
             status_code=403,
         )
 
-class ConflictError(AppException):
-    def __init__(self, message: str):
-        super().__init__(code="CONFLICT", message=message, status_code=409)
-
 class PlanValidationError(AppException):
     def __init__(self, message: str, details: Optional[Dict[str, Any]] = None):
         super().__init__(

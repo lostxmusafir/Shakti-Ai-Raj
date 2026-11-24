@@ -5,9 +5,7 @@ from app.auth.dependencies import get_current_active_user
 from app.models.user import User
 from app.models.file import StoredFile
 from app.db.repository import BaseRepository
-from app.core.exceptions import NotFoundError, ForbiddenError, AppException, ConflictError
-from app.models.analysis import AnalysisRun
-from app.models.message import ChatMessage
+from app.core.exceptions import NotFoundError, ForbiddenError, AppException
 from app.storage.local import storage_service
 from app.analysis.profiling.profiler import DataProfiler
 from app.schemas.file import FileResponse
@@ -15,10 +13,8 @@ from app.audit.service import audit_service
 
 router = APIRouter()
 file_repo = BaseRepository("files", StoredFile)
-analysis_repo = BaseRepository("analysis_runs", AnalysisRun)
-message_repo = BaseRepository("chat_messages", ChatMessage)
 
-ALLOWED_EXTENSIONS = {".csv", ".txt", ".xlsx", ".xls"}
+ALLOWED_EXTENSIONS = {".csv", ".xlsx", ".xls"}
 
 @router.post("", response_model=FileResponse)
 async def upload_file(
@@ -132,11 +128,6 @@ async def delete_file(file_id: str, user: User = Depends(get_current_active_user
 
     if not can_delete:
         raise ForbiddenError("You cannot delete this file.")
-
-    analyses = await analysis_repo.find_many({})
-    active_statuses = {"queued", "understanding", "retrieving_context", "planning", "validating_plan", "executing", "verifying", "generating_answer"}
-    if any(file_id in analysis.input_file_ids and analysis.status in active_statuses for analysis in analyses):
-        raise ConflictError("This file is currently used by an active analysis. Try again when it completes.")
     
     storage_service.delete_file(record.storage_key)
     await file_repo.delete(file_id)
