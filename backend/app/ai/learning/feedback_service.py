@@ -120,12 +120,13 @@ class FeedbackService:
         if record.verification_status != "verified":
             raise ValueError("Only independently verified feedback corrections can be promoted to golden store.")
             
-        if not os.path.exists(GOLDEN_FILE):
-            logger.warning(f"Golden file not found at {GOLDEN_FILE}")
+        golden_file = os.environ.get("GOLDEN_EXAMPLES_PATH", GOLDEN_FILE)
+        if not os.path.exists(golden_file):
+            logger.warning(f"Golden file not found at {golden_file}")
             return False
 
         try:
-            with open(GOLDEN_FILE, "r", encoding="utf-8") as f:
+            with open(golden_file, "r", encoding="utf-8") as f:
                 golden_data = json.load(f)
 
             new_example = {
@@ -149,7 +150,7 @@ class FeedbackService:
 
             golden_data.append(new_example)
 
-            with open(GOLDEN_FILE, "w", encoding="utf-8") as f:
+            with open(golden_file, "w", encoding="utf-8") as f:
                 json.dump(golden_data, f, indent=2)
 
             logger.info(f"Successfully promoted feedback {record.feedback_id} to golden example store.")

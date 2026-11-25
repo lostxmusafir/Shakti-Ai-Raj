@@ -80,12 +80,13 @@ def generate_dlp(rows: int, seed: int = 20261123) -> List[Dict[str, Any]]:
     return records
 
 
-def generate_hr(seed: int = 20261123, employees: int = 60) -> Dict[str, List[Dict[str, Any]]]:
+def generate_hr(seed: int = 20261123, employees: int = 100) -> Dict[str, List[Dict[str, Any]]]:
     rng = random.Random(seed)
     master = [_employee(index) | {"employment_status": "active" if index % 9 else "inactive"} for index in range(1, employees + 1)]
+    missing_indices = {5, 12, 19, 23, 31, 42, 55, 67, 73, 81, 92, 99}
     payroll = [
         {"employee_id": employee["employee_id"], "month": "2026-01", "gross_pay": rng.randint(4_000, 18_000), "currency": "USD"}
-        for employee in master if rng.random() > 0.08
+        for index, employee in enumerate(master, start=1) if index not in missing_indices
     ]
     attendance = [
         {"employee_id": employee["employee_id"], "month": "2026-01", "days_present": rng.randint(15, 23), "days_absent": rng.randint(0, 4)}

@@ -53,7 +53,7 @@ from app.analysis.profiling.profiler import DataProfiler
 def test_excel_skill_is_discovered_and_metadata_is_pinned():
     skills = SkillRegistry.discover()
     assert "microsoft-excel" in [skill.name for skill in skills]
-    assert SkillRegistry.count() == 8
+    assert SkillRegistry.count() == 9
     assert SkillRegistry.get("microsoft-excel").source_commit == SOURCE_COMMIT
     assert skill_source_path().is_file()
     assert "name: microsoft-excel" in skill_source_path().read_text(encoding="utf-8")

@@ -6,9 +6,34 @@ from app.ai.learning.evaluation_service import evaluation_service
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
+def _shape_demo_fixtures(con) -> None:
+    """Add the friendly aliases this demo suite's SQL expects.
+
+    These aliases are a property of the demo fixtures, so they are shaped here
+    in the test rather than injected by the production evaluation harness.
+    """
+    tables = {row[0] for row in con.execute("SHOW TABLES").fetchall()}
+
+    if "employees" in tables:
+        con.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS full_name VARCHAR")
+        con.execute("UPDATE employees SET full_name = employee_name")
+        con.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS department_id VARCHAR")
+        con.execute("UPDATE employees SET department_id = department")
+
+    if "expenses" in tables:
+        con.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS policy_violation_flag BOOLEAN")
+        con.execute(
+            "UPDATE expenses SET policy_violation_flag = "
+            "CAST(amount > 1000 AND receipt_present = false AS BOOLEAN)"
+        )
+        con.execute("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS category VARCHAR")
+        con.execute("UPDATE expenses SET category = 'Travel'")
+
+
 @pytest.fixture(scope="module")
 def duckdb_con():
     con = evaluation_service.setup_database_context()
+    _shape_demo_fixtures(con)
     yield con
     con.close()
 

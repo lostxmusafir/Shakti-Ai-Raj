@@ -4,6 +4,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, AsyncGenerator
 from app.core.exceptions import AppException
+from app.core.config import settings
 from app.db.repository import BaseRepository
 from app.models.analysis import AnalysisRun
 from app.models.file import StoredFile
@@ -624,6 +625,16 @@ class AnalysisOrchestrator:
             return PlanValidator.validate_plan(plan, files_map)
         except Exception as e:
             logger.warning(f"AI structured planning failed: {e}. Falling back to deterministic keyword planner.")
+            if getattr(settings, "ENABLE_GENERIC_PLANNER", False):
+                try:
+                    from app.ai.planning.generic_planner import QuestionEngine, GenericPlanner
+                    engine = QuestionEngine(first_profile, file_ids=file_ids)
+                    interp = engine.analyze(question)
+                    if not interp.clarification and interp.confidence >= 0.5:
+                        gen_plan = GenericPlanner.build_plan(interp, question, file_ids, first_profile)
+                        return PlanValidator.validate_plan(gen_plan, files_map)
+                except Exception as gp_err:
+                    logger.debug(f"Generic planner fallback bypassed: {gp_err}")
             return self._plan_fallback(question, file_ids, files_map, intent)
 
     async def _handle_data_analysis(
