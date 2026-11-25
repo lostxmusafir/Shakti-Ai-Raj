@@ -1,21 +1,46 @@
 "use client";
 
-import { useEffect, useState, useRef, use } from "react";
+import { useCallback, useEffect, useRef, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import {
-  api,
-  User,
-  ChatSession,
-  ChatMessage,
-  StoredFile,
-} from "@/lib/api";
+import Link from "next/link";
+import { AlertCircle, ArrowUpRight, Database, GitCompareArrows, ScanSearch, ShieldCheck, Sparkles, Table2 } from "lucide-react";
+import { api, User, ChatSession, ChatMessage, StoredFile } from "@/lib/api";
 import Sidebar from "@/components/Sidebar";
 import Composer from "@/components/Composer";
 import AnalysisStatusIndicator from "@/components/AnalysisStatusIndicator";
-import ResultTable from "@/components/ResultTable";
-import SourceEvidenceCard from "@/components/SourceEvidenceCard";
-import MarkdownMessage from "@/components/MarkdownMessage";
-import { Sparkles, Bot, User as UserIcon, ShieldAlert } from "lucide-react";
+import AnswerBody from "@/components/AnswerBody";
+import Message from "@/components/ai-elements/Message";
+import Conversation from "@/components/ai-elements/Conversation";
+import Attachments from "@/components/ai-elements/Attachments";
+import { cn } from "@/lib/cn";
+
+const QUICK_ACTIONS = [
+  {
+    icon: Database,
+    label: "Analyze dataset",
+    prompt: "Give me an overview of this dataset: row count, columns and the key totals.",
+  },
+  {
+    icon: GitCompareArrows,
+    label: "Compare files",
+    prompt: "Compare Sheet1 and Sheet2 in this workbook and list the differences.",
+  },
+  {
+    icon: ScanSearch,
+    label: "Find anomalies",
+    prompt: "Find unusual values or anomalies in this dataset.",
+  },
+  {
+    icon: ShieldCheck,
+    label: "Check policy",
+    prompt: "Check this dataset against our security policy and list any violations.",
+  },
+  {
+    icon: Table2,
+    label: "Summarize workbook",
+    prompt: "Summarize this workbook: sheets, columns, missing values and the main totals.",
+  },
+];
 
 export default function ChatDetailPage({ params }: { params: Promise<{ chatId: string }> }) {
   const router = useRouter();
@@ -28,20 +53,16 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
   const [activeAnalysisId, setActiveAnalysisId] = useState<string | null>(null);
   const [analysisStatus, setAnalysisStatus] = useState<string>("");
+  const [streamText, setStreamText] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, analysisStatus]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, streamText, analysisStatus]);
 
-  // Load initial session data
   useEffect(() => {
     async function loadData() {
       try {
@@ -55,84 +76,102 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
         setChats(chatList);
         setMessages(msgList);
         setFiles(fileList);
-        if (fileList.length > 0 && selectedFileIds.length === 0) {
-          // Pre-select first file for convenience
-          setSelectedFileIds([fileList[0].id]);
-        }
-      } catch (err) {
+        setSelectedFileIds((current) => (current.length ? current : fileList.slice(0, 1).map((file) => file.id)));
+      } catch {
         router.push("/login");
       } finally {
         setLoading(false);
       }
     }
     loadData();
-  }, [chatId, router, selectedFileIds.length]);
+  }, [chatId, router]);
 
-  // SSE stream listener when activeAnalysisId is set
   useEffect(() => {
     if (!activeAnalysisId) return;
 
-    const eventSource = new EventSource(
-      api.getEventsUrl(activeAnalysisId)
-    );
+    const eventSource = new EventSource(api.getEventsUrl(activeAnalysisId));
+    let settled = false;
 
-    eventSource.addEventListener("analysis.status", (e: any) => {
+    const refresh = () => {
+      api.getMessages(chatId).then(setMessages).catch(() => undefined);
+    };
+
+    eventSource.addEventListener("analysis.status", (event: MessageEvent) => {
       try {
-        const data = JSON.parse(e.data);
-        setAnalysisStatus(data.status);
-      } catch {}
+        setAnalysisStatus(JSON.parse(event.data).status);
+      } catch {
+        /* ignore malformed frame */
+      }
     });
 
-    eventSource.addEventListener("assistant.delta", (e: any) => {
-      // streaming delta chunks
+    eventSource.addEventListener("assistant.delta", (event: MessageEvent) => {
+      try {
+        const delta = JSON.parse(event.data).delta;
+        if (typeof delta === "string" && delta) {
+          setStreamText((previous) => (previous ?? "") + delta);
+        }
+      } catch {
+        /* ignore malformed frame */
+      }
     });
 
-    eventSource.addEventListener("analysis.completed", (e: any) => {
-      try {
-        const data = JSON.parse(e.data);
-        setAnalysisStatus("completed");
-        // Refresh message list
-        api.getMessages(chatId).then(setMessages);
-      } catch {}
-      eventSource.close();
+    eventSource.addEventListener("analysis.completed", () => {
+      settled = true;
+      setAnalysisStatus("completed");
+      setStreamText(null);
       setActiveAnalysisId(null);
+      refresh();
+      eventSource.close();
     });
 
-    eventSource.addEventListener("analysis.failed", (e: any) => {
+    eventSource.addEventListener("analysis.failed", (event: MessageEvent) => {
+      settled = true;
       setAnalysisStatus("failed");
-      eventSource.close();
+      setStreamText(null);
       setActiveAnalysisId(null);
+      setError("The analysis could not be completed. Your question was kept in the thread.");
+      eventSource.close();
+      try {
+        const detail = JSON.parse(event.data)?.error;
+        if (typeof detail === "string" && detail) setError(detail);
+      } catch {
+        /* ignore */
+      }
     });
 
     eventSource.onerror = () => {
-      // Polling fallback
-      const timer = setInterval(async () => {
+      if (settled) return;
+      eventSource.close();
+      const timer = window.setInterval(async () => {
         try {
-          const ana = await api.getAnalysis(activeAnalysisId);
-          if (ana.status === "completed" || ana.status === "failed") {
-            setAnalysisStatus(ana.status);
-            clearInterval(timer);
+          const analysis = await api.getAnalysis(activeAnalysisId);
+          setAnalysisStatus(analysis.status);
+          if (analysis.status === "completed" || analysis.status === "failed") {
+            window.clearInterval(timer);
+            setStreamText(null);
             setActiveAnalysisId(null);
-            api.getMessages(chatId).then(setMessages);
-          } else {
-            setAnalysisStatus(ana.status);
+            if (analysis.status === "failed") {
+              setError("The analysis could not be completed. Your question was kept in the thread.");
+            }
+            refresh();
           }
         } catch {
-          clearInterval(timer);
+          window.clearInterval(timer);
         }
-      }, 1000);
-      eventSource.close();
+      }, 1500);
     };
 
     return () => {
+      settled = true;
       eventSource.close();
     };
   }, [activeAnalysisId, chatId]);
 
-  const handleSendMessage = async (content: string, fileIds: string[]) => {
-    try {
-      // Optimistic user message
-      const optMsg: ChatMessage = {
+  const handleSendMessage = useCallback(
+    async (content: string, fileIds: string[]) => {
+      setError(null);
+      setStreamText(null);
+      const optimistic: ChatMessage = {
         id: `opt_${Date.now()}`,
         chat_id: chatId,
         role: "user",
@@ -140,182 +179,187 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
         attachments: fileIds,
         created_at: new Date().toISOString(),
       };
-      setMessages((prev) => [...prev, optMsg]);
+      setMessages((previous) => [...previous, optimistic]);
       setAnalysisStatus("queued");
 
-      const resp = await api.sendMessage(chatId, content, fileIds);
-      if (resp.analysis_id) {
-        setActiveAnalysisId(resp.analysis_id);
+      try {
+        const response = await api.sendMessage(chatId, content, fileIds);
+        if (response.analysis_id) setActiveAnalysisId(response.analysis_id);
+      } catch (err) {
+        setAnalysisStatus("");
+        setError(err instanceof Error ? err.message : "Failed to send message.");
       }
-    } catch (err: any) {
-      alert(err.message || "Failed to send message.");
-    }
-  };
+    },
+    [chatId],
+  );
 
   const handleNewChat = async () => {
     try {
-      const newSession = await api.createChat("New Analysis");
-      router.push(`/chat/${newSession.id}`);
-    } catch (err: any) {
-      alert("Failed to create chat");
+      const session = await api.createChat("New Analysis");
+      router.push(`/chat/${session.id}`);
+    } catch {
+      setError("Could not start a new chat.");
     }
   };
 
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-950">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-slate-300" />
       </div>
     );
   }
 
-  const currentChat = chats.find((c) => c.id === chatId);
+  const currentChat = chats.find((chat) => chat.id === chatId);
+  const knownFiles = files.map((file) => ({
+    id: file.id,
+    original_name: file.original_name,
+    row_count: file.schema_profile?.row_count ?? null,
+  }));
+  const attachmentsFor = (ids?: string[]) =>
+    (ids ?? []).map((id) => {
+      const file = files.find((item) => item.id === id);
+      return {
+        id,
+        name: file?.original_name || "Dataset",
+        rows: file?.schema_profile?.row_count ?? null,
+        state: file?.status ?? null,
+      };
+    });
+
+  const busy = Boolean(activeAnalysisId);
+  const hasFiles = files.length > 0;
 
   return (
     <div className="flex h-screen bg-slate-950">
-      <Sidebar
-        user={user}
-        chats={chats}
-        activeChatId={chatId}
-        onNewChat={handleNewChat}
-      />
+      <Sidebar user={user} chats={chats} activeChatId={chatId} onNewChat={handleNewChat} />
 
-      <main className="flex flex-1 flex-col overflow-hidden">
-        {/* Chat Header */}
-        <header className="flex h-16 items-center justify-between border-b border-slate-800 bg-slate-900/60 px-6 backdrop-blur-md">
-          <div>
-            <h1 className="text-sm font-semibold text-white">
+      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-800/80 px-5 sm:px-6">
+          <div className="min-w-0">
+            <h1 className="truncate text-[13px] font-medium text-slate-100">
               {currentChat?.title || "Data Analysis Session"}
             </h1>
-            <p className="text-[11px] text-slate-400">
-              Deterministic Query Engine • Policy Verification Enabled
-            </p>
+            <p className="truncate text-[11px] text-slate-500">Deterministic query engine · policy verification</p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 rounded-full bg-emerald-950 px-2.5 py-1 text-xs font-medium text-emerald-400 border border-emerald-800/60">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Engine Online
-            </span>
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+            <span className={cn("h-1.5 w-1.5 rounded-full", hasFiles ? "bg-emerald-500" : "bg-slate-600")} />
+            {hasFiles ? `${files.length} dataset${files.length > 1 ? "s" : ""}` : "No datasets"}
           </div>
         </header>
 
-        {/* Message Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600/20 text-indigo-400 ring-1 ring-indigo-500/30">
-                <Sparkles className="h-6 w-6" />
-              </div>
-              <h2 className="mt-4 text-base font-semibold text-white">
-                Start Analytical Investigation
-              </h2>
-              <p className="mt-1 max-w-sm text-xs text-slate-400">
-                Ask questions over your datasets. Calculations execute through DuckDB and verify against company policy rule books.
-              </p>
-
-              <div className="mt-6 flex flex-wrap justify-center gap-2 max-w-md">
-                <button
-                  onClick={() =>
-                    handleSendMessage(
-                      "Show total incident count grouped by department where severity is Critical",
-                      selectedFileIds
-                    )
-                  }
-                  className="rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-slate-300 hover:border-indigo-500 hover:text-white transition text-left"
-                >
-                  📊 &quot;Show incident count by department for Critical severity&quot;
-                </button>
-                <button
-                  onClick={() =>
-                    handleSendMessage(
-                      "Evaluate this dataset against our email security policy for violations",
-                      selectedFileIds
-                    )
-                  }
-                  className="rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-slate-300 hover:border-indigo-500 hover:text-white transition text-left"
-                >
-                  🛡️ &quot;Check email logs against security policy SEC-EMAIL-001&quot;
-                </button>
-              </div>
-            </div>
-          ) : (
-            messages.map((msg) => {
-              const isUser = msg.role === "user";
-              const resultData = msg.metadata?.result;
-              return (
-                <div key={msg.id} className="space-y-3">
-                  <div
-                    className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}
-                  >
-                    {!isUser && (
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
-                        <Bot className="h-4 w-4" />
-                      </div>
-                    )}
-
-                    <div
-                      className={`max-w-2xl rounded-2xl px-4 py-3 text-xs leading-relaxed ${
-                        isUser
-                          ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                          : "border border-slate-800 bg-slate-900/90 text-slate-200 backdrop-blur-md"
-                      }`}
-                    >
-                      {isUser ? (
-                        <div className="whitespace-pre-wrap">{msg.content}</div>
-                      ) : (
-                        <MarkdownMessage content={msg.content} />
-                      )}
-                    </div>
-
-                    {isUser && (
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-slate-300">
-                        <UserIcon className="h-4 w-4" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Render verified result table for assistant message if present */}
-                  {!isUser && resultData?.columns && resultData?.rows && (
-                    <div className="pl-11 max-w-3xl">
-                      <ResultTable
-                        columns={resultData.columns}
-                        rows={resultData.rows}
-                        durationMs={resultData.duration_ms}
-                      />
-                    </div>
-                  )}
-                  {!isUser && msg.metadata?.provenance && (
-                    <div className="pl-11 max-w-3xl">
-                      <SourceEvidenceCard provenance={msg.metadata.provenance} />
-                    </div>
-                  )}
+        {messages.length === 0 && !busy ? (
+          <div className="flex flex-1 items-center justify-center overflow-y-auto px-5 py-10">
+            <div className="w-full max-w-xl">
+              <div className="mb-6 text-center">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-300 ring-1 ring-inset ring-indigo-400/20">
+                  <Sparkles className="h-5 w-5" />
                 </div>
-              );
-            })
-          )}
+                <h2 className="mt-3 text-[17px] font-semibold tracking-tight text-white">
+                  What would you like to analyze?
+                </h2>
+                <p className="mx-auto mt-1 max-w-sm text-[12.5px] leading-6 text-slate-400">
+                  Ask in English or Hinglish. Queries run through DuckDB and every answer is verified against your
+                  policy rules.
+                </p>
+              </div>
 
-          {/* Active Status Stepper */}
-          {activeAnalysisId && analysisStatus && (
-            <div className="flex gap-3 justify-start">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white">
-                <Bot className="h-4 w-4" />
+              <div className="grid gap-2 sm:grid-cols-2">
+                {QUICK_ACTIONS.map((action) => {
+                  const Icon = action.icon;
+                  return (
+                    <button
+                      key={action.label}
+                      type="button"
+                      disabled={!hasFiles}
+                      onClick={() => handleSendMessage(action.prompt, selectedFileIds)}
+                      className={cn(
+                        "group flex items-start gap-2.5 rounded-xl border border-slate-800 bg-slate-900/40 px-3 py-2.5 text-left transition",
+                        hasFiles
+                          ? "hover:border-slate-700 hover:bg-slate-900/80"
+                          : "cursor-not-allowed opacity-50",
+                      )}
+                    >
+                      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500 group-hover:text-indigo-300" />
+                      <span className="text-[12px] leading-5 text-slate-300">
+                        <span className="block font-medium text-slate-200">{action.label}</span>
+                        <span className="text-[11px] text-slate-500">{action.prompt}</span>
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-              <div className="w-full max-w-2xl">
-                <AnalysisStatusIndicator status={analysisStatus} />
-              </div>
+
+              {!hasFiles ? (
+                <p className="mt-4 text-center text-[11.5px] text-slate-500">
+                  Upload a dataset first —{" "}
+                  <Link href="/files" className="inline-flex items-center gap-0.5 text-indigo-300 hover:text-indigo-200">
+                    open Datasets <ArrowUpRight className="h-3 w-3" />
+                  </Link>
+                </p>
+              ) : null}
             </div>
-          )}
+          </div>
+        ) : (
+          <Conversation>
+            <div className="space-y-7">
+              {messages.map((message) => {
+                const isUser = message.role === "user";
+                if (isUser) {
+                  return (
+                    <Message key={message.id} role="user">
+                      <div className="whitespace-pre-wrap">{message.content}</div>
+                      {message.attachments?.length ? (
+                        <Attachments items={attachmentsFor(message.attachments)} compact className="mt-2 justify-end" />
+                      ) : null}
+                    </Message>
+                  );
+                }
 
-          <div ref={messagesEndRef} />
-        </div>
+                return (
+                  <Message key={message.id} role="assistant">
+                    <AnswerBody
+                      content={message.content}
+                      result={message.metadata?.result}
+                      verification={message.metadata?.verification}
+                      provenance={message.metadata?.provenance}
+                      files={knownFiles}
+                    />
+                  </Message>
+                );
+              })}
 
-        {/* Composer */}
+              {busy ? (
+                <Message role="assistant">
+                  {streamText ? (
+                    <AnswerBody content={streamText} streaming />
+                  ) : (
+                    <AnalysisStatusIndicator status={analysisStatus || "queued"} />
+                  )}
+                </Message>
+              ) : null}
+
+              {error ? (
+                <div className="flex items-start gap-2 rounded-lg border border-red-500/25 bg-red-500/[0.06] px-3 py-2 text-[12px] text-red-200">
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" />
+                  <div>
+                    <div className="font-medium">Something went wrong</div>
+                    <div className="mt-0.5 text-red-200/70">{error}</div>
+                  </div>
+                </div>
+              ) : null}
+
+              <div ref={bottomRef} />
+            </div>
+          </Conversation>
+        )}
+
         <Composer
           files={files}
           selectedFileIds={selectedFileIds}
           onSelectFileIds={setSelectedFileIds}
           onSend={handleSendMessage}
-          disabled={Boolean(activeAnalysisId)}
+          disabled={busy}
         />
       </main>
     </div>

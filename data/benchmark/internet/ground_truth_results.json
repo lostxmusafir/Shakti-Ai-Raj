@@ -1,0 +1,3685 @@
+{
+  "results": {
+    "internet-001-q1": {
+      "q_id": "internet-001-q1",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "scalar",
+      "columns": [
+        "total_order_lines"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "total_order_lines",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-001-q2": {
+      "q_id": "internet-001-q2",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "row",
+      "columns": [
+        "Country",
+        "order_lines"
+      ],
+      "rows": [
+        [
+          "United Kingdom",
+          18284
+        ]
+      ],
+      "primary_number": 18284.0,
+      "measure_column": "order_lines",
+      "measures": [
+        18284.0
+      ]
+    },
+    "internet-001-q3": {
+      "q_id": "internet-001-q3",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "scalar",
+      "columns": [
+        "lines_without_customer"
+      ],
+      "rows": [
+        [
+          4963
+        ]
+      ],
+      "primary_number": 4963.0,
+      "measure_column": "lines_without_customer",
+      "measures": [
+        4963.0
+      ]
+    },
+    "internet-001-q4": {
+      "q_id": "internet-001-q4",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "row",
+      "columns": [
+        "country",
+        "revenue",
+        "share_pct"
+      ],
+      "rows": [
+        [
+          "United Kingdom",
+          415650.24,
+          86.71
+        ]
+      ],
+      "primary_number": 86.71,
+      "measure_column": "share_pct",
+      "measures": [
+        86.71
+      ]
+    },
+    "internet-001-q5": {
+      "q_id": "internet-001-q5",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-001-q6": {
+      "q_id": "internet-001-q6",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "rows",
+      "columns": [
+        "Country",
+        "order_lines"
+      ],
+      "rows": [
+        [
+          "United Kingdom",
+          18284
+        ],
+        [
+          "Germany",
+          343
+        ],
+        [
+          "EIRE",
+          335
+        ],
+        [
+          "France",
+          308
+        ],
+        [
+          "Netherlands",
+          98
+        ]
+      ],
+      "primary_number": 18284.0,
+      "measure_column": "order_lines",
+      "measures": [
+        18284.0,
+        343.0,
+        335.0,
+        308.0,
+        98.0
+      ]
+    },
+    "internet-001-q7": {
+      "q_id": "internet-001-q7",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "rows",
+      "columns": [
+        "Description",
+        "order_lines"
+      ],
+      "rows": [
+        [
+          "WHITE HANGING HEART T-LIGHT HOLDER",
+          88
+        ],
+        [
+          "JUMBO BAG RED RETROSPOT",
+          84
+        ],
+        [
+          "REGENCY CAKESTAND 3 TIER",
+          71
+        ],
+        [
+          "ASSORTED COLOUR BIRD ORNAMENT",
+          63
+        ],
+        [
+          "PARTY BUNTING",
+          59
+        ]
+      ],
+      "primary_number": 88.0,
+      "measure_column": "order_lines",
+      "measures": [
+        88.0,
+        84.0,
+        71.0,
+        63.0,
+        59.0
+      ]
+    },
+    "internet-001-q8": {
+      "q_id": "internet-001-q8",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "row",
+      "columns": [
+        "Description",
+        "revenue"
+      ],
+      "rows": [
+        [
+          "MEDIUM CERAMIC TOP STORAGE JAR",
+          77272.19
+        ]
+      ],
+      "primary_number": 77272.19,
+      "measure_column": "revenue",
+      "measures": [
+        77272.19
+      ]
+    },
+    "internet-002-q1": {
+      "q_id": "internet-002-q1",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "scalar",
+      "columns": [
+        "total_profit"
+      ],
+      "rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "primary_number": 16893702.26,
+      "measure_column": "total_profit",
+      "measures": [
+        16893702.26
+      ]
+    },
+    "internet-002-q2": {
+      "q_id": "internet-002-q2",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "row",
+      "columns": [
+        "Country",
+        "total_sales"
+      ],
+      "rows": [
+        [
+          "United States of America",
+          25029830.17
+        ]
+      ],
+      "primary_number": 25029830.17,
+      "measure_column": "total_sales",
+      "measures": [
+        25029830.17
+      ]
+    },
+    "internet-002-q3": {
+      "q_id": "internet-002-q3",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "scalar",
+      "columns": [
+        "units_sold"
+      ],
+      "rows": [
+        [
+          98412.0
+        ]
+      ],
+      "primary_number": 98412.0,
+      "measure_column": "units_sold",
+      "measures": [
+        98412.0
+      ]
+    },
+    "internet-002-q4": {
+      "q_id": "internet-002-q4",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "row",
+      "columns": [
+        "product",
+        "profit",
+        "share_pct"
+      ],
+      "rows": [
+        [
+          "Paseo",
+          4797437.95,
+          28.4
+        ]
+      ],
+      "primary_number": 28.4,
+      "measure_column": "share_pct",
+      "measures": [
+        28.4
+      ]
+    },
+    "internet-002-q5": {
+      "q_id": "internet-002-q5",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-003-q1": {
+      "q_id": "internet-003-q1",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "scalar",
+      "columns": [
+        "total_customers"
+      ],
+      "rows": [
+        [
+          440
+        ]
+      ],
+      "primary_number": 440.0,
+      "measure_column": "total_customers",
+      "measures": [
+        440.0
+      ]
+    },
+    "internet-003-q2": {
+      "q_id": "internet-003-q2",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "row",
+      "columns": [
+        "Channel",
+        "avg_grocery"
+      ],
+      "rows": [
+        [
+          2,
+          16322.85
+        ]
+      ],
+      "primary_number": 16322.85,
+      "measure_column": "avg_grocery",
+      "measures": [
+        16322.85
+      ]
+    },
+    "internet-003-q3": {
+      "q_id": "internet-003-q3",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "scalar",
+      "columns": [
+        "customers"
+      ],
+      "rows": [
+        [
+          45
+        ]
+      ],
+      "primary_number": 45.0,
+      "measure_column": "customers",
+      "measures": [
+        45.0
+      ]
+    },
+    "internet-003-q4": {
+      "q_id": "internet-003-q4",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "scalar",
+      "columns": [
+        "channel_1_share_pct"
+      ],
+      "rows": [
+        [
+          76.05
+        ]
+      ],
+      "primary_number": 76.05,
+      "measure_column": "channel_1_share_pct",
+      "measures": [
+        76.05
+      ]
+    },
+    "internet-003-q5": {
+      "q_id": "internet-003-q5",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-003-q6": {
+      "q_id": "internet-003-q6",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "rows",
+      "columns": [
+        "Region",
+        "total_spend"
+      ],
+      "rows": [
+        [
+          3,
+          10677599
+        ],
+        [
+          1,
+          2386813
+        ],
+        [
+          2,
+          1555088
+        ]
+      ],
+      "primary_number": 10677599.0,
+      "measure_column": "total_spend",
+      "measures": [
+        10677599.0,
+        2386813.0,
+        1555088.0
+      ]
+    },
+    "internet-003-q7": {
+      "q_id": "internet-003-q7",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "rows",
+      "columns": [
+        "Region",
+        "total_spend"
+      ],
+      "rows": [
+        [
+          3,
+          4935522
+        ],
+        [
+          1,
+          848471
+        ],
+        [
+          2,
+          835938
+        ]
+      ],
+      "primary_number": 4935522.0,
+      "measure_column": "total_spend",
+      "measures": [
+        4935522.0,
+        848471.0,
+        835938.0
+      ]
+    },
+    "internet-003-q8": {
+      "q_id": "internet-003-q8",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "rows",
+      "columns": [
+        "Region",
+        "avg_total_spend"
+      ],
+      "rows": [
+        [
+          1,
+          47137.28
+        ],
+        [
+          3,
+          47004.97
+        ],
+        [
+          2,
+          43996.74
+        ]
+      ],
+      "primary_number": 47137.28,
+      "measure_column": "avg_total_spend",
+      "measures": [
+        47137.28,
+        47004.97,
+        43996.74
+      ]
+    },
+    "internet-004-q1": {
+      "q_id": "internet-004-q1",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "scalar",
+      "columns": [
+        "inspection_records"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "inspection_records",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-004-q2": {
+      "q_id": "internet-004-q2",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "row",
+      "columns": [
+        "boro",
+        "inspections"
+      ],
+      "rows": [
+        [
+          "Manhattan",
+          7505
+        ]
+      ],
+      "primary_number": 7505.0,
+      "measure_column": "inspections",
+      "measures": [
+        7505.0
+      ]
+    },
+    "internet-004-q3": {
+      "q_id": "internet-004-q3",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "scalar",
+      "columns": [
+        "critical_high_score"
+      ],
+      "rows": [
+        [
+          2265
+        ]
+      ],
+      "primary_number": 2265.0,
+      "measure_column": "critical_high_score",
+      "measures": [
+        2265.0
+      ]
+    },
+    "internet-004-q4": {
+      "q_id": "internet-004-q4",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "scalar",
+      "columns": [
+        "critical_share_pct"
+      ],
+      "rows": [
+        [
+          51.71
+        ]
+      ],
+      "primary_number": 51.71,
+      "measure_column": "critical_share_pct",
+      "measures": [
+        51.71
+      ]
+    },
+    "internet-004-q5": {
+      "q_id": "internet-004-q5",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-005-q1": {
+      "q_id": "internet-005-q1",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "scalar",
+      "columns": [
+        "deposits"
+      ],
+      "rows": [
+        [
+          2232
+        ]
+      ],
+      "primary_number": 2232.0,
+      "measure_column": "deposits",
+      "measures": [
+        2232.0
+      ]
+    },
+    "internet-005-q2": {
+      "q_id": "internet-005-q2",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "row",
+      "columns": [
+        "job",
+        "conversion_pct",
+        "customers"
+      ],
+      "rows": [
+        [
+          "student",
+          29.62,
+          395
+        ]
+      ],
+      "primary_number": 29.62,
+      "measure_column": "conversion_pct",
+      "measures": [
+        29.62
+      ]
+    },
+    "internet-005-q3": {
+      "q_id": "internet-005-q3",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "scalar",
+      "columns": [
+        "deposits"
+      ],
+      "rows": [
+        [
+          1199
+        ]
+      ],
+      "primary_number": 1199.0,
+      "measure_column": "deposits",
+      "measures": [
+        1199.0
+      ]
+    },
+    "internet-005-q4": {
+      "q_id": "internet-005-q4",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "columns": [
+        "contact",
+        "conversion_pct",
+        "customers"
+      ],
+      "rows": [
+        [
+          "cellular",
+          14.36,
+          12680
+        ],
+        [
+          "telephone",
+          5.61,
+          7320
+        ]
+      ],
+      "primary_number": 14.36,
+      "measure_column": "conversion_pct",
+      "measures": [
+        14.36,
+        5.61
+      ]
+    },
+    "internet-005-q5": {
+      "q_id": "internet-005-q5",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-005-q6": {
+      "q_id": "internet-005-q6",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "columns": [
+        "job",
+        "conversion_pct",
+        "customers"
+      ],
+      "rows": [
+        [
+          "student",
+          29.62,
+          395
+        ],
+        [
+          "retired",
+          25.03,
+          811
+        ],
+        [
+          "unemployed",
+          14.0,
+          493
+        ]
+      ],
+      "primary_number": 29.62,
+      "measure_column": "conversion_pct",
+      "measures": [
+        29.62,
+        25.03,
+        14.0
+      ]
+    },
+    "internet-005-q7": {
+      "q_id": "internet-005-q7",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "columns": [
+        "job",
+        "conversion_pct",
+        "customers"
+      ],
+      "rows": [
+        [
+          "student",
+          42.86,
+          14
+        ],
+        [
+          "retired",
+          25.7,
+          607
+        ],
+        [
+          "unemployed",
+          12.67,
+          300
+        ]
+      ],
+      "primary_number": 42.86,
+      "measure_column": "conversion_pct",
+      "measures": [
+        42.86,
+        25.7,
+        12.67
+      ]
+    },
+    "internet-005-q8": {
+      "q_id": "internet-005-q8",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "columns": [
+        "job",
+        "customers",
+        "deposits",
+        "conversion_pct"
+      ],
+      "rows": [
+        [
+          "student",
+          14,
+          6,
+          42.86
+        ],
+        [
+          "retired",
+          607,
+          156,
+          25.7
+        ],
+        [
+          "unemployed",
+          300,
+          38,
+          12.67
+        ]
+      ],
+      "primary_number": 42.86,
+      "measure_column": "conversion_pct",
+      "measures": [
+        42.86,
+        25.7,
+        12.67
+      ]
+    },
+    "internet-006-q1": {
+      "q_id": "internet-006-q1",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "scalar",
+      "columns": [
+        "customers"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "customers",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-006-q2": {
+      "q_id": "internet-006-q2",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "row",
+      "columns": [
+        "EDUCATION",
+        "defaults"
+      ],
+      "rows": [
+        [
+          2,
+          2232
+        ]
+      ],
+      "primary_number": 2232.0,
+      "measure_column": "defaults",
+      "measures": [
+        2232.0
+      ]
+    },
+    "internet-006-q3": {
+      "q_id": "internet-006-q3",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "scalar",
+      "columns": [
+        "defaults"
+      ],
+      "rows": [
+        [
+          951
+        ]
+      ],
+      "primary_number": 951.0,
+      "measure_column": "defaults",
+      "measures": [
+        951.0
+      ]
+    },
+    "internet-006-q4": {
+      "q_id": "internet-006-q4",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "rows",
+      "columns": [
+        "age_band",
+        "default_rate_pct",
+        "customers"
+      ],
+      "rows": [
+        [
+          "30 plus",
+          22.02,
+          13571
+        ],
+        [
+          "under 30",
+          22.91,
+          6429
+        ]
+      ],
+      "primary_number": 22.02,
+      "measure_column": "default_rate_pct",
+      "measures": [
+        22.02,
+        22.91
+      ]
+    },
+    "internet-006-q5": {
+      "q_id": "internet-006-q5",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-007-q1": {
+      "q_id": "internet-007-q1",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "scalar",
+      "columns": [
+        "applicants"
+      ],
+      "rows": [
+        [
+          1000
+        ]
+      ],
+      "primary_number": 1000.0,
+      "measure_column": "applicants",
+      "measures": [
+        1000.0
+      ]
+    },
+    "internet-007-q2": {
+      "q_id": "internet-007-q2",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "row",
+      "columns": [
+        "purpose",
+        "bad_applicants"
+      ],
+      "rows": [
+        [
+          "new car",
+          89
+        ]
+      ],
+      "primary_number": 89.0,
+      "measure_column": "bad_applicants",
+      "measures": [
+        89.0
+      ]
+    },
+    "internet-007-q3": {
+      "q_id": "internet-007-q3",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "scalar",
+      "columns": [
+        "applicants"
+      ],
+      "rows": [
+        [
+          28
+        ]
+      ],
+      "primary_number": 28.0,
+      "measure_column": "applicants",
+      "measures": [
+        28.0
+      ]
+    },
+    "internet-007-q4": {
+      "q_id": "internet-007-q4",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "row",
+      "columns": [
+        "purpose",
+        "bad_rate_pct",
+        "applicants"
+      ],
+      "rows": [
+        [
+          "education",
+          44.0,
+          50
+        ]
+      ],
+      "primary_number": 44.0,
+      "measure_column": "bad_rate_pct",
+      "measures": [
+        44.0
+      ]
+    },
+    "internet-007-q5": {
+      "q_id": "internet-007-q5",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-008-q1": {
+      "q_id": "internet-008-q1",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "scalar",
+      "columns": [
+        "total_payment_amount"
+      ],
+      "rows": [
+        [
+          6314308.21
+        ]
+      ],
+      "primary_number": 6314308.21,
+      "measure_column": "total_payment_amount",
+      "measures": [
+        6314308.21
+      ]
+    },
+    "internet-008-q2": {
+      "q_id": "internet-008-q2",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "row",
+      "columns": [
+        "fee_code_name",
+        "total_paid"
+      ],
+      "rows": [
+        [
+          "TP - Tobacco Fine Violation",
+          872207.62
+        ]
+      ],
+      "primary_number": 872207.62,
+      "measure_column": "total_paid",
+      "measures": [
+        872207.62
+      ]
+    },
+    "internet-008-q3": {
+      "q_id": "internet-008-q3",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "scalar",
+      "columns": [
+        "voided_payments"
+      ],
+      "rows": [
+        [
+          1305
+        ]
+      ],
+      "primary_number": 1305.0,
+      "measure_column": "voided_payments",
+      "measures": [
+        1305.0
+      ]
+    },
+    "internet-008-q4": {
+      "q_id": "internet-008-q4",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "scalar",
+      "columns": [
+        "avg_payment"
+      ],
+      "rows": [
+        [
+          372.96
+        ]
+      ],
+      "primary_number": 372.96,
+      "measure_column": "avg_payment",
+      "measures": [
+        372.96
+      ]
+    },
+    "internet-008-q5": {
+      "q_id": "internet-008-q5",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-009-q1": {
+      "q_id": "internet-009-q1",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "trips"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "trips",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-009-q2": {
+      "q_id": "internet-009-q2",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "row",
+      "columns": [
+        "payment_type",
+        "trips"
+      ],
+      "rows": [
+        [
+          1,
+          14217
+        ]
+      ],
+      "primary_number": 1.0,
+      "measure_column": "payment_type",
+      "measures": [
+        1.0
+      ]
+    },
+    "internet-009-q3": {
+      "q_id": "internet-009-q3",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "long_card_trips"
+      ],
+      "rows": [
+        [
+          1052
+        ]
+      ],
+      "primary_number": 1052.0,
+      "measure_column": "long_card_trips",
+      "measures": [
+        1052.0
+      ]
+    },
+    "internet-009-q4": {
+      "q_id": "internet-009-q4",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "columns": [
+        "payment_type",
+        "avg_total_amount",
+        "trips"
+      ],
+      "rows": [
+        [
+          1,
+          28.35,
+          14217
+        ],
+        [
+          2,
+          21.61,
+          2220
+        ]
+      ],
+      "primary_number": 28.35,
+      "measure_column": "avg_total_amount",
+      "measures": [
+        28.35,
+        21.61
+      ]
+    },
+    "internet-009-q5": {
+      "q_id": "internet-009-q5",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-009-q6": {
+      "q_id": "internet-009-q6",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "columns": [
+        "PULocationID",
+        "trips"
+      ],
+      "rows": [
+        [
+          236,
+          936
+        ],
+        [
+          161,
+          930
+        ],
+        [
+          237,
+          919
+        ],
+        [
+          132,
+          845
+        ],
+        [
+          230,
+          737
+        ]
+      ],
+      "primary_number": 236.0,
+      "measure_column": "PULocationID",
+      "measures": [
+        236.0,
+        161.0,
+        237.0,
+        132.0,
+        230.0
+      ]
+    },
+    "internet-009-q7": {
+      "q_id": "internet-009-q7",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "columns": [
+        "PULocationID",
+        "trips"
+      ],
+      "rows": [
+        [
+          237,
+          730
+        ],
+        [
+          236,
+          718
+        ],
+        [
+          161,
+          691
+        ],
+        [
+          132,
+          583
+        ],
+        [
+          186,
+          552
+        ]
+      ],
+      "primary_number": 237.0,
+      "measure_column": "PULocationID",
+      "measures": [
+        237.0,
+        236.0,
+        161.0,
+        132.0,
+        186.0
+      ]
+    },
+    "internet-009-q8": {
+      "q_id": "internet-009-q8",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "columns": [
+        "PULocationID",
+        "trips",
+        "avg_fare"
+      ],
+      "rows": [
+        [
+          237,
+          730,
+          12.24
+        ],
+        [
+          236,
+          718,
+          12.95
+        ],
+        [
+          161,
+          691,
+          14.48
+        ],
+        [
+          132,
+          583,
+          67.9
+        ],
+        [
+          186,
+          552,
+          15.94
+        ]
+      ],
+      "primary_number": 12.24,
+      "measure_column": "avg_fare",
+      "measures": [
+        12.24,
+        12.95,
+        14.48,
+        67.9,
+        15.94
+      ]
+    },
+    "internet-010-q1": {
+      "q_id": "internet-010-q1",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "trips"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "trips",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-010-q2": {
+      "q_id": "internet-010-q2",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "row",
+      "columns": [
+        "PULocationID",
+        "trips"
+      ],
+      "rows": [
+        [
+          74,
+          4775
+        ]
+      ],
+      "primary_number": 74.0,
+      "measure_column": "PULocationID",
+      "measures": [
+        74.0
+      ]
+    },
+    "internet-010-q3": {
+      "q_id": "internet-010-q3",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "avg_fare"
+      ],
+      "rows": [
+        [
+          25.16
+        ]
+      ],
+      "primary_number": 25.16,
+      "measure_column": "avg_fare",
+      "measures": [
+        25.16
+      ]
+    },
+    "internet-010-q4": {
+      "q_id": "internet-010-q4",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "airport_rate_share_pct"
+      ],
+      "rows": [
+        [
+          3.98
+        ]
+      ],
+      "primary_number": 3.98,
+      "measure_column": "airport_rate_share_pct",
+      "measures": [
+        3.98
+      ]
+    },
+    "internet-010-q5": {
+      "q_id": "internet-010-q5",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-011-q1": {
+      "q_id": "internet-011-q1",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "trips"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "trips",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-011-q2": {
+      "q_id": "internet-011-q2",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "row",
+      "columns": [
+        "dispatching_base_num",
+        "trips"
+      ],
+      "rows": [
+        [
+          "B03614",
+          1120
+        ]
+      ],
+      "primary_number": 1120.0,
+      "measure_column": "trips",
+      "measures": [
+        1120.0
+      ]
+    },
+    "internet-011-q3": {
+      "q_id": "internet-011-q3",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "missing_pickup"
+      ],
+      "rows": [
+        [
+          16617
+        ]
+      ],
+      "primary_number": 16617.0,
+      "measure_column": "missing_pickup",
+      "measures": [
+        16617.0
+      ]
+    },
+    "internet-011-q4": {
+      "q_id": "internet-011-q4",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "scalar",
+      "columns": [
+        "pickup_share_pct"
+      ],
+      "rows": [
+        [
+          16.91
+        ]
+      ],
+      "primary_number": 16.91,
+      "measure_column": "pickup_share_pct",
+      "measures": [
+        16.91
+      ]
+    },
+    "internet-011-q5": {
+      "q_id": "internet-011-q5",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-012-q1": {
+      "q_id": "internet-012-q1",
+      "dataset_id": "openml-airlines",
+      "answer_type": "scalar",
+      "columns": [
+        "flights"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "flights",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-012-q2": {
+      "q_id": "internet-012-q2",
+      "dataset_id": "openml-airlines",
+      "answer_type": "row",
+      "columns": [
+        "Airline",
+        "flights"
+      ],
+      "rows": [
+        [
+          "WN",
+          3457
+        ]
+      ],
+      "primary_number": 3457.0,
+      "measure_column": "flights",
+      "measures": [
+        3457.0
+      ]
+    },
+    "internet-012-q3": {
+      "q_id": "internet-012-q3",
+      "dataset_id": "openml-airlines",
+      "answer_type": "scalar",
+      "columns": [
+        "long_delays"
+      ],
+      "rows": [
+        [
+          4215
+        ]
+      ],
+      "primary_number": 4215.0,
+      "measure_column": "long_delays",
+      "measures": [
+        4215.0
+      ]
+    },
+    "internet-012-q4": {
+      "q_id": "internet-012-q4",
+      "dataset_id": "openml-airlines",
+      "answer_type": "rows",
+      "columns": [
+        "airline",
+        "flights",
+        "delay_pct"
+      ],
+      "rows": [
+        [
+          "WN",
+          3457,
+          68.96
+        ],
+        [
+          "DL",
+          2300,
+          44.65
+        ],
+        [
+          "AA",
+          1722,
+          39.84
+        ],
+        [
+          "OO",
+          1708,
+          45.14
+        ],
+        [
+          "MQ",
+          1351,
+          35.53
+        ]
+      ],
+      "primary_number": 68.96,
+      "measure_column": "delay_pct",
+      "measures": [
+        68.96,
+        44.65,
+        39.84,
+        45.14,
+        35.53
+      ]
+    },
+    "internet-012-q5": {
+      "q_id": "internet-012-q5",
+      "dataset_id": "openml-airlines",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-013-q1": {
+      "q_id": "internet-013-q1",
+      "dataset_id": "chicago-employees",
+      "answer_type": "scalar",
+      "columns": [
+        "employees"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "employees",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-013-q2": {
+      "q_id": "internet-013-q2",
+      "dataset_id": "chicago-employees",
+      "answer_type": "row",
+      "columns": [
+        "department",
+        "employees"
+      ],
+      "rows": [
+        [
+          "CHICAGO POLICE DEPARTMENT",
+          7598
+        ]
+      ],
+      "primary_number": 7598.0,
+      "measure_column": "employees",
+      "measures": [
+        7598.0
+      ]
+    },
+    "internet-013-q3": {
+      "q_id": "internet-013-q3",
+      "dataset_id": "chicago-employees",
+      "answer_type": "scalar",
+      "columns": [
+        "part_time_hourly"
+      ],
+      "rows": [
+        [
+          652
+        ]
+      ],
+      "primary_number": 652.0,
+      "measure_column": "part_time_hourly",
+      "measures": [
+        652.0
+      ]
+    },
+    "internet-013-q4": {
+      "q_id": "internet-013-q4",
+      "dataset_id": "chicago-employees",
+      "answer_type": "scalar",
+      "columns": [
+        "avg_annual_salary"
+      ],
+      "rows": [
+        [
+          117995.81
+        ]
+      ],
+      "primary_number": 117995.81,
+      "measure_column": "avg_annual_salary",
+      "measures": [
+        117995.81
+      ]
+    },
+    "internet-013-q5": {
+      "q_id": "internet-013-q5",
+      "dataset_id": "chicago-employees",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-013-q6": {
+      "q_id": "internet-013-q6",
+      "dataset_id": "chicago-employees",
+      "answer_type": "rows",
+      "columns": [
+        "department",
+        "employees"
+      ],
+      "rows": [
+        [
+          "CHICAGO POLICE DEPARTMENT",
+          7598
+        ],
+        [
+          "CHICAGO FIRE DEPARTMENT",
+          2896
+        ],
+        [
+          "CHICAGO DEPARTMENT OF AVIATION",
+          1375
+        ]
+      ],
+      "primary_number": 7598.0,
+      "measure_column": "employees",
+      "measures": [
+        7598.0,
+        2896.0,
+        1375.0
+      ]
+    },
+    "internet-013-q7": {
+      "q_id": "internet-013-q7",
+      "dataset_id": "chicago-employees",
+      "answer_type": "rows",
+      "columns": [
+        "department",
+        "employees"
+      ],
+      "rows": [
+        [
+          "CHICAGO POLICE DEPARTMENT",
+          7571
+        ],
+        [
+          "CHICAGO FIRE DEPARTMENT",
+          2896
+        ],
+        [
+          "CHICAGO DEPARTMENT OF AVIATION",
+          1360
+        ]
+      ],
+      "primary_number": 7571.0,
+      "measure_column": "employees",
+      "measures": [
+        7571.0,
+        2896.0,
+        1360.0
+      ]
+    },
+    "internet-013-q8": {
+      "q_id": "internet-013-q8",
+      "dataset_id": "chicago-employees",
+      "answer_type": "rows",
+      "columns": [
+        "department",
+        "employees",
+        "avg_annual_salary"
+      ],
+      "rows": [
+        [
+          "CHICAGO POLICE DEPARTMENT",
+          7571,
+          117995.81
+        ],
+        [
+          "CHICAGO FIRE DEPARTMENT",
+          2896,
+          129715.06
+        ],
+        [
+          "CHICAGO DEPARTMENT OF AVIATION",
+          1360,
+          99938.33
+        ]
+      ],
+      "primary_number": 117995.81,
+      "measure_column": "avg_annual_salary",
+      "measures": [
+        117995.81,
+        129715.06,
+        99938.33
+      ]
+    },
+    "internet-014-q1": {
+      "q_id": "internet-014-q1",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "scalar",
+      "columns": [
+        "payroll_records"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "payroll_records",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-014-q2": {
+      "q_id": "internet-014-q2",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "row",
+      "columns": [
+        "title_description",
+        "records"
+      ],
+      "rows": [
+        [
+          "CHILD PROTECTIVE SPECIALIST",
+          6730
+        ]
+      ],
+      "primary_number": 6730.0,
+      "measure_column": "records",
+      "measures": [
+        6730.0
+      ]
+    },
+    "internet-014-q3": {
+      "q_id": "internet-014-q3",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "scalar",
+      "columns": [
+        "ceased_records"
+      ],
+      "rows": [
+        [
+          3921
+        ]
+      ],
+      "primary_number": 3921.0,
+      "measure_column": "ceased_records",
+      "measures": [
+        3921.0
+      ]
+    },
+    "internet-014-q4": {
+      "q_id": "internet-014-q4",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "rows",
+      "columns": [
+        "work_location_borough",
+        "avg_base_salary",
+        "records"
+      ],
+      "rows": [
+        [
+          "BROOKLYN",
+          66596.97,
+          3823
+        ],
+        [
+          "MANHATTAN",
+          80448.14,
+          9748
+        ]
+      ],
+      "primary_number": 66596.97,
+      "measure_column": "avg_base_salary",
+      "measures": [
+        66596.97,
+        80448.14
+      ]
+    },
+    "internet-014-q5": {
+      "q_id": "internet-014-q5",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-015-q1": {
+      "q_id": "internet-015-q1",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "scalar",
+      "columns": [
+        "postings"
+      ],
+      "rows": [
+        [
+          2622
+        ]
+      ],
+      "primary_number": 2622.0,
+      "measure_column": "postings",
+      "measures": [
+        2622.0
+      ]
+    },
+    "internet-015-q2": {
+      "q_id": "internet-015-q2",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "row",
+      "columns": [
+        "agency",
+        "postings"
+      ],
+      "rows": [
+        [
+          "DEPT OF HEALTH/MENTAL HYGIENE",
+          548
+        ]
+      ],
+      "primary_number": 548.0,
+      "measure_column": "postings",
+      "measures": [
+        548.0
+      ]
+    },
+    "internet-015-q3": {
+      "q_id": "internet-015-q3",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "scalar",
+      "columns": [
+        "multi_position_postings"
+      ],
+      "rows": [
+        [
+          431
+        ]
+      ],
+      "primary_number": 431.0,
+      "measure_column": "multi_position_postings",
+      "measures": [
+        431.0
+      ]
+    },
+    "internet-015-q4": {
+      "q_id": "internet-015-q4",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "scalar",
+      "columns": [
+        "avg_upper_salary"
+      ],
+      "rows": [
+        [
+          101691.05
+        ]
+      ],
+      "primary_number": 101691.05,
+      "measure_column": "avg_upper_salary",
+      "measures": [
+        101691.05
+      ]
+    },
+    "internet-015-q5": {
+      "q_id": "internet-015-q5",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-016-q1": {
+      "q_id": "internet-016-q1",
+      "dataset_id": "openml-adult",
+      "answer_type": "scalar",
+      "columns": [
+        "people"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "people",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-016-q2": {
+      "q_id": "internet-016-q2",
+      "dataset_id": "openml-adult",
+      "answer_type": "row",
+      "columns": [
+        "occupation",
+        "people"
+      ],
+      "rows": [
+        [
+          " Craft-repair",
+          2559
+        ]
+      ],
+      "primary_number": 2559.0,
+      "measure_column": "people",
+      "measures": [
+        2559.0
+      ]
+    },
+    "internet-016-q3": {
+      "q_id": "internet-016-q3",
+      "dataset_id": "openml-adult",
+      "answer_type": "scalar",
+      "columns": [
+        "people"
+      ],
+      "rows": [
+        [
+          0
+        ]
+      ],
+      "primary_number": 0.0,
+      "measure_column": "people",
+      "measures": [
+        0.0
+      ]
+    },
+    "internet-016-q4": {
+      "q_id": "internet-016-q4",
+      "dataset_id": "openml-adult",
+      "answer_type": "row",
+      "columns": [
+        "education",
+        "high_income_pct",
+        "people"
+      ],
+      "rows": [
+        [
+          " HS-grad",
+          0.0,
+          6469
+        ]
+      ],
+      "primary_number": 0.0,
+      "measure_column": "high_income_pct",
+      "measures": [
+        0.0
+      ]
+    },
+    "internet-016-q5": {
+      "q_id": "internet-016-q5",
+      "dataset_id": "openml-adult",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-017-q1": {
+      "q_id": "internet-017-q1",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "scalar",
+      "columns": [
+        "contracts"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "contracts",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-017-q2": {
+      "q_id": "internet-017-q2",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "row",
+      "columns": [
+        "department",
+        "total_award"
+      ],
+      "rows": [
+        [
+          "CHICAGO DEPARTMENT OF PUBLIC HEALTH",
+          6425816254.8
+        ]
+      ],
+      "primary_number": 6425816254.8,
+      "measure_column": "total_award",
+      "measures": [
+        6425816254.8
+      ]
+    },
+    "internet-017-q3": {
+      "q_id": "internet-017-q3",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "scalar",
+      "columns": [
+        "negative_awards"
+      ],
+      "rows": [
+        [
+          4363
+        ]
+      ],
+      "primary_number": 4363.0,
+      "measure_column": "negative_awards",
+      "measures": [
+        4363.0
+      ]
+    },
+    "internet-017-q4": {
+      "q_id": "internet-017-q4",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "scalar",
+      "columns": [
+        "pct_over_one_million"
+      ],
+      "rows": [
+        [
+          3.6
+        ]
+      ],
+      "primary_number": 3.6,
+      "measure_column": "pct_over_one_million",
+      "measures": [
+        3.6
+      ]
+    },
+    "internet-017-q5": {
+      "q_id": "internet-017-q5",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-017-q6": {
+      "q_id": "internet-017-q6",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "rows",
+      "columns": [
+        "vendor_name",
+        "total_award"
+      ],
+      "rows": [
+        [
+          "MICHAEL REESE RESEARCH & EDUCATION FOUNDATION",
+          6124657682.4
+        ],
+        [
+          "WORLD WIDE PROTECTION GROUP INC",
+          2107543014.7
+        ],
+        [
+          "BLUE CROSS & BLUE SHIELD",
+          327630171.0
+        ],
+        [
+          "CDW GOVERNMENT, LLC.",
+          122620163.6
+        ],
+        [
+          "INDEPENDENT MECHANICAL INDUSTRIES INC",
+          120195513.3
+        ]
+      ],
+      "primary_number": 6124657682.4,
+      "measure_column": "total_award",
+      "measures": [
+        6124657682.4,
+        2107543014.7,
+        327630171.0,
+        122620163.6,
+        120195513.3
+      ]
+    },
+    "internet-017-q7": {
+      "q_id": "internet-017-q7",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "rows",
+      "columns": [
+        "vendor_name",
+        "total_award"
+      ],
+      "rows": [
+        [
+          "MICHAEL REESE RESEARCH & EDUCATION FOUNDATION",
+          6124729563.0
+        ],
+        [
+          "WORLD WIDE PROTECTION GROUP INC",
+          2107543014.7
+        ],
+        [
+          "BLUE CROSS & BLUE SHIELD",
+          327630171.0
+        ],
+        [
+          "CDW GOVERNMENT, LLC.",
+          122620163.6
+        ],
+        [
+          "INDEPENDENT MECHANICAL INDUSTRIES INC",
+          120195513.3
+        ]
+      ],
+      "primary_number": 6124729563.0,
+      "measure_column": "total_award",
+      "measures": [
+        6124729563.0,
+        2107543014.7,
+        327630171.0,
+        122620163.6,
+        120195513.3
+      ]
+    },
+    "internet-017-q8": {
+      "q_id": "internet-017-q8",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "rows",
+      "columns": [
+        "vendor_name",
+        "total_award",
+        "contracts"
+      ],
+      "rows": [
+        [
+          "MICHAEL REESE RESEARCH & EDUCATION FOUNDATION",
+          6124729563.0,
+          16
+        ],
+        [
+          "WORLD WIDE PROTECTION GROUP INC",
+          2107543014.7,
+          2
+        ],
+        [
+          "BLUE CROSS & BLUE SHIELD",
+          327630171.0,
+          2
+        ],
+        [
+          "CDW GOVERNMENT, LLC.",
+          122620163.6,
+          2
+        ],
+        [
+          "INDEPENDENT MECHANICAL INDUSTRIES INC",
+          120195513.3,
+          7
+        ]
+      ],
+      "primary_number": 6124729563.0,
+      "measure_column": "total_award",
+      "measures": [
+        6124729563.0,
+        2107543014.7,
+        327630171.0,
+        122620163.6,
+        120195513.3
+      ]
+    },
+    "internet-018-q1": {
+      "q_id": "internet-018-q1",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "scalar",
+      "columns": [
+        "permits"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "permits",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-018-q2": {
+      "q_id": "internet-018-q2",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "row",
+      "columns": [
+        "permit_type",
+        "permits"
+      ],
+      "rows": [
+        [
+          "PERMIT - EASY PERMIT PROCESS",
+          10492
+        ]
+      ],
+      "primary_number": 10492.0,
+      "measure_column": "permits",
+      "measures": [
+        10492.0
+      ]
+    },
+    "internet-018-q3": {
+      "q_id": "internet-018-q3",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "scalar",
+      "columns": [
+        "zero_fee_permits"
+      ],
+      "rows": [
+        [
+          5
+        ]
+      ],
+      "primary_number": 5.0,
+      "measure_column": "zero_fee_permits",
+      "measures": [
+        5.0
+      ]
+    },
+    "internet-018-q4": {
+      "q_id": "internet-018-q4",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "row",
+      "columns": [
+        "permit_type",
+        "avg_days",
+        "permits"
+      ],
+      "rows": [
+        [
+          "PERMIT \u2013 EXPRESS PERMIT PROGRAM",
+          117.18,
+          230
+        ]
+      ],
+      "primary_number": 117.18,
+      "measure_column": "avg_days",
+      "measures": [
+        117.18
+      ]
+    },
+    "internet-018-q5": {
+      "q_id": "internet-018-q5",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-019-q1": {
+      "q_id": "internet-019-q1",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "scalar",
+      "columns": [
+        "service_requests"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "service_requests",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-019-q2": {
+      "q_id": "internet-019-q2",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "row",
+      "columns": [
+        "complaint_type",
+        "requests"
+      ],
+      "rows": [
+        [
+          "Noise - Residential",
+          3270
+        ]
+      ],
+      "primary_number": 3270.0,
+      "measure_column": "requests",
+      "measures": [
+        3270.0
+      ]
+    },
+    "internet-019-q3": {
+      "q_id": "internet-019-q3",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "scalar",
+      "columns": [
+        "open_requests"
+      ],
+      "rows": [
+        [
+          185
+        ]
+      ],
+      "primary_number": 185.0,
+      "measure_column": "open_requests",
+      "measures": [
+        185.0
+      ]
+    },
+    "internet-019-q4": {
+      "q_id": "internet-019-q4",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "scalar",
+      "columns": [
+        "noise_share_pct"
+      ],
+      "rows": [
+        [
+          36.64
+        ]
+      ],
+      "primary_number": 36.64,
+      "measure_column": "noise_share_pct",
+      "measures": [
+        36.64
+      ]
+    },
+    "internet-019-q5": {
+      "q_id": "internet-019-q5",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-019-q6": {
+      "q_id": "internet-019-q6",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "rows",
+      "columns": [
+        "borough",
+        "requests"
+      ],
+      "rows": [
+        [
+          "BROOKLYN",
+          6189
+        ],
+        [
+          "QUEENS",
+          4915
+        ],
+        [
+          "MANHATTAN",
+          4032
+        ],
+        [
+          "BRONX",
+          3597
+        ],
+        [
+          "STATEN ISLAND",
+          1008
+        ]
+      ],
+      "primary_number": 6189.0,
+      "measure_column": "requests",
+      "measures": [
+        6189.0,
+        4915.0,
+        4032.0,
+        3597.0,
+        1008.0
+      ]
+    },
+    "internet-019-q7": {
+      "q_id": "internet-019-q7",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "rows",
+      "columns": [
+        "borough",
+        "noise_requests"
+      ],
+      "rows": [
+        [
+          "MANHATTAN",
+          1965
+        ],
+        [
+          "BROOKLYN",
+          1822
+        ],
+        [
+          "BRONX",
+          1801
+        ],
+        [
+          "QUEENS",
+          1536
+        ],
+        [
+          "STATEN ISLAND",
+          202
+        ]
+      ],
+      "primary_number": 1965.0,
+      "measure_column": "noise_requests",
+      "measures": [
+        1965.0,
+        1822.0,
+        1801.0,
+        1536.0,
+        202.0
+      ]
+    },
+    "internet-019-q8": {
+      "q_id": "internet-019-q8",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "rows",
+      "columns": [
+        "borough",
+        "noise_requests",
+        "total_requests",
+        "noise_share_pct"
+      ],
+      "rows": [
+        [
+          "MANHATTAN",
+          1965,
+          4032,
+          48.74
+        ],
+        [
+          "BROOKLYN",
+          1822,
+          6189,
+          29.44
+        ],
+        [
+          "BRONX",
+          1801,
+          3597,
+          50.07
+        ],
+        [
+          "QUEENS",
+          1536,
+          4915,
+          31.25
+        ],
+        [
+          "STATEN ISLAND",
+          202,
+          1008,
+          20.04
+        ]
+      ],
+      "primary_number": 48.74,
+      "measure_column": "noise_share_pct",
+      "measures": [
+        48.74,
+        29.44,
+        50.07,
+        31.25,
+        20.04
+      ]
+    },
+    "internet-020-q1": {
+      "q_id": "internet-020-q1",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "scalar",
+      "columns": [
+        "crimes"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "crimes",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-020-q2": {
+      "q_id": "internet-020-q2",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "row",
+      "columns": [
+        "primary_type",
+        "crimes"
+      ],
+      "rows": [
+        [
+          "THEFT",
+          4095
+        ]
+      ],
+      "primary_number": 4095.0,
+      "measure_column": "crimes",
+      "measures": [
+        4095.0
+      ]
+    },
+    "internet-020-q3": {
+      "q_id": "internet-020-q3",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "scalar",
+      "columns": [
+        "domestic_arrests"
+      ],
+      "rows": [
+        [
+          846
+        ]
+      ],
+      "primary_number": 846.0,
+      "measure_column": "domestic_arrests",
+      "measures": [
+        846.0
+      ]
+    },
+    "internet-020-q4": {
+      "q_id": "internet-020-q4",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "row",
+      "columns": [
+        "crime_type",
+        "arrest_rate_pct",
+        "cases"
+      ],
+      "rows": [
+        [
+          "NARCOTICS",
+          100.0,
+          1819
+        ]
+      ],
+      "primary_number": 100.0,
+      "measure_column": "arrest_rate_pct",
+      "measures": [
+        100.0
+      ]
+    },
+    "internet-020-q5": {
+      "q_id": "internet-020-q5",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-021-q1": {
+      "q_id": "internet-021-q1",
+      "dataset_id": "wb-population-total",
+      "answer_type": "scalar",
+      "columns": [
+        "observations"
+      ],
+      "rows": [
+        [
+          17556
+        ]
+      ],
+      "primary_number": 17556.0,
+      "measure_column": "observations",
+      "measures": [
+        17556.0
+      ]
+    },
+    "internet-021-q2": {
+      "q_id": "internet-021-q2",
+      "dataset_id": "wb-population-total",
+      "answer_type": "row",
+      "columns": [
+        "country_name",
+        "population"
+      ],
+      "rows": [
+        [
+          "World",
+          8140897523.0
+        ]
+      ],
+      "primary_number": 8140897523.0,
+      "measure_column": "population",
+      "measures": [
+        8140897523.0
+      ]
+    },
+    "internet-021-q3": {
+      "q_id": "internet-021-q3",
+      "dataset_id": "wb-population-total",
+      "answer_type": "scalar",
+      "columns": [
+        "missing_values"
+      ],
+      "rows": [
+        [
+          96
+        ]
+      ],
+      "primary_number": 96.0,
+      "measure_column": "missing_values",
+      "measures": [
+        96.0
+      ]
+    },
+    "internet-021-q4": {
+      "q_id": "internet-021-q4",
+      "dataset_id": "wb-population-total",
+      "answer_type": "scalar",
+      "columns": [
+        "growth_pct"
+      ],
+      "rows": [
+        [
+          37.15
+        ]
+      ],
+      "primary_number": 37.15,
+      "measure_column": "growth_pct",
+      "measures": [
+        37.15
+      ]
+    },
+    "internet-021-q5": {
+      "q_id": "internet-021-q5",
+      "dataset_id": "wb-population-total",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-021-q6": {
+      "q_id": "internet-021-q6",
+      "dataset_id": "wb-population-total",
+      "answer_type": "rows",
+      "columns": [
+        "country_name",
+        "population"
+      ],
+      "rows": [
+        [
+          "World",
+          7441084771.0
+        ],
+        [
+          "IDA & IBRD total",
+          6280370137.0
+        ],
+        [
+          "Low & middle income",
+          6075072158.0
+        ],
+        [
+          "Middle income",
+          5490559951.0
+        ],
+        [
+          "IBRD only",
+          4676773551.0
+        ]
+      ],
+      "primary_number": 7441084771.0,
+      "measure_column": "population",
+      "measures": [
+        7441084771.0,
+        6280370137.0,
+        6075072158.0,
+        5490559951.0,
+        4676773551.0
+      ]
+    },
+    "internet-021-q7": {
+      "q_id": "internet-021-q7",
+      "dataset_id": "wb-population-total",
+      "answer_type": "rows",
+      "columns": [
+        "country_name",
+        "population"
+      ],
+      "rows": [
+        [
+          "World",
+          7441084771.0
+        ],
+        [
+          "IDA & IBRD total",
+          6280370137.0
+        ],
+        [
+          "Low & middle income",
+          6075072158.0
+        ],
+        [
+          "Middle income",
+          5490559951.0
+        ],
+        [
+          "IBRD only",
+          4676773551.0
+        ]
+      ],
+      "primary_number": 7441084771.0,
+      "measure_column": "population",
+      "measures": [
+        7441084771.0,
+        6280370137.0,
+        6075072158.0,
+        5490559951.0,
+        4676773551.0
+      ]
+    },
+    "internet-021-q8": {
+      "q_id": "internet-021-q8",
+      "dataset_id": "wb-population-total",
+      "answer_type": "rows",
+      "columns": [
+        "country_name",
+        "population"
+      ],
+      "rows": [
+        [
+          "World",
+          8140897523.0
+        ],
+        [
+          "IDA & IBRD total",
+          6925362193.0
+        ],
+        [
+          "Low & middle income",
+          6722971301.0
+        ],
+        [
+          "Middle income",
+          5975818672.0
+        ],
+        [
+          "IBRD only",
+          4979670326.0
+        ]
+      ],
+      "primary_number": 8140897523.0,
+      "measure_column": "population",
+      "measures": [
+        8140897523.0,
+        6925362193.0,
+        6722971301.0,
+        5975818672.0,
+        4979670326.0
+      ]
+    },
+    "internet-022-q1": {
+      "q_id": "internet-022-q1",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "scalar",
+      "columns": [
+        "observations"
+      ],
+      "rows": [
+        [
+          17556
+        ]
+      ],
+      "primary_number": 17556.0,
+      "measure_column": "observations",
+      "measures": [
+        17556.0
+      ]
+    },
+    "internet-022-q2": {
+      "q_id": "internet-022-q2",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "row",
+      "columns": [
+        "country_name",
+        "gdp"
+      ],
+      "rows": [
+        [
+          "World",
+          107348614073350.0
+        ]
+      ],
+      "primary_number": 107348614073350.0,
+      "measure_column": "gdp",
+      "measures": [
+        107348614073350.0
+      ]
+    },
+    "internet-022-q3": {
+      "q_id": "internet-022-q3",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "scalar",
+      "columns": [
+        "missing_values"
+      ],
+      "rows": [
+        [
+          2745
+        ]
+      ],
+      "primary_number": 2745.0,
+      "measure_column": "missing_values",
+      "measures": [
+        2745.0
+      ]
+    },
+    "internet-022-q4": {
+      "q_id": "internet-022-q4",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "scalar",
+      "columns": [
+        "growth_multiple"
+      ],
+      "rows": [
+        [
+          2.09
+        ]
+      ],
+      "primary_number": 2.09,
+      "measure_column": "growth_multiple",
+      "measures": [
+        2.09
+      ]
+    },
+    "internet-022-q5": {
+      "q_id": "internet-022-q5",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-023-q1": {
+      "q_id": "internet-023-q1",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "scalar",
+      "columns": [
+        "observations"
+      ],
+      "rows": [
+        [
+          17556
+        ]
+      ],
+      "primary_number": 17556.0,
+      "measure_column": "observations",
+      "measures": [
+        17556.0
+      ]
+    },
+    "internet-023-q2": {
+      "q_id": "internet-023-q2",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "row",
+      "columns": [
+        "country_name",
+        "co2_per_capita"
+      ],
+      "rows": [
+        [
+          "Palau",
+          78.7262796328622
+        ]
+      ],
+      "primary_number": 78.7262796328622,
+      "measure_column": "co2_per_capita",
+      "measures": [
+        78.7262796328622
+      ]
+    },
+    "internet-023-q3": {
+      "q_id": "internet-023-q3",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "scalar",
+      "columns": [
+        "zero_values"
+      ],
+      "rows": [
+        [
+          150
+        ]
+      ],
+      "primary_number": 150.0,
+      "measure_column": "zero_values",
+      "measures": [
+        150.0
+      ]
+    },
+    "internet-023-q4": {
+      "q_id": "internet-023-q4",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "scalar",
+      "columns": [
+        "avg_co2_per_capita"
+      ],
+      "rows": [
+        [
+          4.34
+        ]
+      ],
+      "primary_number": 4.34,
+      "measure_column": "avg_co2_per_capita",
+      "measures": [
+        4.34
+      ]
+    },
+    "internet-023-q5": {
+      "q_id": "internet-023-q5",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-024-q1": {
+      "q_id": "internet-024-q1",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "scalar",
+      "columns": [
+        "observations"
+      ],
+      "rows": [
+        [
+          17556
+        ]
+      ],
+      "primary_number": 17556.0,
+      "measure_column": "observations",
+      "measures": [
+        17556.0
+      ]
+    },
+    "internet-024-q2": {
+      "q_id": "internet-024-q2",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "row",
+      "columns": [
+        "country_name",
+        "unemployment_rate"
+      ],
+      "rows": [
+        [
+          "Eswatini",
+          34.643
+        ]
+      ],
+      "primary_number": 34.643,
+      "measure_column": "unemployment_rate",
+      "measures": [
+        34.643
+      ]
+    },
+    "internet-024-q3": {
+      "q_id": "internet-024-q3",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "scalar",
+      "columns": [
+        "missing_values"
+      ],
+      "rows": [
+        [
+          9345
+        ]
+      ],
+      "primary_number": 9345.0,
+      "measure_column": "missing_values",
+      "measures": [
+        9345.0
+      ]
+    },
+    "internet-024-q4": {
+      "q_id": "internet-024-q4",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "rows",
+      "columns": [
+        "year",
+        "avg_unemployment",
+        "observations"
+      ],
+      "rows": [
+        [
+          2019,
+          7.08,
+          231
+        ],
+        [
+          2024,
+          6.48,
+          226
+        ]
+      ],
+      "primary_number": 7.08,
+      "measure_column": "avg_unemployment",
+      "measures": [
+        7.08,
+        6.48
+      ]
+    },
+    "internet-024-q5": {
+      "q_id": "internet-024-q5",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-025-q1": {
+      "q_id": "internet-025-q1",
+      "dataset_id": "openml-churn",
+      "answer_type": "scalar",
+      "columns": [
+        "customers"
+      ],
+      "rows": [
+        [
+          5000
+        ]
+      ],
+      "primary_number": 5000.0,
+      "measure_column": "customers",
+      "measures": [
+        5000.0
+      ]
+    },
+    "internet-025-q2": {
+      "q_id": "internet-025-q2",
+      "dataset_id": "openml-churn",
+      "answer_type": "row",
+      "columns": [
+        "area_code",
+        "churn_pct",
+        "customers"
+      ],
+      "rows": [
+        [
+          510,
+          14.77,
+          1246
+        ]
+      ],
+      "primary_number": 14.77,
+      "measure_column": "churn_pct",
+      "measures": [
+        14.77
+      ]
+    },
+    "internet-025-q3": {
+      "q_id": "internet-025-q3",
+      "dataset_id": "openml-churn",
+      "answer_type": "scalar",
+      "columns": [
+        "churned"
+      ],
+      "rows": [
+        [
+          199
+        ]
+      ],
+      "primary_number": 199.0,
+      "measure_column": "churned",
+      "measures": [
+        199.0
+      ]
+    },
+    "internet-025-q4": {
+      "q_id": "internet-025-q4",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "columns": [
+        "class",
+        "avg_service_calls",
+        "customers"
+      ],
+      "rows": [
+        [
+          0,
+          1.46,
+          4293
+        ],
+        [
+          1,
+          2.25,
+          707
+        ]
+      ],
+      "primary_number": 1.46,
+      "measure_column": "avg_service_calls",
+      "measures": [
+        1.46,
+        2.25
+      ]
+    },
+    "internet-025-q5": {
+      "q_id": "internet-025-q5",
+      "dataset_id": "openml-churn",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-025-q6": {
+      "q_id": "internet-025-q6",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "columns": [
+        "state",
+        "customers"
+      ],
+      "rows": [
+        [
+          49,
+          158
+        ],
+        [
+          23,
+          125
+        ],
+        [
+          1,
+          124
+        ]
+      ],
+      "primary_number": 49.0,
+      "measure_column": "state",
+      "measures": [
+        49.0,
+        23.0,
+        1.0
+      ]
+    },
+    "internet-025-q7": {
+      "q_id": "internet-025-q7",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "columns": [
+        "state",
+        "customers"
+      ],
+      "rows": [
+        [
+          14,
+          16
+        ],
+        [
+          25,
+          16
+        ],
+        [
+          50,
+          15
+        ]
+      ],
+      "primary_number": 14.0,
+      "measure_column": "state",
+      "measures": [
+        14.0,
+        25.0,
+        50.0
+      ]
+    },
+    "internet-025-q8": {
+      "q_id": "internet-025-q8",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "columns": [
+        "state",
+        "customers",
+        "churn_pct"
+      ],
+      "rows": [
+        [
+          14,
+          16,
+          37.5
+        ],
+        [
+          25,
+          16,
+          31.25
+        ],
+        [
+          50,
+          15,
+          20.0
+        ]
+      ],
+      "primary_number": 37.5,
+      "measure_column": "churn_pct",
+      "measures": [
+        37.5,
+        31.25,
+        20.0
+      ]
+    },
+    "internet-026-q1": {
+      "q_id": "internet-026-q1",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "scalar",
+      "columns": [
+        "license_records"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "license_records",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-026-q2": {
+      "q_id": "internet-026-q2",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "row",
+      "columns": [
+        "license_description",
+        "records"
+      ],
+      "rows": [
+        [
+          "Retail Food Establishment",
+          5295
+        ]
+      ],
+      "primary_number": 5295.0,
+      "measure_column": "records",
+      "measures": [
+        5295.0
+      ]
+    },
+    "internet-026-q3": {
+      "q_id": "internet-026-q3",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "scalar",
+      "columns": [
+        "missing_payment_date"
+      ],
+      "rows": [
+        [
+          509
+        ]
+      ],
+      "primary_number": 509.0,
+      "measure_column": "missing_payment_date",
+      "measures": [
+        509.0
+      ]
+    },
+    "internet-026-q4": {
+      "q_id": "internet-026-q4",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "scalar",
+      "columns": [
+        "renew_share_pct"
+      ],
+      "rows": [
+        [
+          74.72
+        ]
+      ],
+      "primary_number": 74.72,
+      "measure_column": "renew_share_pct",
+      "measures": [
+        74.72
+      ]
+    },
+    "internet-026-q5": {
+      "q_id": "internet-026-q5",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-027-q1": {
+      "q_id": "internet-027-q1",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "scalar",
+      "columns": [
+        "inspections"
+      ],
+      "rows": [
+        [
+          20000
+        ]
+      ],
+      "primary_number": 20000.0,
+      "measure_column": "inspections",
+      "measures": [
+        20000.0
+      ]
+    },
+    "internet-027-q2": {
+      "q_id": "internet-027-q2",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "row",
+      "columns": [
+        "facility_type",
+        "inspections"
+      ],
+      "rows": [
+        [
+          "Restaurant",
+          13989
+        ]
+      ],
+      "primary_number": 13989.0,
+      "measure_column": "inspections",
+      "measures": [
+        13989.0
+      ]
+    },
+    "internet-027-q3": {
+      "q_id": "internet-027-q3",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "scalar",
+      "columns": [
+        "failed_high_risk"
+      ],
+      "rows": [
+        [
+          3267
+        ]
+      ],
+      "primary_number": 3267.0,
+      "measure_column": "failed_high_risk",
+      "measures": [
+        3267.0
+      ]
+    },
+    "internet-027-q4": {
+      "q_id": "internet-027-q4",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "row",
+      "columns": [
+        "risk",
+        "fail_rate_pct",
+        "inspections"
+      ],
+      "rows": [
+        [
+          "Risk 1 (High)",
+          20.19,
+          16180
+        ]
+      ],
+      "primary_number": 20.19,
+      "measure_column": "fail_rate_pct",
+      "measures": [
+        20.19
+      ]
+    },
+    "internet-027-q5": {
+      "q_id": "internet-027-q5",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-027-q6": {
+      "q_id": "internet-027-q6",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "rows",
+      "columns": [
+        "facility_type",
+        "failures"
+      ],
+      "rows": [
+        [
+          "Restaurant",
+          2713
+        ],
+        [
+          "Grocery Store",
+          402
+        ],
+        [
+          "School",
+          350
+        ]
+      ],
+      "primary_number": 2713.0,
+      "measure_column": "failures",
+      "measures": [
+        2713.0,
+        402.0,
+        350.0
+      ]
+    },
+    "internet-027-q7": {
+      "q_id": "internet-027-q7",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "rows",
+      "columns": [
+        "facility_type",
+        "failures"
+      ],
+      "rows": [
+        [
+          "Restaurant",
+          2342
+        ],
+        [
+          "School",
+          329
+        ],
+        [
+          "Grocery Store",
+          179
+        ]
+      ],
+      "primary_number": 2342.0,
+      "measure_column": "failures",
+      "measures": [
+        2342.0,
+        329.0,
+        179.0
+      ]
+    },
+    "internet-027-q8": {
+      "q_id": "internet-027-q8",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "rows",
+      "columns": [
+        "facility_type",
+        "failures",
+        "inspections",
+        "fail_rate_pct"
+      ],
+      "rows": [
+        [
+          "LOUNGE/BANQUET HALL",
+          1,
+          1,
+          100.0
+        ],
+        [
+          "PALETERIA",
+          1,
+          1,
+          100.0
+        ],
+        [
+          "Pop-Up Establishment Host-Tier III",
+          1,
+          1,
+          100.0
+        ]
+      ],
+      "primary_number": 100.0,
+      "measure_column": "fail_rate_pct",
+      "measures": [
+        100.0,
+        100.0,
+        100.0
+      ]
+    },
+    "internet-028-q1": {
+      "q_id": "internet-028-q1",
+      "dataset_id": "uci-iris",
+      "answer_type": "scalar",
+      "columns": [
+        "flowers"
+      ],
+      "rows": [
+        [
+          150
+        ]
+      ],
+      "primary_number": 150.0,
+      "measure_column": "flowers",
+      "measures": [
+        150.0
+      ]
+    },
+    "internet-028-q2": {
+      "q_id": "internet-028-q2",
+      "dataset_id": "uci-iris",
+      "answer_type": "row",
+      "columns": [
+        "species",
+        "avg_petal_length"
+      ],
+      "rows": [
+        [
+          "Iris-virginica",
+          5.552
+        ]
+      ],
+      "primary_number": 5.552,
+      "measure_column": "avg_petal_length",
+      "measures": [
+        5.552
+      ]
+    },
+    "internet-028-q3": {
+      "q_id": "internet-028-q3",
+      "dataset_id": "uci-iris",
+      "answer_type": "scalar",
+      "columns": [
+        "flowers"
+      ],
+      "rows": [
+        [
+          16
+        ]
+      ],
+      "primary_number": 16.0,
+      "measure_column": "flowers",
+      "measures": [
+        16.0
+      ]
+    },
+    "internet-028-q4": {
+      "q_id": "internet-028-q4",
+      "dataset_id": "uci-iris",
+      "answer_type": "scalar",
+      "columns": [
+        "share_pct"
+      ],
+      "rows": [
+        [
+          27.33
+        ]
+      ],
+      "primary_number": 27.33,
+      "measure_column": "share_pct",
+      "measures": [
+        27.33
+      ]
+    },
+    "internet-028-q5": {
+      "q_id": "internet-028-q5",
+      "dataset_id": "uci-iris",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-029-q1": {
+      "q_id": "internet-029-q1",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "scalar",
+      "columns": [
+        "samples"
+      ],
+      "rows": [
+        [
+          1599
+        ]
+      ],
+      "primary_number": 1599.0,
+      "measure_column": "samples",
+      "measures": [
+        1599.0
+      ]
+    },
+    "internet-029-q2": {
+      "q_id": "internet-029-q2",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "row",
+      "columns": [
+        "quality",
+        "avg_alcohol",
+        "samples"
+      ],
+      "rows": [
+        [
+          8,
+          12.094,
+          18
+        ]
+      ],
+      "primary_number": 12.094,
+      "measure_column": "avg_alcohol",
+      "measures": [
+        12.094
+      ]
+    },
+    "internet-029-q3": {
+      "q_id": "internet-029-q3",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "scalar",
+      "columns": [
+        "wines"
+      ],
+      "rows": [
+        [
+          66
+        ]
+      ],
+      "primary_number": 66.0,
+      "measure_column": "wines",
+      "measures": [
+        66.0
+      ]
+    },
+    "internet-029-q4": {
+      "q_id": "internet-029-q4",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "rows",
+      "columns": [
+        "quality_band",
+        "avg_sulphates",
+        "samples"
+      ],
+      "rows": [
+        [
+          "7 plus",
+          0.743,
+          217
+        ],
+        [
+          "below 7",
+          0.645,
+          1382
+        ]
+      ],
+      "primary_number": 0.743,
+      "measure_column": "avg_sulphates",
+      "measures": [
+        0.743,
+        0.645
+      ]
+    },
+    "internet-029-q5": {
+      "q_id": "internet-029-q5",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    },
+    "internet-030-q1": {
+      "q_id": "internet-030-q1",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "scalar",
+      "columns": [
+        "buildings"
+      ],
+      "rows": [
+        [
+          768
+        ]
+      ],
+      "primary_number": 768.0,
+      "measure_column": "buildings",
+      "measures": [
+        768.0
+      ]
+    },
+    "internet-030-q2": {
+      "q_id": "internet-030-q2",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "row",
+      "columns": [
+        "overall_height",
+        "avg_heating_load",
+        "buildings"
+      ],
+      "rows": [
+        [
+          7.0,
+          31.276,
+          384
+        ]
+      ],
+      "primary_number": 31.276,
+      "measure_column": "avg_heating_load",
+      "measures": [
+        31.276
+      ]
+    },
+    "internet-030-q3": {
+      "q_id": "internet-030-q3",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "scalar",
+      "columns": [
+        "buildings"
+      ],
+      "rows": [
+        [
+          109
+        ]
+      ],
+      "primary_number": 109.0,
+      "measure_column": "buildings",
+      "measures": [
+        109.0
+      ]
+    },
+    "internet-030-q4": {
+      "q_id": "internet-030-q4",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "scalar",
+      "columns": [
+        "load_correlation"
+      ],
+      "rows": [
+        [
+          0.9759
+        ]
+      ],
+      "primary_number": 0.9759,
+      "measure_column": "load_correlation",
+      "measures": [
+        0.9759
+      ]
+    },
+    "internet-030-q5": {
+      "q_id": "internet-030-q5",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "clarification",
+      "columns": [],
+      "rows": [],
+      "primary_number": null
+    }
+  },
+  "failures": []
+}

@@ -1,0 +1,1853 @@
+{
+  "key_version": "blind-internet-1.0",
+  "sealed": true,
+  "note": "Ground-truth key. Must never be loaded into prompts, retrieval, or the planner. Generated independently of any model output.",
+  "answers": [
+    {
+      "q_id": "internet-001-q1",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS total_order_lines FROM data",
+      "expected_columns": [
+        "total_order_lines"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q2",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "row",
+      "sql": "SELECT \"Country\", COUNT(*) AS order_lines FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "Country",
+        "order_lines"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q3",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS lines_without_customer FROM data WHERE \"CustomerID\" IS NULL AND \"Quantity\" > 0",
+      "expected_columns": [
+        "lines_without_customer"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q4",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "row",
+      "sql": "WITH s AS (SELECT \"Country\" AS country, SUM(\"Quantity\" * \"UnitPrice\") AS revenue FROM data WHERE \"Quantity\" > 0 AND \"InvoiceNo\" NOT LIKE 'C%' GROUP BY 1), tot AS (SELECT SUM(revenue) AS total FROM s) SELECT country, ROUND(revenue, 2) AS revenue, ROUND(100 * revenue / total, 2) AS share_pct FROM s, tot ORDER BY revenue DESC, country LIMIT 1",
+      "expected_columns": [
+        "country",
+        "revenue",
+        "share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q5",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-001-q6",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "rows",
+      "sql": "SELECT \"Country\", COUNT(*) AS order_lines FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "Country",
+        "order_lines"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q7",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "rows",
+      "sql": "SELECT \"Description\", COUNT(*) AS order_lines FROM data WHERE \"Country\" = 'United Kingdom' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "Description",
+        "order_lines"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q8",
+      "dataset_id": "uci-online-retail",
+      "answer_type": "row",
+      "sql": "SELECT \"Description\", ROUND(SUM(\"Quantity\" * \"UnitPrice\"), 2) AS revenue FROM data WHERE \"Country\" = 'United Kingdom' AND \"Quantity\" > 0 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "Description",
+        "revenue"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q1",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(SUM(\"Profit\"), 2) AS total_profit FROM data",
+      "expected_columns": [
+        "total_profit"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q2",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "row",
+      "sql": "SELECT \"Country\", ROUND(SUM(\"Sales\"), 2) AS total_sales FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "Country",
+        "total_sales"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q3",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(SUM(\"Units Sold\"), 2) AS units_sold FROM data WHERE \"Segment\" = 'Government' AND \"Country\" = 'Canada'",
+      "expected_columns": [
+        "units_sold"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q4",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "row",
+      "sql": "WITH s AS (SELECT \"Product\" AS product, SUM(\"Profit\") AS profit FROM data GROUP BY 1), tot AS (SELECT SUM(profit) AS total FROM s) SELECT product, ROUND(profit, 2) AS profit, ROUND(100 * profit / total, 2) AS share_pct FROM s, tot ORDER BY profit DESC, product LIMIT 1",
+      "expected_columns": [
+        "product",
+        "profit",
+        "share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q5",
+      "dataset_id": "microsoft-financial-sample",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-003-q1",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS total_customers FROM data",
+      "expected_columns": [
+        "total_customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q2",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "row",
+      "sql": "SELECT \"Channel\", ROUND(AVG(\"grocery\"), 2) AS avg_grocery FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "Channel",
+        "avg_grocery"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q3",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS customers FROM data WHERE \"Region\" = 3 AND \"milk\" > 10000",
+      "expected_columns": [
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q4",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100 * SUM(CASE WHEN \"Channel\" = 1 THEN \"fresh\" ELSE 0 END) / SUM(\"fresh\"), 2) AS channel_1_share_pct FROM data",
+      "expected_columns": [
+        "channel_1_share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q5",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-003-q6",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "rows",
+      "sql": "SELECT \"Region\", SUM(\"fresh\" + \"milk\" + \"grocery\" + \"frozen\" + \"detergents_paper\" + \"delicatessen\") AS total_spend FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "Region",
+        "total_spend"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q7",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "rows",
+      "sql": "SELECT \"Region\", SUM(\"fresh\" + \"milk\" + \"grocery\" + \"frozen\" + \"detergents_paper\" + \"delicatessen\") AS total_spend FROM data WHERE \"Channel\" = 2 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "Region",
+        "total_spend"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q8",
+      "dataset_id": "openml-wholesale-customers",
+      "answer_type": "rows",
+      "sql": "SELECT \"Region\", ROUND(AVG(\"fresh\" + \"milk\" + \"grocery\" + \"frozen\" + \"detergents_paper\" + \"delicatessen\"), 2) AS avg_total_spend FROM data WHERE \"Channel\" = 2 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "Region",
+        "avg_total_spend"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q1",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS inspection_records FROM data",
+      "expected_columns": [
+        "inspection_records"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q2",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "row",
+      "sql": "SELECT \"boro\", COUNT(*) AS inspections FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "boro",
+        "inspections"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q3",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS critical_high_score FROM data WHERE \"boro\" = 'Manhattan' AND \"critical_flag\" = 'Critical' AND \"score\" > 20",
+      "expected_columns": [
+        "critical_high_score"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q4",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100.0 * COUNT(*) FILTER (WHERE \"critical_flag\" = 'Critical') / COUNT(*), 2) AS critical_share_pct FROM data WHERE \"boro\" = 'Brooklyn'",
+      "expected_columns": [
+        "critical_share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q5",
+      "dataset_id": "nyc-restaurant-inspections",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-005-q1",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS deposits FROM data WHERE \"y\" = true",
+      "expected_columns": [
+        "deposits"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q2",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "row",
+      "sql": "SELECT \"job\", ROUND(100.0 * AVG(CASE WHEN \"y\" THEN 1 ELSE 0 END), 2) AS conversion_pct, COUNT(*) AS customers FROM data GROUP BY 1 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "job",
+        "conversion_pct",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q3",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS deposits FROM data WHERE \"housing\" = 'yes' AND \"y\" = true",
+      "expected_columns": [
+        "deposits"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q4",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "sql": "SELECT \"contact\", ROUND(100.0 * AVG(CASE WHEN \"y\" THEN 1 ELSE 0 END), 2) AS conversion_pct, COUNT(*) AS customers FROM data GROUP BY 1 ORDER BY 1",
+      "expected_columns": [
+        "contact",
+        "conversion_pct",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q5",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-005-q6",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "sql": "SELECT \"job\", ROUND(100.0 * AVG(CASE WHEN \"y\" THEN 1 ELSE 0 END), 2) AS conversion_pct, COUNT(*) AS customers FROM data GROUP BY 1 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "job",
+        "conversion_pct",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q7",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "sql": "SELECT \"job\", ROUND(100.0 * AVG(CASE WHEN \"y\" THEN 1 ELSE 0 END), 2) AS conversion_pct, COUNT(*) AS customers FROM data WHERE \"marital\" = 'married' GROUP BY 1 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "job",
+        "conversion_pct",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q8",
+      "dataset_id": "uci-bank-marketing",
+      "answer_type": "rows",
+      "sql": "SELECT \"job\", COUNT(*) AS customers, COUNT(*) FILTER (WHERE \"y\") AS deposits, ROUND(100.0 * AVG(CASE WHEN \"y\" THEN 1 ELSE 0 END), 2) AS conversion_pct FROM data WHERE \"marital\" = 'married' GROUP BY 1 ORDER BY 4 DESC, 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "job",
+        "customers",
+        "deposits",
+        "conversion_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q1",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS customers FROM data",
+      "expected_columns": [
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q2",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "row",
+      "sql": "SELECT \"EDUCATION\", COUNT(*) AS defaults FROM data WHERE \"default payment next month\" = 1 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "EDUCATION",
+        "defaults"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q3",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS defaults FROM data WHERE \"LIMIT_BAL\" > 200000 AND \"default payment next month\" = 1",
+      "expected_columns": [
+        "defaults"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q4",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "rows",
+      "sql": "SELECT CASE WHEN \"AGE\" < 30 THEN 'under 30' ELSE '30 plus' END AS age_band, ROUND(100.0 * AVG(CASE WHEN \"default payment next month\" = 1 THEN 1 ELSE 0 END), 2) AS default_rate_pct, COUNT(*) AS customers FROM data GROUP BY 1 ORDER BY 1",
+      "expected_columns": [
+        "age_band",
+        "default_rate_pct",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q5",
+      "dataset_id": "uci-credit-card-default",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-007-q1",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS applicants FROM data",
+      "expected_columns": [
+        "applicants"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q2",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "row",
+      "sql": "SELECT \"purpose\", COUNT(*) AS bad_applicants FROM data WHERE \"class\" = 'bad' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "purpose",
+        "bad_applicants"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q3",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS applicants FROM data WHERE \"housing\" = 'rent' AND \"credit_amount\" > 5000",
+      "expected_columns": [
+        "applicants"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q4",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "row",
+      "sql": "SELECT \"purpose\", ROUND(100.0 * AVG(CASE WHEN \"class\" = 'bad' THEN 1 ELSE 0 END), 2) AS bad_rate_pct, COUNT(*) AS applicants FROM data GROUP BY 1 HAVING COUNT(*) >= 20 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "purpose",
+        "bad_rate_pct",
+        "applicants"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q5",
+      "dataset_id": "openml-credit-g",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-008-q1",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(SUM(\"payment_amount\"), 2) AS total_payment_amount FROM data",
+      "expected_columns": [
+        "total_payment_amount"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q2",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "row",
+      "sql": "SELECT \"fee_code_name\", ROUND(SUM(\"payment_amount\"), 2) AS total_paid FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "fee_code_name",
+        "total_paid"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q3",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS voided_payments FROM data WHERE \"payment_type\" = 'Void Payment Applied'",
+      "expected_columns": [
+        "voided_payments"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q4",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(AVG(\"payment_amount\"), 2) AS avg_payment FROM data WHERE \"payment_type\" = 'Payment Applied'",
+      "expected_columns": [
+        "avg_payment"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q5",
+      "dataset_id": "nyc-dcwp-payments",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-009-q1",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS trips FROM data",
+      "expected_columns": [
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q2",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "row",
+      "sql": "SELECT \"payment_type\", COUNT(*) AS trips FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "payment_type",
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q3",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS long_card_trips FROM data WHERE \"payment_type\" = 1 AND \"trip_distance\" > 10",
+      "expected_columns": [
+        "long_card_trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q4",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "sql": "SELECT \"payment_type\", ROUND(AVG(\"total_amount\"), 2) AS avg_total_amount, COUNT(*) AS trips FROM data WHERE \"payment_type\" IN (1, 2) GROUP BY 1 ORDER BY 1",
+      "expected_columns": [
+        "payment_type",
+        "avg_total_amount",
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q5",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-009-q6",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "sql": "SELECT \"PULocationID\", COUNT(*) AS trips FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "PULocationID",
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q7",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "sql": "SELECT \"PULocationID\", COUNT(*) AS trips FROM data WHERE \"payment_type\" = 1 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "PULocationID",
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q8",
+      "dataset_id": "tlc-yellow-2025-01",
+      "answer_type": "rows",
+      "sql": "SELECT \"PULocationID\", COUNT(*) AS trips, ROUND(AVG(\"fare_amount\"), 2) AS avg_fare FROM data WHERE \"payment_type\" = 1 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "PULocationID",
+        "trips",
+        "avg_fare"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q1",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS trips FROM data",
+      "expected_columns": [
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q2",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "row",
+      "sql": "SELECT \"PULocationID\", COUNT(*) AS trips FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "PULocationID",
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q3",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(AVG(\"fare_amount\"), 2) AS avg_fare FROM data WHERE \"passenger_count\" IS NULL",
+      "expected_columns": [
+        "avg_fare"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q4",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100.0 * COUNT(*) FILTER (WHERE \"RatecodeID\" = 5) / COUNT(*), 2) AS airport_rate_share_pct FROM data",
+      "expected_columns": [
+        "airport_rate_share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q5",
+      "dataset_id": "tlc-green-2025-01",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-011-q1",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS trips FROM data",
+      "expected_columns": [
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q2",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "row",
+      "sql": "SELECT \"dispatching_base_num\", COUNT(*) AS trips FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "dispatching_base_num",
+        "trips"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q3",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS missing_pickup FROM data WHERE \"PUlocationID\" IS NULL",
+      "expected_columns": [
+        "missing_pickup"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q4",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100.0 * COUNT(\"PUlocationID\") / COUNT(*), 2) AS pickup_share_pct FROM data",
+      "expected_columns": [
+        "pickup_share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q5",
+      "dataset_id": "tlc-fhv-2025-01",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-012-q1",
+      "dataset_id": "openml-airlines",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS flights FROM data",
+      "expected_columns": [
+        "flights"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q2",
+      "dataset_id": "openml-airlines",
+      "answer_type": "row",
+      "sql": "SELECT \"Airline\", COUNT(*) AS flights FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "Airline",
+        "flights"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q3",
+      "dataset_id": "openml-airlines",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS long_delays FROM data WHERE \"Delay\" = 1 AND \"Length\" > 120",
+      "expected_columns": [
+        "long_delays"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q4",
+      "dataset_id": "openml-airlines",
+      "answer_type": "rows",
+      "sql": "WITH a AS (SELECT \"Airline\" AS airline, COUNT(*) AS flights, AVG(CASE WHEN \"Delay\" = 1 THEN 1 ELSE 0 END) AS delay_rate FROM data GROUP BY 1) SELECT airline, flights, ROUND(100 * delay_rate, 2) AS delay_pct FROM a ORDER BY flights DESC, airline LIMIT 5",
+      "expected_columns": [
+        "airline",
+        "flights",
+        "delay_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q5",
+      "dataset_id": "openml-airlines",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-013-q1",
+      "dataset_id": "chicago-employees",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS employees FROM data",
+      "expected_columns": [
+        "employees"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q2",
+      "dataset_id": "chicago-employees",
+      "answer_type": "row",
+      "sql": "SELECT \"department\", COUNT(*) AS employees FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "department",
+        "employees"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q3",
+      "dataset_id": "chicago-employees",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS part_time_hourly FROM data WHERE \"full_or_part_time\" = 'P' AND \"salary_or_hourly\" = 'HOURLY'",
+      "expected_columns": [
+        "part_time_hourly"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q4",
+      "dataset_id": "chicago-employees",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(AVG(\"annual_salary\"), 2) AS avg_annual_salary FROM data WHERE \"department\" = 'CHICAGO POLICE DEPARTMENT'",
+      "expected_columns": [
+        "avg_annual_salary"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q5",
+      "dataset_id": "chicago-employees",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-013-q6",
+      "dataset_id": "chicago-employees",
+      "answer_type": "rows",
+      "sql": "SELECT \"department\", COUNT(*) AS employees FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "department",
+        "employees"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q7",
+      "dataset_id": "chicago-employees",
+      "answer_type": "rows",
+      "sql": "SELECT \"department\", COUNT(*) AS employees FROM data WHERE \"full_or_part_time\" = 'F' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "department",
+        "employees"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q8",
+      "dataset_id": "chicago-employees",
+      "answer_type": "rows",
+      "sql": "SELECT \"department\", COUNT(*) AS employees, ROUND(AVG(\"annual_salary\"), 2) AS avg_annual_salary FROM data WHERE \"full_or_part_time\" = 'F' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "department",
+        "employees",
+        "avg_annual_salary"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q1",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS payroll_records FROM data",
+      "expected_columns": [
+        "payroll_records"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q2",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "row",
+      "sql": "SELECT \"title_description\", COUNT(*) AS records FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "title_description",
+        "records"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q3",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS ceased_records FROM data WHERE \"leave_status_as_of_june_30\" = 'CEASED'",
+      "expected_columns": [
+        "ceased_records"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q4",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "rows",
+      "sql": "SELECT \"work_location_borough\", ROUND(AVG(\"base_salary\"), 2) AS avg_base_salary, COUNT(*) AS records FROM data WHERE \"work_location_borough\" IN ('MANHATTAN', 'BROOKLYN') GROUP BY 1 ORDER BY 1",
+      "expected_columns": [
+        "work_location_borough",
+        "avg_base_salary",
+        "records"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q5",
+      "dataset_id": "nyc-citywide-payroll",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-015-q1",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS postings FROM data",
+      "expected_columns": [
+        "postings"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q2",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "row",
+      "sql": "SELECT \"agency\", COUNT(*) AS postings FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "agency",
+        "postings"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q3",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS multi_position_postings FROM data WHERE \"number_of_positions\" > 1",
+      "expected_columns": [
+        "multi_position_postings"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q4",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(AVG(\"salary_range_to\"), 2) AS avg_upper_salary FROM data WHERE \"posting_type\" = 'External' AND \"salary_frequency\" = 'Annual'",
+      "expected_columns": [
+        "avg_upper_salary"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q5",
+      "dataset_id": "nyc-job-postings",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-016-q1",
+      "dataset_id": "openml-adult",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS people FROM data",
+      "expected_columns": [
+        "people"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q2",
+      "dataset_id": "openml-adult",
+      "answer_type": "row",
+      "sql": "SELECT \"occupation\", COUNT(*) AS people FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "occupation",
+        "people"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q3",
+      "dataset_id": "openml-adult",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS people FROM data WHERE \"hours-per-week\" > 50 AND \"class\" = '>50K'",
+      "expected_columns": [
+        "people"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q4",
+      "dataset_id": "openml-adult",
+      "answer_type": "row",
+      "sql": "SELECT \"education\", ROUND(100.0 * AVG(CASE WHEN \"class\" = '>50K' THEN 1 ELSE 0 END), 2) AS high_income_pct, COUNT(*) AS people FROM data GROUP BY 1 HAVING COUNT(*) >= 100 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "education",
+        "high_income_pct",
+        "people"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q5",
+      "dataset_id": "openml-adult",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-017-q1",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS contracts FROM data",
+      "expected_columns": [
+        "contracts"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q2",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "row",
+      "sql": "SELECT \"department\", ROUND(SUM(\"award_amount\"), 2) AS total_award FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "department",
+        "total_award"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q3",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS negative_awards FROM data WHERE \"award_amount\" < 0",
+      "expected_columns": [
+        "negative_awards"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q4",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100.0 * COUNT(*) FILTER (WHERE \"award_amount\" > 1000000) / COUNT(*), 2) AS pct_over_one_million FROM data",
+      "expected_columns": [
+        "pct_over_one_million"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q5",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-017-q6",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "rows",
+      "sql": "SELECT \"vendor_name\", ROUND(SUM(\"award_amount\"), 2) AS total_award FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "vendor_name",
+        "total_award"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q7",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "rows",
+      "sql": "SELECT \"vendor_name\", ROUND(SUM(\"award_amount\"), 2) AS total_award FROM data WHERE \"award_amount\" > 0 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "vendor_name",
+        "total_award"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q8",
+      "dataset_id": "chicago-contracts",
+      "answer_type": "rows",
+      "sql": "SELECT \"vendor_name\", ROUND(SUM(\"award_amount\"), 2) AS total_award, COUNT(*) AS contracts FROM data WHERE \"award_amount\" > 0 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "vendor_name",
+        "total_award",
+        "contracts"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q1",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS permits FROM data",
+      "expected_columns": [
+        "permits"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q2",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "row",
+      "sql": "SELECT \"permit_type\", COUNT(*) AS permits FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "permit_type",
+        "permits"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q3",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS zero_fee_permits FROM data WHERE \"total_fee\" = 0",
+      "expected_columns": [
+        "zero_fee_permits"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q4",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "row",
+      "sql": "WITH p AS (SELECT \"permit_type\" AS permit_type, AVG(\"processing_time\") AS avg_days, COUNT(*) AS permits FROM data GROUP BY 1 HAVING COUNT(*) >= 100) SELECT permit_type, ROUND(avg_days, 2) AS avg_days, permits FROM p ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "permit_type",
+        "avg_days",
+        "permits"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q5",
+      "dataset_id": "chicago-building-permits",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-019-q1",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS service_requests FROM data",
+      "expected_columns": [
+        "service_requests"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q2",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "row",
+      "sql": "SELECT \"complaint_type\", COUNT(*) AS requests FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "complaint_type",
+        "requests"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q3",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS open_requests FROM data WHERE \"status\" IN ('Open', 'In Progress')",
+      "expected_columns": [
+        "open_requests"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q4",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100.0 * COUNT(*) FILTER (WHERE \"complaint_type\" LIKE 'Noise%') / COUNT(*), 2) AS noise_share_pct FROM data",
+      "expected_columns": [
+        "noise_share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q5",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-019-q6",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "rows",
+      "sql": "SELECT \"borough\", COUNT(*) AS requests FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "borough",
+        "requests"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q7",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "rows",
+      "sql": "SELECT \"borough\", COUNT(*) AS noise_requests FROM data WHERE \"complaint_type\" LIKE 'Noise%' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "borough",
+        "noise_requests"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q8",
+      "dataset_id": "nyc-311-service-requests",
+      "answer_type": "rows",
+      "sql": "SELECT \"borough\", COUNT(*) FILTER (WHERE \"complaint_type\" LIKE 'Noise%') AS noise_requests, COUNT(*) AS total_requests, ROUND(100.0 * COUNT(*) FILTER (WHERE \"complaint_type\" LIKE 'Noise%') / COUNT(*), 2) AS noise_share_pct FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5",
+      "expected_columns": [
+        "borough",
+        "noise_requests",
+        "total_requests",
+        "noise_share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q1",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS crimes FROM data",
+      "expected_columns": [
+        "crimes"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q2",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "row",
+      "sql": "SELECT \"primary_type\", COUNT(*) AS crimes FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "primary_type",
+        "crimes"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q3",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS domestic_arrests FROM data WHERE \"arrest\" = true AND \"domestic\" = true",
+      "expected_columns": [
+        "domestic_arrests"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q4",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "row",
+      "sql": "WITH c AS (SELECT \"primary_type\" AS crime_type, AVG(CASE WHEN \"arrest\" THEN 1 ELSE 0 END) AS arrest_rate, COUNT(*) AS cases FROM data GROUP BY 1 HAVING COUNT(*) >= 200) SELECT crime_type, ROUND(100 * arrest_rate, 2) AS arrest_rate_pct, cases FROM c ORDER BY 2 DESC, 3 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "crime_type",
+        "arrest_rate_pct",
+        "cases"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q5",
+      "dataset_id": "chicago-crimes",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-021-q1",
+      "dataset_id": "wb-population-total",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS observations FROM data",
+      "expected_columns": [
+        "observations"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q2",
+      "dataset_id": "wb-population-total",
+      "answer_type": "row",
+      "sql": "SELECT \"country_name\", \"value\" AS population FROM data WHERE \"year\" = 2024 AND \"country_code\" IS NOT NULL ORDER BY population DESC, \"country_name\" LIMIT 1",
+      "expected_columns": [
+        "country_name",
+        "population"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q3",
+      "dataset_id": "wb-population-total",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS missing_values FROM data WHERE \"value\" IS NULL",
+      "expected_columns": [
+        "missing_values"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q4",
+      "dataset_id": "wb-population-total",
+      "answer_type": "scalar",
+      "sql": "WITH p AS (SELECT \"year\", \"value\" FROM data WHERE \"country_name\" = 'India' AND \"year\" IN (2000, 2024)) SELECT ROUND(100 * (MAX(CASE WHEN \"year\" = 2024 THEN \"value\" END) - MAX(CASE WHEN \"year\" = 2000 THEN \"value\" END)) / MAX(CASE WHEN \"year\" = 2000 THEN \"value\" END), 2) AS growth_pct FROM p",
+      "expected_columns": [
+        "growth_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q5",
+      "dataset_id": "wb-population-total",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-021-q6",
+      "dataset_id": "wb-population-total",
+      "answer_type": "rows",
+      "sql": "SELECT \"country_name\", \"value\" AS population FROM data WHERE \"year\" = 2015 AND \"country_code\" IS NOT NULL ORDER BY population DESC, \"country_name\" LIMIT 5",
+      "expected_columns": [
+        "country_name",
+        "population"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q7",
+      "dataset_id": "wb-population-total",
+      "answer_type": "rows",
+      "sql": "SELECT \"country_name\", \"value\" AS population FROM data WHERE \"year\" = 2015 AND \"country_code\" IS NOT NULL AND \"value\" > 100000000 ORDER BY population DESC, \"country_name\" LIMIT 5",
+      "expected_columns": [
+        "country_name",
+        "population"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q8",
+      "dataset_id": "wb-population-total",
+      "answer_type": "rows",
+      "sql": "SELECT \"country_name\", \"value\" AS population FROM data WHERE \"year\" = 2024 AND \"country_code\" IS NOT NULL AND \"value\" > 100000000 ORDER BY population DESC, \"country_name\" LIMIT 5",
+      "expected_columns": [
+        "country_name",
+        "population"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q1",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS observations FROM data",
+      "expected_columns": [
+        "observations"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q2",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "row",
+      "sql": "SELECT \"country_name\", \"value\" AS gdp FROM data WHERE \"year\" = 2023 AND \"country_code\" IS NOT NULL AND \"value\" IS NOT NULL ORDER BY gdp DESC, \"country_name\" LIMIT 1",
+      "expected_columns": [
+        "country_name",
+        "gdp"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q3",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS missing_values FROM data WHERE \"value\" IS NULL",
+      "expected_columns": [
+        "missing_values"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q4",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "scalar",
+      "sql": "WITH g AS (SELECT \"year\", \"value\" FROM data WHERE \"country_name\" = 'India' AND \"year\" IN (2010, 2023)) SELECT ROUND(MAX(CASE WHEN \"year\" = 2023 THEN \"value\" END) / MAX(CASE WHEN \"year\" = 2010 THEN \"value\" END), 2) AS growth_multiple FROM g",
+      "expected_columns": [
+        "growth_multiple"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q5",
+      "dataset_id": "wb-gdp-current-usd",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-023-q1",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS observations FROM data",
+      "expected_columns": [
+        "observations"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q2",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "row",
+      "sql": "SELECT \"country_name\", \"value\" AS co2_per_capita FROM data WHERE \"year\" = 2022 AND \"country_code\" IS NOT NULL AND \"value\" IS NOT NULL ORDER BY co2_per_capita DESC, \"country_name\" LIMIT 1",
+      "expected_columns": [
+        "country_name",
+        "co2_per_capita"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q3",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS zero_values FROM data WHERE \"value\" = 0",
+      "expected_columns": [
+        "zero_values"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q4",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(AVG(\"value\"), 2) AS avg_co2_per_capita FROM data WHERE \"year\" = 2020 AND \"country_code\" IS NOT NULL AND \"value\" IS NOT NULL",
+      "expected_columns": [
+        "avg_co2_per_capita"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q5",
+      "dataset_id": "wb-co2-per-capita",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-024-q1",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS observations FROM data",
+      "expected_columns": [
+        "observations"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q2",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "row",
+      "sql": "SELECT \"country_name\", \"value\" AS unemployment_rate FROM data WHERE \"year\" = 2024 AND \"country_code\" IS NOT NULL AND \"value\" IS NOT NULL ORDER BY unemployment_rate DESC, \"country_name\" LIMIT 1",
+      "expected_columns": [
+        "country_name",
+        "unemployment_rate"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q3",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS missing_values FROM data WHERE \"value\" IS NULL",
+      "expected_columns": [
+        "missing_values"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q4",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "rows",
+      "sql": "SELECT \"year\", ROUND(AVG(\"value\"), 2) AS avg_unemployment, COUNT(*) AS observations FROM data WHERE \"year\" IN (2019, 2024) AND \"country_code\" IS NOT NULL AND \"value\" IS NOT NULL GROUP BY 1 ORDER BY 1",
+      "expected_columns": [
+        "year",
+        "avg_unemployment",
+        "observations"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q5",
+      "dataset_id": "wb-unemployment-rate",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-025-q1",
+      "dataset_id": "openml-churn",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS customers FROM data",
+      "expected_columns": [
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q2",
+      "dataset_id": "openml-churn",
+      "answer_type": "row",
+      "sql": "SELECT \"area_code\", ROUND(100.0 * AVG(\"class\"), 2) AS churn_pct, COUNT(*) AS customers FROM data GROUP BY 1 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "area_code",
+        "churn_pct",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q3",
+      "dataset_id": "openml-churn",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS churned FROM data WHERE \"international_plan\" = 1 AND \"class\" = 1",
+      "expected_columns": [
+        "churned"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q4",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "sql": "SELECT \"class\", ROUND(AVG(\"number_customer_service_calls\"), 2) AS avg_service_calls, COUNT(*) AS customers FROM data GROUP BY 1 ORDER BY 1",
+      "expected_columns": [
+        "class",
+        "avg_service_calls",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q5",
+      "dataset_id": "openml-churn",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-025-q6",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "sql": "SELECT \"state\", COUNT(*) AS customers FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "state",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q7",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "sql": "SELECT \"state\", COUNT(*) AS customers FROM data WHERE \"international_plan\" = 1 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "state",
+        "customers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q8",
+      "dataset_id": "openml-churn",
+      "answer_type": "rows",
+      "sql": "SELECT \"state\", COUNT(*) AS customers, ROUND(100.0 * AVG(\"class\"), 2) AS churn_pct FROM data WHERE \"international_plan\" = 1 GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "state",
+        "customers",
+        "churn_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q1",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS license_records FROM data",
+      "expected_columns": [
+        "license_records"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q2",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "row",
+      "sql": "SELECT \"license_description\", COUNT(*) AS records FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "license_description",
+        "records"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q3",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS missing_payment_date FROM data WHERE \"payment_date\" IS NULL",
+      "expected_columns": [
+        "missing_payment_date"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q4",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100.0 * COUNT(*) FILTER (WHERE \"application_type\" = 'RENEW') / COUNT(*), 2) AS renew_share_pct FROM data",
+      "expected_columns": [
+        "renew_share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q5",
+      "dataset_id": "chicago-business-licenses",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-027-q1",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS inspections FROM data",
+      "expected_columns": [
+        "inspections"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q2",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "row",
+      "sql": "SELECT \"facility_type\", COUNT(*) AS inspections FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "facility_type",
+        "inspections"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q3",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS failed_high_risk FROM data WHERE \"results\" = 'Fail' AND \"risk\" = 'Risk 1 (High)'",
+      "expected_columns": [
+        "failed_high_risk"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q4",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "row",
+      "sql": "SELECT \"risk\", ROUND(100.0 * AVG(CASE WHEN \"results\" = 'Fail' THEN 1 ELSE 0 END), 2) AS fail_rate_pct, COUNT(*) AS inspections FROM data GROUP BY 1 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "risk",
+        "fail_rate_pct",
+        "inspections"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q5",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-027-q6",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "rows",
+      "sql": "SELECT \"facility_type\", COUNT(*) AS failures FROM data WHERE \"results\" = 'Fail' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "facility_type",
+        "failures"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q7",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "rows",
+      "sql": "SELECT \"facility_type\", COUNT(*) AS failures FROM data WHERE \"results\" = 'Fail' AND \"risk\" = 'Risk 1 (High)' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "facility_type",
+        "failures"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q8",
+      "dataset_id": "chicago-food-inspections",
+      "answer_type": "rows",
+      "sql": "SELECT \"facility_type\", COUNT(*) FILTER (WHERE \"results\" = 'Fail') AS failures, COUNT(*) AS inspections, ROUND(100.0 * AVG(CASE WHEN \"results\" = 'Fail' THEN 1 ELSE 0 END), 2) AS fail_rate_pct FROM data WHERE \"risk\" = 'Risk 1 (High)' GROUP BY 1 ORDER BY 4 DESC, 3 DESC, 1 LIMIT 3",
+      "expected_columns": [
+        "facility_type",
+        "failures",
+        "inspections",
+        "fail_rate_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q1",
+      "dataset_id": "uci-iris",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS flowers FROM data",
+      "expected_columns": [
+        "flowers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q2",
+      "dataset_id": "uci-iris",
+      "answer_type": "row",
+      "sql": "SELECT \"species\", ROUND(AVG(\"petal_length\"), 3) AS avg_petal_length FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "species",
+        "avg_petal_length"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q3",
+      "dataset_id": "uci-iris",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS flowers FROM data WHERE \"species\" = 'Iris-setosa' AND \"petal_width\" > 0.2",
+      "expected_columns": [
+        "flowers"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q4",
+      "dataset_id": "uci-iris",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(100.0 * COUNT(*) FILTER (WHERE \"species\" = 'Iris-virginica' AND \"petal_length\" > 5) / COUNT(*), 2) AS share_pct FROM data",
+      "expected_columns": [
+        "share_pct"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q5",
+      "dataset_id": "uci-iris",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-029-q1",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS samples FROM data",
+      "expected_columns": [
+        "samples"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q2",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "row",
+      "sql": "SELECT \"quality\", ROUND(AVG(\"alcohol\"), 3) AS avg_alcohol, COUNT(*) AS samples FROM data GROUP BY 1 ORDER BY 2 DESC, 3 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "quality",
+        "avg_alcohol",
+        "samples"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q3",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS wines FROM data WHERE \"alcohol\" > 12 AND \"quality\" >= 7",
+      "expected_columns": [
+        "wines"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q4",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "rows",
+      "sql": "SELECT CASE WHEN \"quality\" >= 7 THEN '7 plus' ELSE 'below 7' END AS quality_band, ROUND(AVG(\"sulphates\"), 3) AS avg_sulphates, COUNT(*) AS samples FROM data GROUP BY 1 ORDER BY 1",
+      "expected_columns": [
+        "quality_band",
+        "avg_sulphates",
+        "samples"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q5",
+      "dataset_id": "uci-wine-quality",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-030-q1",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS buildings FROM data",
+      "expected_columns": [
+        "buildings"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q2",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "row",
+      "sql": "SELECT \"overall_height\", ROUND(AVG(\"heating_load\"), 3) AS avg_heating_load, COUNT(*) AS buildings FROM data GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+      "expected_columns": [
+        "overall_height",
+        "avg_heating_load",
+        "buildings"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q3",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "scalar",
+      "sql": "SELECT COUNT(*) AS buildings FROM data WHERE \"glazing_area\" > 0.25 AND \"cooling_load\" > 30",
+      "expected_columns": [
+        "buildings"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q4",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "scalar",
+      "sql": "SELECT ROUND(CORR(\"heating_load\", \"cooling_load\"), 4) AS load_correlation FROM data",
+      "expected_columns": [
+        "load_correlation"
+      ],
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q5",
+      "dataset_id": "uci-energy-efficiency",
+      "answer_type": "clarification",
+      "sql": null,
+      "expected_columns": [],
+      "needs_clarification": true
+    }
+  ]
+}
