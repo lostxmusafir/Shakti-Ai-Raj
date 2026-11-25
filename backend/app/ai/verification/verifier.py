@@ -47,7 +47,8 @@ class ResultVerifier:
                     if agg.function.lower() in {"count", "sum"} and value is not None and value < 0:
                         recompute_status = "failed"
                         warnings.append(f"Negative aggregate detected on {alias}: {value}")
-                    if plan.group_by and not truncated_grouped_result and agg.function.lower() in {"count", "sum", "min", "max"}:
+                    is_distinct_agg = getattr(agg, "distinct", False) or agg.function.lower() in {"count_distinct", "distinct_count"}
+                    if plan.group_by and not truncated_grouped_result and not is_distinct_agg and agg.function.lower() in {"count", "sum", "min", "max"}:
                         values = [item.get(alias) for item in rows if isinstance(item.get(alias), (int, float))]
                         overall = recompute.get(alias)
                         if values and overall is not None:

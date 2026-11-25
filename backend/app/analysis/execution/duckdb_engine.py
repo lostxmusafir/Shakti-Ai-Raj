@@ -55,6 +55,9 @@ class DuckDBEngine:
                 if ext == ".csv":
                     # Register CSV into in-memory table via parameterized read
                     con.execute(f'CREATE TABLE "{alias}" AS SELECT * FROM read_csv_auto(?)', [file_path])
+                elif ext == ".parquet":
+                    # Register Parquet into in-memory table via native DuckDB columnar scan
+                    con.execute(f'CREATE TABLE "{alias}" AS SELECT * FROM read_parquet(?)', [file_path])
                 elif ext in [".xlsx", ".xls"]:
                     # Read Excel into Polars/Arrow and register in DuckDB
                     import polars as pl
@@ -83,12 +86,16 @@ class DuckDBEngine:
                     dom_len = 18
                     dom_str = "@nexusdynamics.com"
                     try:
-                        sample_dests = con.execute(f'SELECT Destination FROM "{primary_alias}" WHERE Destination IS NOT NULL LIMIT 15').fetchall()
-                        for s in sample_dests:
-                            if s[0] and "@raj.com" in str(s[0]).lower():
-                                dom_str = "@raj.com"
-                                dom_len = 8
-                                break
+                        # Dynamically discover primary corporate domain from dataset
+                        dom_cand = con.execute(f'''
+                            SELECT lower(regexp_extract(Destination, '@([A-Za-z0-9.-]+)', 0)) AS dom, COUNT(*) AS cnt
+                            FROM "{primary_alias}"
+                            WHERE Destination IS NOT NULL AND Destination LIKE '%@%'
+                            GROUP BY dom ORDER BY cnt DESC LIMIT 1
+                        ''').fetchone()
+                        if dom_cand and dom_cand[0]:
+                            dom_str = dom_cand[0]
+                            dom_len = len(dom_str)
                     except Exception:
                         pass
 
@@ -150,19 +157,10 @@ class DuckDBEngine:
 
             # Independent aggregate recomputation for verification
             recompute = {}
-            if plan.intent == "comparative_count":
-                profile = files_map[plan.datasets[0].file_id].schema_profile or {}
-                columns = {col["name"].lower(): col["name"] for col in profile.get("columns", [])}
-                debit, credit = (escape_identifier(columns[name]) for name in ("debit", "credit"))
-                alias = escape_identifier(plan.datasets[0].alias)
-                counts = con.execute(
-                    f"SELECT COUNT(*) FILTER (WHERE {debit} IS NOT NULL AND {debit} <> 0), "
-                    f"COUNT(*) FILTER (WHERE {credit} IS NOT NULL AND {credit} <> 0) FROM {alias}"
-                ).fetchone()
-                recompute = {"debit_entries": counts[0], "credit_entries": counts[1]}
-            elif plan.aggregations and not plan.sql_query:
+            if plan.aggregations and not plan.sql_query:
                 recompute_plan = plan.model_copy(deep=True)
                 recompute_plan.group_by = []
+                recompute_plan.having = []
                 recompute_plan.sort = []
                 recompute_plan.limit = None
                 try:
@@ -175,6 +173,24 @@ class DuckDBEngine:
                         recompute = {rec_cols[i]: DuckDBEngine._clean_value(rec_rows[0][i]) for i in range(len(rec_cols))}
                 except Exception:
                     recompute = {}
+            elif plan.intent == "comparative_count" and plan.requested_concepts and plan.datasets:
+                try:
+                    alias = escape_identifier(plan.datasets[0].alias)
+                    rec_parts = []
+                    for c in plan.requested_concepts:
+                        col_esc = escape_identifier(c)
+                        alias_esc = escape_identifier(f"{c.lower()}_entries")
+                        rec_parts.append(f"COUNT(*) FILTER (WHERE {col_esc} IS NOT NULL AND {col_esc} <> 0) AS {alias_esc}")
+                    if rec_parts:
+                        rec_cursor = con.execute(f"SELECT {', '.join(rec_parts)} FROM {alias}")
+                        rec_cols = [d[0] for d in rec_cursor.description]
+                        rec_row = rec_cursor.fetchone()
+                        if rec_row:
+                            recompute = {rec_cols[i]: DuckDBEngine._clean_value(rec_row[i]) for i in range(len(rec_cols))}
+                except Exception:
+                    recompute = {}
+            elif plan.intent == "comparative_count" and rows and len(rows) == 1:
+                recompute = rows[0]
             elif rows:
                 recompute = rows[0]
 

@@ -1,3 +1,4 @@
+import json
 import pytest
 from app.ai.learning.semantic_mapping import SemanticMapper
 from app.ai.learning.example_retrieval import ExampleRetriever
@@ -58,7 +59,12 @@ def test_example_retriever_tenant_isolation():
         if ex.get("source_type") == "private_tenant":
             assert ex.get("unit_id") == "unit_b"
 
-def test_feedback_service_verification_and_promotion(tmp_path):
+def test_feedback_service_verification_and_promotion(tmp_path, monkeypatch):
+    # Isolation guard: promotion must write to a temporary corpus, never the tracked one.
+    isolated_golden = tmp_path / "golden_examples_isolated.json"
+    isolated_golden.write_text("[]", encoding="utf-8")
+    monkeypatch.setenv("GOLDEN_EXAMPLES_PATH", str(isolated_golden))
+
     # Create small CSV for verification test
     test_csv = tmp_path / "test.csv"
     test_csv.write_text("id,val\n1,100\n2,200\n")
@@ -78,3 +84,6 @@ def test_feedback_service_verification_and_promotion(tmp_path):
     rec = FeedbackService.record_feedback(sub)
     assert rec.verification_status == "verified"
     assert rec.verified_rows == [{"total": 300}]
+    # A unit_admin correction is promoted, but only into the isolated corpus
+    promoted = json.loads(isolated_golden.read_text(encoding="utf-8"))
+    assert [ex["example_id"] for ex in promoted] == [f"ex-fb-{rec.feedback_id}"]

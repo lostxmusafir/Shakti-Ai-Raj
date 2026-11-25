@@ -14,7 +14,7 @@ from app.audit.service import audit_service
 router = APIRouter()
 file_repo = BaseRepository("files", StoredFile)
 
-ALLOWED_EXTENSIONS = {".csv", ".xlsx", ".xls"}
+ALLOWED_EXTENSIONS = {".csv", ".xlsx", ".xls", ".parquet"}
 
 @router.post("", response_model=FileResponse)
 async def upload_file(

@@ -32,7 +32,7 @@ from app.ai.planning.schemas import (
 # plus the QueryCompiler implementations. Anything outside this set must be refused
 # loudly rather than emitted as an unrunnable AnalysisPlan.
 EXECUTABLE_AGGREGATES = {
-    "count", "sum", "avg", "min", "max", "median", "count_distinct",
+    "count", "sum", "avg", "min", "max", "median", "count_distinct", "count_nonzero",
 }
 
 

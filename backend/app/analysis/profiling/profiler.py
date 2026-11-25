@@ -17,8 +17,15 @@ class DataProfiler:
             return DataProfiler._profile_csv(file_path)
         elif ext in [".xlsx", ".xls"]:
             return DataProfiler._profile_excel(file_path)
+        elif ext == ".parquet":
+            return DataProfiler._profile_parquet(file_path)
         else:
             raise ValueError(f"Unsupported file format for profiling: {ext}")
+
+    @staticmethod
+    def _profile_parquet(file_path: str) -> Dict[str, Any]:
+        df = pl.read_parquet(file_path)
+        return DataProfiler._extract_profile_from_df(df, sheet_names=["Sheet1"])
 
     @staticmethod
     def _profile_csv(file_path: str) -> Dict[str, Any]:
@@ -48,14 +55,72 @@ class DataProfiler:
         return profile
 
     @staticmethod
+    def _classify_column_role(
+        col_name: str,
+        inferred_type: str,
+        row_count: int,
+        unique_count: int,
+        null_count: int,
+        zero_count: int,
+        non_zero_count: int,
+        sample_values: List[str]
+    ) -> str:
+        name_lower = col_name.strip().lower()
+
+        # 1. Timestamp
+        if inferred_type == "datetime":
+            return "timestamp"
+        if any(term in name_lower for term in ["time", "date", "timestamp", "datetime", "created_at", "updated_at"]):
+            return "timestamp"
+
+        # 2. Flag
+        if inferred_type == "boolean":
+            return "flag"
+        if unique_count <= 2 and (name_lower.startswith("is_") or name_lower.startswith("has_")):
+            return "flag"
+
+        # 3. Identifier
+        id_suffixes = ("_id", " id", "id", "_key", " key", "_code", " code", "_no", " no", "number")
+        if (any(name_lower.endswith(sfx) or name_lower == sfx for sfx in id_suffixes)
+                and inferred_type != "float" and row_count > 0 and (unique_count / row_count > 0.4 or unique_count >= 100)):
+            return "identifier"
+
+        # 4. Status
+        if inferred_type == "string" and (
+            name_lower in {"status", "action", "severity", "state", "stage", "action_status", "channel"}
+            or (1 < unique_count <= 20 and any(kw in name_lower for kw in ["status", "action", "severity", "stage", "channel", "priority"]))
+        ):
+            return "status"
+
+        # 5. Text
+        if inferred_type == "string" and (
+            any(len(str(s)) > 80 for s in sample_values)
+            or name_lower in {"description", "policies", "policy", "notes", "comment", "file name", "file_name", "message", "query"}
+        ):
+            return "text"
+
+        # 6. Numeric Measures vs Sparse Measures
+        if inferred_type in ["integer", "float"]:
+            # If zero or null indicates absent event (e.g. debit/credit entries, refund, discounts)
+            if row_count > 0 and (null_count > 0 or zero_count > 0) and non_zero_count > 0:
+                return "sparse_measure"
+            return "measure"
+
+        # 7. Dimension (categorical grouping field)
+        if inferred_type == "string":
+            return "dimension"
+
+        return "dimension"
+
+    @staticmethod
     def _extract_profile_from_df(df: pl.DataFrame, sheet_names: List[str]) -> Dict[str, Any]:
         row_count = df.height
         columns_profile = []
 
         for col_name in df.columns:
             series = df[col_name]
-            null_count = series.null_count()
-            unique_count = series.n_unique()
+            null_count = int(series.null_count())
+            unique_count = int(series.n_unique())
             dtype_str = str(series.dtype).lower()
 
             # Map polars type to clean simplified type
@@ -75,11 +140,36 @@ class DataProfiler:
             # Clean samples for json serialization
             clean_samples = [str(s) for s in samples]
 
+            zero_count = 0
+            non_zero_count = 0
+            if inferred in ["integer", "float"] and row_count > 0:
+                try:
+                    zero_count = int((series == 0).sum())
+                    non_zero_count = int(((series != 0) & series.is_not_null()).sum())
+                except Exception:
+                    zero_count = 0
+                    non_zero_count = max(0, row_count - null_count)
+
+            role = DataProfiler._classify_column_role(
+                col_name=col_name,
+                inferred_type=inferred,
+                row_count=row_count,
+                unique_count=unique_count,
+                null_count=null_count,
+                zero_count=zero_count,
+                non_zero_count=non_zero_count,
+                sample_values=clean_samples,
+            )
+
             col_meta: Dict[str, Any] = {
                 "name": col_name,
                 "inferred_type": inferred,
+                "role": role,
                 "null_count": null_count,
                 "unique_count": unique_count,
+                "distinct_count": unique_count,
+                "zero_count": zero_count,
+                "non_zero_count": non_zero_count,
                 "sample_values": clean_samples,
             }
 
