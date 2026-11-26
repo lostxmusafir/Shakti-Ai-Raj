@@ -83,20 +83,20 @@ export default function FilesPage() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-950">
+    <div className="app-main flex h-screen">
       <Sidebar
         user={user}
         chats={chats}
         onNewChat={() => router.push("/chat")}
       />
 
-      <main className="flex flex-1 flex-col overflow-y-auto p-8">
-        <div className="flex items-center justify-between pb-6 border-b border-slate-800">
+      <main className="app-main flex min-w-0 flex-1 flex-col overflow-y-auto px-5 py-6 sm:px-8 sm:py-8">
+        <div className="page-header flex flex-wrap items-end justify-between gap-4 border-b pb-6">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">
+            <h1 className="text-2xl font-semibold tracking-[-0.03em] text-white">
               Dataset Ingestion & Schema Profiling
             </h1>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
               Upload CSV and Excel files. Schemas, types, and column distributions are profiled server-side.
             </p>
           </div>
@@ -112,7 +112,7 @@ export default function FilesPage() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500 disabled:opacity-50"
+              className="accent-action flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white transition disabled:opacity-50"
             >
               <UploadCloud className="h-4 w-4" />
               {uploading ? "Profiling Dataset..." : "Upload New Dataset"}
@@ -121,9 +121,9 @@ export default function FilesPage() {
         </div>
 
         {/* Datasets List */}
-        <div className="mt-8 space-y-4">
+        <div className="mx-auto mt-7 w-full max-w-[1180px] space-y-4">
           {files.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-800 p-12 text-center">
+            <div className="surface-panel flex flex-col items-center justify-center rounded-xl border border-dashed p-14 text-center">
               <FileSpreadsheet className="h-10 w-10 text-slate-600" />
               <h3 className="mt-3 text-sm font-semibold text-slate-300">
                 No datasets uploaded yet
@@ -139,11 +139,11 @@ export default function FilesPage() {
               return (
                 <div
                   key={file.id}
-                  className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl transition"
+                  className="surface-panel rounded-xl border p-5 transition"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600/20 text-indigo-400 ring-1 ring-indigo-500/30">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-400/20">
                         <FileSpreadsheet className="h-5 w-5" />
                       </div>
                       <div>
@@ -153,13 +153,18 @@ export default function FilesPage() {
                         <p className="text-[11px] text-slate-400">
                           {(file.size_bytes / 1024).toFixed(1)} KB • {profile?.row_count ?? 0} rows • {profile?.column_count ?? 0} columns
                         </p>
+                        {file.status === "error" || profile?.error ? (
+                          <p className="mt-1 text-[11px] text-red-400">
+                            Profiling error: {String(profile?.error || "Failed to parse file")}
+                          </p>
+                        ) : null}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleStartAnalysis(file.id)}
-                        className="flex items-center gap-1.5 rounded-lg bg-indigo-950 px-3 py-1.5 text-xs font-medium text-indigo-300 border border-indigo-800 hover:bg-indigo-900 transition"
+                        className="flex items-center gap-1.5 rounded-lg border border-indigo-400/25 bg-indigo-500/10 px-3 py-1.5 text-xs font-medium text-indigo-200 transition hover:bg-indigo-500/20"
                       >
                         <MessageSquare className="h-3.5 w-3.5" />
                         Analyze in Chat
@@ -197,9 +202,9 @@ export default function FilesPage() {
                         )}
                       </div>
 
-                      <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+                      <div className="overflow-x-auto rounded-lg border border-slate-800/80">
                         <table className="w-full text-left text-xs">
-                          <thead className="bg-slate-800/60 text-slate-300">
+                          <thead className="bg-white/[0.03] text-slate-300">
                             <tr>
                               <th className="px-3 py-2 font-semibold">Column Name</th>
                               <th className="px-3 py-2 font-semibold">Inferred Type</th>
