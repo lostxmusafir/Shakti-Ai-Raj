@@ -1,96 +1,137 @@
 "use client";
 
-import { useState } from "react";
-import { ShieldCheck, FileText, ChevronDown, ChevronUp, Fingerprint, AlertTriangle } from "lucide-react";
+import { ChevronRight, Database, FileSpreadsheet, Filter, Hash, ShieldCheck } from "lucide-react";
+import type { AnswerProvenance, Row } from "@/lib/answer";
+import { cn } from "@/lib/cn";
+import { formatNumber, humanizeColumn } from "@/lib/format";
 
-interface EvidenceProps {
-  provenance: {
-    source_files?: string[];
-    source_sheets?: string[];
-    evidence_rows?: number[];
-    policy_code?: string;
-    policy_version?: number;
-    query_hash?: string;
-    result_hash?: string;
-    verification_status?: string;
-    source_row_count?: number;
-    matched_row_count?: number;
-  };
-}
-
-export default function SourceEvidenceCard({ provenance }: EvidenceProps) {
-  const [expanded, setExpanded] = useState(false);
-
-  if (!provenance) return null;
-  const verified = provenance.verification_status?.toLowerCase() === "passed";
+/**
+ * Collapsible evidence: source file, sheet, row identifiers, query scope and
+ * a small matched-row preview. Collapsed by default.
+ */
+export default function EvidencePanel({
+  provenance,
+  compiledSql,
+  rows,
+  count,
+  open,
+  onToggle,
+  sourceNames,
+}: {
+  provenance: AnswerProvenance;
+  compiledSql?: string;
+  rows?: Row[];
+  count: number;
+  open: boolean;
+  onToggle: () => void;
+  sourceNames?: string[];
+}) {
+  const evidenceRows = provenance.evidence_rows ?? [];
+  const whereClause = extractWhere(compiledSql);
+  const sourceFiles = sourceNames?.length ? sourceNames : (provenance.source_files ?? []);
+  const sheets = provenance.source_sheets ?? [];
+  const preview = (rows ?? []).slice(0, 5);
 
   return (
-    <div className="my-3 rounded-xl border border-indigo-900/40 bg-indigo-950/20 p-3 text-xs">
-      <div
-        className="flex cursor-pointer items-center justify-between"
-        onClick={() => setExpanded(!expanded)}
+    <div className="overflow-hidden rounded-lg border border-slate-800/70 bg-slate-900/30">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11.5px] text-slate-400 transition hover:bg-slate-900/60 hover:text-slate-200"
       >
-        <div className="flex items-center gap-2 font-semibold text-indigo-300">
-          <ShieldCheck className="h-4 w-4 text-indigo-400" />
-          <span>Verification & Provenance Citations</span>
-          <span className={`rounded-full px-2 py-0.5 text-[10px] border ${verified ? "bg-emerald-950/80 text-emerald-300 border-emerald-800" : "bg-amber-950/80 text-amber-300 border-amber-800"}`}>
-            {provenance.verification_status || "UNKNOWN"}
-          </span>
-        </div>
-        <button className="text-slate-400 hover:text-white">
-          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
-      </div>
+        <ChevronRight className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-90")} />
+        <ShieldCheck className="h-3.5 w-3.5 text-slate-500" />
+        <span className="font-medium">Evidence</span>
+        <span className="text-[10.5px] text-slate-500">{formatNumber(count)} rows</span>
+      </button>
 
-      {expanded && (
-        <div className="mt-3 space-y-2 border-t border-indigo-900/30 pt-3 text-slate-300">
-          {(provenance.source_row_count !== undefined || provenance.matched_row_count !== undefined) && (
-            <div className="grid grid-cols-2 gap-2">
-              <div><span className="font-medium text-slate-400">Source rows:</span> {provenance.source_row_count ?? "—"}</div>
-              <div><span className="font-medium text-slate-400">Matched rows:</span> {provenance.matched_row_count ?? "—"}</div>
-            </div>
-          )}
-          {provenance.policy_code && (
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-slate-400">Policy Citation:</span>
-              <span className="font-mono text-indigo-300">
-                {provenance.policy_code} (v{provenance.policy_version || 1})
-              </span>
-            </div>
-          )}
+      {open ? (
+        <div className="space-y-3 border-t border-slate-800/70 px-3 py-2.5 text-[11px] text-slate-400">
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Field icon={<Database className="h-3 w-3" />} label="Source files">
+              {sourceFiles.length ? sourceFiles.map((file) => String(file)).join(", ") : "Not recorded"}
+            </Field>
+            <Field icon={<FileSpreadsheet className="h-3 w-3" />} label="Sheet">
+              {sheets.length ? sheets.join(", ") : "—"}
+            </Field>
+            <Field icon={<Hash className="h-3 w-3" />} label="Rows analysed">
+              {provenance.source_row_count !== undefined ? formatNumber(Number(provenance.source_row_count)) : "—"}
+            </Field>
+            <Field icon={<Filter className="h-3 w-3" />} label="Matched rows">
+              {provenance.matched_row_count !== undefined ? formatNumber(Number(provenance.matched_row_count)) : formatNumber(count)}
+            </Field>
+          </div>
 
-          {provenance.evidence_rows && provenance.evidence_rows.length > 0 && (
+          <div>
+            <div className="mb-1 text-slate-500">Applied filters</div>
+            {whereClause ? (
+              <code className="block overflow-x-auto rounded bg-slate-950/60 px-2 py-1.5 font-mono text-[10.5px] text-slate-300">
+                WHERE {whereClause}
+              </code>
+            ) : (
+              <div className="text-slate-500">None recorded for this query.</div>
+            )}
+          </div>
+
+          {evidenceRows.length ? (
             <div>
-              <span className="font-medium text-slate-400">Offending Row Evidence:</span>
-              <div className="mt-1 flex flex-wrap gap-1">
-                {provenance.evidence_rows.slice(0, 20).map((rowIdx) => (
+              <div className="mb-1 text-slate-500">Row identifiers</div>
+              <div className="flex flex-wrap gap-1">
+                {evidenceRows.slice(0, 24).map((rowId) => (
                   <span
-                    key={rowIdx}
-                    className="rounded bg-red-950/60 px-1.5 py-0.5 font-mono text-[11px] text-red-300 border border-red-800/40"
+                    key={rowId}
+                    className="rounded bg-slate-800/80 px-1.5 py-0.5 font-mono text-[10px] text-slate-300"
                   >
-                    Row {rowIdx}
+                    #{rowId}
                   </span>
                 ))}
-                {provenance.evidence_rows.length > 20 && (
-                  <span className="text-[10px] text-slate-500 self-center">
-                    +{provenance.evidence_rows.length - 20} more rows
-                  </span>
-                )}
+                {evidenceRows.length > 24 ? (
+                  <span className="self-center text-[10px] text-slate-500">+{evidenceRows.length - 24} more</span>
+                ) : null}
               </div>
             </div>
-          )}
+          ) : null}
 
-          {provenance.query_hash && (
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-              <Fingerprint className="h-3.5 w-3.5 text-slate-500" />
-              <span>Query Hash:</span>
-              <span className="font-mono text-[10px] text-slate-300">
-                {provenance.query_hash.slice(0, 16)}...
-              </span>
+          {preview.length ? (
+            <div>
+              <div className="mb-1 text-slate-500">Matched rows</div>
+              <div className="space-y-1">
+                {preview.map((row, index) => (
+                  <div key={index} className="truncate rounded bg-slate-950/50 px-2 py-1 font-mono text-[10px] text-slate-400">
+                    {Object.entries(row)
+                      .slice(0, 5)
+                      .map(([key, value]) => `${humanizeColumn(key)}=${value === null ? "null" : String(value)}`)
+                      .join("  ·  ")}
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
+          ) : null}
         </div>
-      )}
+      ) : null}
     </div>
   );
+}
+
+function Field({ icon, label, children }: { icon: React.ReactNode; label: string; children: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <div className="flex items-center gap-1 text-slate-500">
+        {icon}
+        <span>{label}</span>
+      </div>
+      <div className="truncate text-slate-300" title={typeof children === "string" ? children : undefined}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function extractWhere(sql?: string): string | null {
+  if (!sql) return null;
+  const match = sql.match(/\bwhere\b([\s\S]*?)(?:\bgroup\s+by\b|\border\s+by\b|\blimit\b|$)/i);
+  const clause = match?.[1]?.trim();
+  if (!clause) return null;
+  return clause.replace(/\s+/g, " ");
 }

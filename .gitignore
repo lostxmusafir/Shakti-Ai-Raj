@@ -63,6 +63,15 @@ data/benchmark/synthetic/*
 data/benchmark/golden/*
 !data/benchmark/golden/.gitkeep
 
+# Blind internet-evaluation raw data and samples (regenerate with eval.internet.acquire)
+data/benchmark/internet/raw/
+data/benchmark/internet/samples/
+data/benchmark/internet/records/
+*.log
+schema_report.txt
+reference.log
+planner.log
+
 # System & IDE
 .DS_Store
 Thumbs.db

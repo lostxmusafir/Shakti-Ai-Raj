@@ -1,0 +1,3341 @@
+{
+  "corpus_version": "blind-internet-1.0",
+  "note": "Questions only. No SQL, answers, dataset aliases, or retrieval entries may be added to this file before scoring.",
+  "questions": [
+    {
+      "q_id": "internet-001-q1",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "How many order lines are in this dataset?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q2",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "Sabse zyada order lines kis country se aa rahe hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Country",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q3",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "How many lines are missing a customer ID but still have a positive quantity?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "CustomerID",
+        "Quantity"
+      ],
+      "expected_filters": [
+        "CustomerID IS NULL",
+        "Quantity > 0"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q4",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "Cancelled lines hata ke top country ka revenue share kitna hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "Country",
+      "expected_metric_columns": [
+        "Quantity",
+        "UnitPrice",
+        "InvoiceNo"
+      ],
+      "expected_filters": [
+        "Quantity > 0",
+        "InvoiceNo NOT LIKE 'C%'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q5",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "ye data me kuch ajeeb lag raha hai kya?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-001-q6",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "Top 5 countries batao lines ke hisaab se.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-001",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Country",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q7",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "Ab sirf UK ke andar top 5 products?",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-001",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Description",
+      "expected_metric_columns": [],
+      "expected_filters": [
+        "Country = 'United Kingdom'"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-001-q8",
+      "test_id": "internet-001",
+      "dataset_id": "uci-online-retail",
+      "question": "Aur unme se sabse zyada revenue kis product ka hai?",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-001",
+      "turn_index": 3,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "Description",
+      "expected_metric_columns": [
+        "Quantity",
+        "UnitPrice"
+      ],
+      "expected_filters": [
+        "Country = 'United Kingdom'",
+        "Quantity > 0"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q1",
+      "test_id": "internet-002",
+      "dataset_id": "microsoft-financial-sample",
+      "question": "What is the total profit across all rows?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "aggregate_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "Profit"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q2",
+      "test_id": "internet-002",
+      "dataset_id": "microsoft-financial-sample",
+      "question": "Kaunsa country sabse zyada sales de raha hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Country",
+      "expected_metric_columns": [
+        "Sales"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q3",
+      "test_id": "internet-002",
+      "dataset_id": "microsoft-financial-sample",
+      "question": "Government segment me Canada ke total units sold kitne hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "Units Sold"
+      ],
+      "expected_filters": [
+        "Segment = 'Government'",
+        "Country = 'Canada'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q4",
+      "test_id": "internet-002",
+      "dataset_id": "microsoft-financial-sample",
+      "question": "Sabse profitable product ka profit total profit ka kitna percent hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "Product",
+      "expected_metric_columns": [
+        "Profit"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-002-q5",
+      "test_id": "internet-002",
+      "dataset_id": "microsoft-financial-sample",
+      "question": "worst month konsa",
+      "language": "shorthand",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-003-q1",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "Total kitne customers hain?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q2",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "Which channel has the highest average grocery spend?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Channel",
+      "expected_metric_columns": [
+        "grocery"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q3",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "Region 3 me kitne customers ka milk spend 10000 se zyada hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "milk",
+        "Region"
+      ],
+      "expected_filters": [
+        "Region = 3",
+        "milk > 10000"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q4",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "What share of total fresh spend comes from channel 1?",
+      "language": "english",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "Channel",
+      "expected_metric_columns": [
+        "fresh"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q5",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "kaunse customers best hain?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-003-q6",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "Top 3 regions by total spend across all categories.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-003",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Region",
+      "expected_metric_columns": [
+        "fresh",
+        "milk",
+        "grocery",
+        "frozen",
+        "detergents_paper",
+        "delicatessen"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q7",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "Sirf channel 2 wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-003",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Region",
+      "expected_metric_columns": [
+        "fresh",
+        "milk",
+        "grocery",
+        "frozen",
+        "detergents_paper",
+        "delicatessen"
+      ],
+      "expected_filters": [
+        "Channel = 2"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-003-q8",
+      "test_id": "internet-003",
+      "dataset_id": "openml-wholesale-customers",
+      "question": "Ab har region ka average total spend bhi bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-003",
+      "turn_index": 3,
+      "expected_intent": "group_avg",
+      "expected_group_column": "Region",
+      "expected_metric_columns": [
+        "fresh",
+        "milk",
+        "grocery",
+        "frozen",
+        "detergents_paper",
+        "delicatessen"
+      ],
+      "expected_filters": [
+        "Channel = 2"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q1",
+      "test_id": "internet-004",
+      "dataset_id": "nyc-restaurant-inspections",
+      "question": "How many inspection records are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q2",
+      "test_id": "internet-004",
+      "dataset_id": "nyc-restaurant-inspections",
+      "question": "Kaunsa boro sabse zyada inspections kar raha hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "boro",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q3",
+      "test_id": "internet-004",
+      "dataset_id": "nyc-restaurant-inspections",
+      "question": "How many Manhattan inspections were critical and scored above 20?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "score",
+        "critical_flag",
+        "boro"
+      ],
+      "expected_filters": [
+        "boro = 'Manhattan'",
+        "critical_flag = 'Critical'",
+        "score > 20"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q4",
+      "test_id": "internet-004",
+      "dataset_id": "nyc-restaurant-inspections",
+      "question": "Brooklyn me critical violations ka share kitna percent hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "critical_flag",
+        "boro"
+      ],
+      "expected_filters": [
+        "boro = 'Brooklyn'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-004-q5",
+      "test_id": "internet-004",
+      "dataset_id": "nyc-restaurant-inspections",
+      "question": "Which restaurants look the worst?",
+      "language": "english",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-005-q1",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "Kitne customers ne term deposit liya?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "y"
+      ],
+      "expected_filters": [
+        "y = true"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q2",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "Which job category converts best into a deposit?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "job",
+      "expected_metric_columns": [
+        "y"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q3",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "Housing loan wale customers me kitne ka deposit hua?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "housing",
+        "y"
+      ],
+      "expected_filters": [
+        "housing = 'yes'",
+        "y = true"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q4",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "Compare the deposit rate for cellular versus telephone contacts.",
+      "language": "english",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "comparison",
+      "expected_group_column": "contact",
+      "expected_metric_columns": [
+        "y"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 2,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q5",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "kaunse customers EMI me problem kar rahe hain?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-005-q6",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "Top 3 jobs by conversion rate.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-005",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "job",
+      "expected_metric_columns": [
+        "y"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q7",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "Sirf married wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-005",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "job",
+      "expected_metric_columns": [
+        "y"
+      ],
+      "expected_filters": [
+        "marital = 'married'"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-005-q8",
+      "test_id": "internet-005",
+      "dataset_id": "uci-bank-marketing",
+      "question": "Ab counts bhi bata de.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-005",
+      "turn_index": 3,
+      "expected_intent": "group_rank",
+      "expected_group_column": "job",
+      "expected_metric_columns": [
+        "y"
+      ],
+      "expected_filters": [
+        "marital = 'married'"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q1",
+      "test_id": "internet-006",
+      "dataset_id": "uci-credit-card-default",
+      "question": "How many customers are in the dataset?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q2",
+      "test_id": "internet-006",
+      "dataset_id": "uci-credit-card-default",
+      "question": "Sabse zyada defaults kis education level me hue?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "EDUCATION",
+      "expected_metric_columns": [
+        "default payment next month"
+      ],
+      "expected_filters": [
+        "default payment next month = 1"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q3",
+      "test_id": "internet-006",
+      "dataset_id": "uci-credit-card-default",
+      "question": "How many customers with a credit limit above 200000 actually defaulted?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "LIMIT_BAL",
+        "default payment next month"
+      ],
+      "expected_filters": [
+        "LIMIT_BAL > 200000",
+        "default payment next month = 1"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q4",
+      "test_id": "internet-006",
+      "dataset_id": "uci-credit-card-default",
+      "question": "Default rate kya hai age 30 se kam walon me vs 30 ya usse zyada?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "comparison",
+      "expected_group_column": "age_band",
+      "expected_metric_columns": [
+        "AGE",
+        "default payment next month"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 2,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-006-q5",
+      "test_id": "internet-006",
+      "dataset_id": "uci-credit-card-default",
+      "question": "Who is most likely to default?",
+      "language": "english",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-007-q1",
+      "test_id": "internet-007",
+      "dataset_id": "openml-credit-g",
+      "question": "Total kitne loan applicants hain?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q2",
+      "test_id": "internet-007",
+      "dataset_id": "openml-credit-g",
+      "question": "Which loan purpose has the most bad-credit applicants?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "purpose",
+      "expected_metric_columns": [
+        "class"
+      ],
+      "expected_filters": [
+        "class = 'bad'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q3",
+      "test_id": "internet-007",
+      "dataset_id": "openml-credit-g",
+      "question": "How many applicants rent their housing and asked for more than 5000?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "housing",
+        "credit_amount"
+      ],
+      "expected_filters": [
+        "housing = 'rent'",
+        "credit_amount > 5000"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q4",
+      "test_id": "internet-007",
+      "dataset_id": "openml-credit-g",
+      "question": "Bad rate kis purpose me sabse zyada hai, kam se kam 20 applicants wale?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "purpose",
+      "expected_metric_columns": [
+        "class"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-007-q5",
+      "test_id": "internet-007",
+      "dataset_id": "openml-credit-g",
+      "question": "Kaun risk-free hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-008-q1",
+      "test_id": "internet-008",
+      "dataset_id": "nyc-dcwp-payments",
+      "question": "What is the total payment amount collected?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "aggregate_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "payment_amount"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q2",
+      "test_id": "internet-008",
+      "dataset_id": "nyc-dcwp-payments",
+      "question": "Sabse zyada payment amount kis fee code se aaya?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "fee_code_name",
+      "expected_metric_columns": [
+        "payment_amount"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q3",
+      "test_id": "internet-008",
+      "dataset_id": "nyc-dcwp-payments",
+      "question": "How many payments were voided?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "payment_type"
+      ],
+      "expected_filters": [
+        "payment_type = 'Void Payment Applied'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q4",
+      "test_id": "internet-008",
+      "dataset_id": "nyc-dcwp-payments",
+      "question": "Void payments hata ke average payment kitna hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "payment_amount",
+        "payment_type"
+      ],
+      "expected_filters": [
+        "payment_type = 'Payment Applied'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-008-q5",
+      "test_id": "internet-008",
+      "dataset_id": "nyc-dcwp-payments",
+      "question": "pament me kuch galat dikh raha?",
+      "language": "shorthand",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-009-q1",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "How many trips are in this sample?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q2",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "Kaunsa payment type sabse zyada trips le raha hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "payment_type",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q3",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "Among credit-card trips, how many were longer than 10 miles?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "payment_type",
+        "trip_distance"
+      ],
+      "expected_filters": [
+        "payment_type = 1",
+        "trip_distance > 10"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q4",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "Cash aur card trips ka average total amount compare karo.",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "comparison",
+      "expected_group_column": "payment_type",
+      "expected_metric_columns": [
+        "total_amount",
+        "payment_type"
+      ],
+      "expected_filters": [
+        "payment_type IN (1,2)"
+      ],
+      "expected_row_count": 2,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q5",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "tip zyada kaha mila",
+      "language": "shorthand",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-009-q6",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "Top 5 pickup locations by trips.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-009",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "PULocationID",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q7",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "Sirf card wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-009",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "PULocationID",
+      "expected_metric_columns": [
+        "payment_type"
+      ],
+      "expected_filters": [
+        "payment_type = 1"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-009-q8",
+      "test_id": "internet-009",
+      "dataset_id": "tlc-yellow-2025-01",
+      "question": "Ab average fare bhi bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-009",
+      "turn_index": 3,
+      "expected_intent": "group_rank",
+      "expected_group_column": "PULocationID",
+      "expected_metric_columns": [
+        "fare_amount",
+        "payment_type"
+      ],
+      "expected_filters": [
+        "payment_type = 1"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q1",
+      "test_id": "internet-010",
+      "dataset_id": "tlc-green-2025-01",
+      "question": "कुल कितनी ट्रिप्स हैं?",
+      "language": "hindi",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q2",
+      "test_id": "internet-010",
+      "dataset_id": "tlc-green-2025-01",
+      "question": "Which pickup location is the busiest?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "PULocationID",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q3",
+      "test_id": "internet-010",
+      "dataset_id": "tlc-green-2025-01",
+      "question": "Passenger count missing wali trips ka average fare kitna hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "passenger_count",
+        "fare_amount"
+      ],
+      "expected_filters": [
+        "passenger_count IS NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q4",
+      "test_id": "internet-010",
+      "dataset_id": "tlc-green-2025-01",
+      "question": "What share of trips carry the airport rate code (5)?",
+      "language": "english",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "RatecodeID"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-010-q5",
+      "test_id": "internet-010",
+      "dataset_id": "tlc-green-2025-01",
+      "question": "koi unusual trip dikh rahi hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-011-q1",
+      "test_id": "internet-011",
+      "dataset_id": "tlc-fhv-2025-01",
+      "question": "How many FHV trip records are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q2",
+      "test_id": "internet-011",
+      "dataset_id": "tlc-fhv-2025-01",
+      "question": "Sabse zyada trips kis dispatching base se hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "dispatching_base_num",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q3",
+      "test_id": "internet-011",
+      "dataset_id": "tlc-fhv-2025-01",
+      "question": "How many trips are missing the pickup location ID?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "PUlocationID"
+      ],
+      "expected_filters": [
+        "PUlocationID IS NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q4",
+      "test_id": "internet-011",
+      "dataset_id": "tlc-fhv-2025-01",
+      "question": "Pickup location available wali trips ka share kitna hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "PUlocationID"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-011-q5",
+      "test_id": "internet-011",
+      "dataset_id": "tlc-fhv-2025-01",
+      "question": "ye data adhura kyun lag raha hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-012-q1",
+      "test_id": "internet-012",
+      "dataset_id": "openml-airlines",
+      "question": "How many flights are in the sample?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q2",
+      "test_id": "internet-012",
+      "dataset_id": "openml-airlines",
+      "question": "Sabse zyada flights kis airline ki hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "Airline",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q3",
+      "test_id": "internet-012",
+      "dataset_id": "openml-airlines",
+      "question": "How many delayed flights were longer than 120 minutes?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "Delay",
+        "Length"
+      ],
+      "expected_filters": [
+        "Delay = 1",
+        "Length > 120"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q4",
+      "test_id": "internet-012",
+      "dataset_id": "openml-airlines",
+      "question": "Har airline ka delay rate bata, top 5 airlines by flights.",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "Airline",
+      "expected_metric_columns": [
+        "Delay"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-012-q5",
+      "test_id": "internet-012",
+      "dataset_id": "openml-airlines",
+      "question": "konsi flite sabse kharab hai",
+      "language": "shorthand",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-013-q1",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "How many employees are listed?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q2",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "Sabse zyada employees kis department me hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "department",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q3",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "How many part-time employees are paid hourly?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "full_or_part_time",
+        "salary_or_hourly"
+      ],
+      "expected_filters": [
+        "full_or_part_time = 'P'",
+        "salary_or_hourly = 'HOURLY'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q4",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "Police department ka average annual salary kitna hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "annual_salary",
+        "department"
+      ],
+      "expected_filters": [
+        "department = 'CHICAGO POLICE DEPARTMENT'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q5",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "salary me koi ajeeb value dikh rahi hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-013-q6",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "Top 3 departments by headcount.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-013",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "department",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q7",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "Sirf full time.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-013",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "department",
+      "expected_metric_columns": [
+        "full_or_part_time"
+      ],
+      "expected_filters": [
+        "full_or_part_time = 'F'"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-013-q8",
+      "test_id": "internet-013",
+      "dataset_id": "chicago-employees",
+      "question": "Ab average annual salary bhi bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-013",
+      "turn_index": 3,
+      "expected_intent": "group_avg",
+      "expected_group_column": "department",
+      "expected_metric_columns": [
+        "annual_salary",
+        "full_or_part_time"
+      ],
+      "expected_filters": [
+        "full_or_part_time = 'F'"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q1",
+      "test_id": "internet-014",
+      "dataset_id": "nyc-citywide-payroll",
+      "question": "कुल कितने पेरोल रिकॉर्ड हैं?",
+      "language": "hindi",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q2",
+      "test_id": "internet-014",
+      "dataset_id": "nyc-citywide-payroll",
+      "question": "Which job title appears most often?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "title_description",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q3",
+      "test_id": "internet-014",
+      "dataset_id": "nyc-citywide-payroll",
+      "question": "How many records are for employees who ceased work?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "leave_status_as_of_june_30"
+      ],
+      "expected_filters": [
+        "leave_status_as_of_june_30 = 'CEASED'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q4",
+      "test_id": "internet-014",
+      "dataset_id": "nyc-citywide-payroll",
+      "question": "Manhattan me average base salary kitni hai vs Brooklyn?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "comparison",
+      "expected_group_column": "work_location_borough",
+      "expected_metric_columns": [
+        "base_salary",
+        "work_location_borough"
+      ],
+      "expected_filters": [
+        "work_location_borough IN ('MANHATTAN','BROOKLYN')"
+      ],
+      "expected_row_count": 2,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-014-q5",
+      "test_id": "internet-014",
+      "dataset_id": "nyc-citywide-payroll",
+      "question": "overtime ka scene kya hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-015-q1",
+      "test_id": "internet-015",
+      "dataset_id": "nyc-job-postings",
+      "question": "How many job postings are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q2",
+      "test_id": "internet-015",
+      "dataset_id": "nyc-job-postings",
+      "question": "Sabse zyada postings kis agency ki hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "agency",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q3",
+      "test_id": "internet-015",
+      "dataset_id": "nyc-job-postings",
+      "question": "How many postings are for more than one position?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "number_of_positions"
+      ],
+      "expected_filters": [
+        "number_of_positions > 1"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q4",
+      "test_id": "internet-015",
+      "dataset_id": "nyc-job-postings",
+      "question": "Annual salary wali external postings ka average upper limit kitna hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "salary_range_to",
+        "posting_type",
+        "salary_frequency"
+      ],
+      "expected_filters": [
+        "posting_type = 'External'",
+        "salary_frequency = 'Annual'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-015-q5",
+      "test_id": "internet-015",
+      "dataset_id": "nyc-job-postings",
+      "question": "kaunsi job best hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-016-q1",
+      "test_id": "internet-016",
+      "dataset_id": "openml-adult",
+      "question": "How many people are in this census sample?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q2",
+      "test_id": "internet-016",
+      "dataset_id": "openml-adult",
+      "question": "Sabse zyada log kis occupation me hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "occupation",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q3",
+      "test_id": "internet-016",
+      "dataset_id": "openml-adult",
+      "question": "How many people work more than 50 hours a week and earn over 50K?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "hours-per-week",
+        "class"
+      ],
+      "expected_filters": [
+        "hours-per-week > 50",
+        "class = '>50K'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q4",
+      "test_id": "internet-016",
+      "dataset_id": "openml-adult",
+      "question": ">50K earners ka share kis education level me sabse zyada hai, kam se kam 100 log wale?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "education",
+      "expected_metric_columns": [
+        "class"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-016-q5",
+      "test_id": "internet-016",
+      "dataset_id": "openml-adult",
+      "question": "kaun ameer hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-017-q1",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "How many contract records are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q2",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "Sabse zyada award amount kis department ko gaya?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "department",
+      "expected_metric_columns": [
+        "award_amount"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q3",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "How many contracts have a negative award amount?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "award_amount"
+      ],
+      "expected_filters": [
+        "award_amount < 0"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q4",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "Kitne percent contracts ka award amount 1 million se zyada hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "award_amount"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q5",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "contracts me kuch gadbad lag rahi hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-017-q6",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "Top 5 vendors by total award amount.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-017",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "vendor_name",
+      "expected_metric_columns": [
+        "award_amount"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q7",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "Sirf positive amounts wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-017",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "vendor_name",
+      "expected_metric_columns": [
+        "award_amount"
+      ],
+      "expected_filters": [
+        "award_amount > 0"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-017-q8",
+      "test_id": "internet-017",
+      "dataset_id": "chicago-contracts",
+      "question": "Ab har vendor ke kitne contracts bhi bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-017",
+      "turn_index": 3,
+      "expected_intent": "group_rank",
+      "expected_group_column": "vendor_name",
+      "expected_metric_columns": [
+        "award_amount"
+      ],
+      "expected_filters": [
+        "award_amount > 0"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q1",
+      "test_id": "internet-018",
+      "dataset_id": "chicago-building-permits",
+      "question": "Total kitne building permits hain?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q2",
+      "test_id": "internet-018",
+      "dataset_id": "chicago-building-permits",
+      "question": "Which permit type is the most common?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "permit_type",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q3",
+      "test_id": "internet-018",
+      "dataset_id": "chicago-building-permits",
+      "question": "How many permits have a total fee of zero?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "total_fee"
+      ],
+      "expected_filters": [
+        "total_fee = 0"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q4",
+      "test_id": "internet-018",
+      "dataset_id": "chicago-building-permits",
+      "question": "Average processing time kis permit type me sabse zyada hai, kam se kam 100 permits wale?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "permit_type",
+      "expected_metric_columns": [
+        "processing_time"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-018-q5",
+      "test_id": "internet-018",
+      "dataset_id": "chicago-building-permits",
+      "question": "kaunsa permit risky hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-019-q1",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "How many service requests are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q2",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "Sabse zyada complaints kis type ki hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "complaint_type",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q3",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "How many requests are still open or in progress?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "status"
+      ],
+      "expected_filters": [
+        "status IN ('Open','In Progress')"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q4",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "Noise complaints ka share kitna hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "complaint_type"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q5",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "sabse badi problem kya hai",
+      "language": "shorthand",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-019-q6",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "Top 5 boroughs by requests.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-019",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "borough",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q7",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "Sirf noise wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-019",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "borough",
+      "expected_metric_columns": [
+        "complaint_type"
+      ],
+      "expected_filters": [
+        "complaint_type LIKE 'Noise%'"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-019-q8",
+      "test_id": "internet-019",
+      "dataset_id": "nyc-311-service-requests",
+      "question": "Ab percentage bhi bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-019",
+      "turn_index": 3,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "borough",
+      "expected_metric_columns": [
+        "complaint_type"
+      ],
+      "expected_filters": [
+        "complaint_type LIKE 'Noise%'"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q1",
+      "test_id": "internet-020",
+      "dataset_id": "chicago-crimes",
+      "question": "How many crime records are in the sample?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q2",
+      "test_id": "internet-020",
+      "dataset_id": "chicago-crimes",
+      "question": "Sabse common crime type kaunsa hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "primary_type",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q3",
+      "test_id": "internet-020",
+      "dataset_id": "chicago-crimes",
+      "question": "How many domestic incidents ended in an arrest?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "arrest",
+        "domestic"
+      ],
+      "expected_filters": [
+        "arrest = true",
+        "domestic = true"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q4",
+      "test_id": "internet-020",
+      "dataset_id": "chicago-crimes",
+      "question": "Arrest rate kis crime type me sabse zyada hai, kam se kam 200 cases wale?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "primary_type",
+      "expected_metric_columns": [
+        "arrest"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-020-q5",
+      "test_id": "internet-020",
+      "dataset_id": "chicago-crimes",
+      "question": "kaunsa area unsafe hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-021-q1",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "How many observations are in this indicator?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q2",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "2024 me sabse zyada population kis country ki thi?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "country_name",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year = 2024",
+        "country_code IS NOT NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q3",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "How many country-year observations have no value?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "value"
+      ],
+      "expected_filters": [
+        "value IS NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q4",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "India ki population 2000 se 2024 tak kitne percent badhi?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_name"
+      ],
+      "expected_filters": [
+        "country_name = 'India'",
+        "year IN (2000,2024)"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q5",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "kaunsi country best hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-021-q6",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "2015 me top 5 countries by population.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-021",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "country_name",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year = 2015",
+        "country_code IS NOT NULL"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q7",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "Sirf 10 crore se zyada population wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-021",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "country_name",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year = 2015",
+        "country_code IS NOT NULL",
+        "value > 100000000"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-021-q8",
+      "test_id": "internet-021",
+      "dataset_id": "wb-population-total",
+      "question": "Ab wahi 2024 ke liye bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-021",
+      "turn_index": 3,
+      "expected_intent": "group_rank",
+      "expected_group_column": "country_name",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year = 2024",
+        "country_code IS NOT NULL",
+        "value > 100000000"
+      ],
+      "expected_row_count": 5,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q1",
+      "test_id": "internet-022",
+      "dataset_id": "wb-gdp-current-usd",
+      "question": "Kitne GDP observations hain?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q2",
+      "test_id": "internet-022",
+      "dataset_id": "wb-gdp-current-usd",
+      "question": "Which country had the highest GDP in 2023?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "country_name",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year = 2023",
+        "country_code IS NOT NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q3",
+      "test_id": "internet-022",
+      "dataset_id": "wb-gdp-current-usd",
+      "question": "How many observations have a missing GDP value?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "value"
+      ],
+      "expected_filters": [
+        "value IS NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q4",
+      "test_id": "internet-022",
+      "dataset_id": "wb-gdp-current-usd",
+      "question": "India ka GDP 2010 se 2023 tak kitne guna badha?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_name"
+      ],
+      "expected_filters": [
+        "country_name = 'India'",
+        "year IN (2010,2023)"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-022-q5",
+      "test_id": "internet-022",
+      "dataset_id": "wb-gdp-current-usd",
+      "question": "sabse ameer country kaunsi hai",
+      "language": "shorthand",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-023-q1",
+      "test_id": "internet-023",
+      "dataset_id": "wb-co2-per-capita",
+      "question": "How many CO2 observations are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q2",
+      "test_id": "internet-023",
+      "dataset_id": "wb-co2-per-capita",
+      "question": "2022 me sabse zyada CO2 per capita kis country ka tha?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "country_name",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year = 2022",
+        "country_code IS NOT NULL",
+        "value IS NOT NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q3",
+      "test_id": "internet-023",
+      "dataset_id": "wb-co2-per-capita",
+      "question": "How many observations are exactly zero, not missing?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "value"
+      ],
+      "expected_filters": [
+        "value = 0"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q4",
+      "test_id": "internet-023",
+      "dataset_id": "wb-co2-per-capita",
+      "question": "2020 me un countries ka average CO2 per capita kitna tha jinke paas data hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_metric",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "value",
+        "year"
+      ],
+      "expected_filters": [
+        "year = 2020",
+        "country_code IS NOT NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-023-q5",
+      "test_id": "internet-023",
+      "dataset_id": "wb-co2-per-capita",
+      "question": "climate ka scene kya hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-024-q1",
+      "test_id": "internet-024",
+      "dataset_id": "wb-unemployment-rate",
+      "question": "Kitne unemployment observations hain?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q2",
+      "test_id": "internet-024",
+      "dataset_id": "wb-unemployment-rate",
+      "question": "Which country had the highest unemployment rate in 2024?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "country_name",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year = 2024",
+        "country_code IS NOT NULL",
+        "value IS NOT NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q3",
+      "test_id": "internet-024",
+      "dataset_id": "wb-unemployment-rate",
+      "question": "How many observations have a null value?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "value"
+      ],
+      "expected_filters": [
+        "value IS NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q4",
+      "test_id": "internet-024",
+      "dataset_id": "wb-unemployment-rate",
+      "question": "2019 vs 2024 me average unemployment rate compare karo.",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "comparison",
+      "expected_group_column": "year",
+      "expected_metric_columns": [
+        "value",
+        "year",
+        "country_code"
+      ],
+      "expected_filters": [
+        "year IN (2019,2024)",
+        "country_code IS NOT NULL"
+      ],
+      "expected_row_count": 2,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-024-q5",
+      "test_id": "internet-024",
+      "dataset_id": "wb-unemployment-rate",
+      "question": "kaunsi country me job problem hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-025-q1",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "How many customers are in this dataset?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q2",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "Churn rate kis area code me sabse zyada hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "area_code",
+      "expected_metric_columns": [
+        "class"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q3",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "How many customers on an international plan churned?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "international_plan",
+        "class"
+      ],
+      "expected_filters": [
+        "international_plan = 1",
+        "class = 1"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q4",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "Churn karne wale customers ke average customer service calls kitne hain vs nahi karne wale?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "comparison",
+      "expected_group_column": "class",
+      "expected_metric_columns": [
+        "number_customer_service_calls",
+        "class"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 2,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q5",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "kaun churn karega?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-025-q6",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "Top 3 states by customers.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-025",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "state",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q7",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "Sirf international plan wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-025",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "state",
+      "expected_metric_columns": [
+        "international_plan"
+      ],
+      "expected_filters": [
+        "international_plan = 1"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-025-q8",
+      "test_id": "internet-025",
+      "dataset_id": "openml-churn",
+      "question": "Ab churn rate bhi bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-025",
+      "turn_index": 3,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "state",
+      "expected_metric_columns": [
+        "class",
+        "international_plan"
+      ],
+      "expected_filters": [
+        "international_plan = 1"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q1",
+      "test_id": "internet-026",
+      "dataset_id": "chicago-business-licenses",
+      "question": "Total kitne license records hain?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q2",
+      "test_id": "internet-026",
+      "dataset_id": "chicago-business-licenses",
+      "question": "Which license description is the most common?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "license_description",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q3",
+      "test_id": "internet-026",
+      "dataset_id": "chicago-business-licenses",
+      "question": "How many records are missing a payment date?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "payment_date"
+      ],
+      "expected_filters": [
+        "payment_date IS NULL"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q4",
+      "test_id": "internet-026",
+      "dataset_id": "chicago-business-licenses",
+      "question": "RENEW applications ka share kitna hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "application_type"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-026-q5",
+      "test_id": "internet-026",
+      "dataset_id": "chicago-business-licenses",
+      "question": "kaunsa business sabse bada hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-027-q1",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "How many inspections are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q2",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "Sabse zyada inspections kis facility type ki hain?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "facility_type",
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q3",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "How many high-risk facilities failed their inspection?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "results",
+        "risk"
+      ],
+      "expected_filters": [
+        "results = 'Fail'",
+        "risk = 'Risk 1 (High)'"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q4",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "Fail rate kis risk category me sabse zyada hai?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "risk",
+      "expected_metric_columns": [
+        "results"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q5",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "kaunsa restaurant kharab hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-027-q6",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "Top 3 facility types by fail count.",
+      "language": "english",
+      "difficulty": "followup",
+      "conversation_id": "conv-027",
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "facility_type",
+      "expected_metric_columns": [
+        "results"
+      ],
+      "expected_filters": [
+        "results = 'Fail'"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q7",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "Sirf high risk wale.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-027",
+      "turn_index": 2,
+      "expected_intent": "group_rank",
+      "expected_group_column": "facility_type",
+      "expected_metric_columns": [
+        "results",
+        "risk"
+      ],
+      "expected_filters": [
+        "results = 'Fail'",
+        "risk = 'Risk 1 (High)'"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-027-q8",
+      "test_id": "internet-027",
+      "dataset_id": "chicago-food-inspections",
+      "question": "Ab fail rate bhi bata.",
+      "language": "hinglish",
+      "difficulty": "followup",
+      "conversation_id": "conv-027",
+      "turn_index": 3,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": "facility_type",
+      "expected_metric_columns": [
+        "results",
+        "risk"
+      ],
+      "expected_filters": [
+        "risk = 'Risk 1 (High)'"
+      ],
+      "expected_row_count": 3,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q1",
+      "test_id": "internet-028",
+      "dataset_id": "uci-iris",
+      "question": "Total kitne flowers hain?",
+      "language": "hinglish",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q2",
+      "test_id": "internet-028",
+      "dataset_id": "uci-iris",
+      "question": "Which species has the highest average petal length?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "species",
+      "expected_metric_columns": [
+        "petal_length"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q3",
+      "test_id": "internet-028",
+      "dataset_id": "uci-iris",
+      "question": "Setosa me kitne flowers ki petal width 0.2 se zyada hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "species",
+        "petal_width"
+      ],
+      "expected_filters": [
+        "species = 'Iris-setosa'",
+        "petal_width > 0.2"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q4",
+      "test_id": "internet-028",
+      "dataset_id": "uci-iris",
+      "question": "What share of all flowers are virginica with petal length above 5?",
+      "language": "english",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "derived_ratio",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "species",
+        "petal_length"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-028-q5",
+      "test_id": "internet-028",
+      "dataset_id": "uci-iris",
+      "question": "kaunsa flower best hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-029-q1",
+      "test_id": "internet-029",
+      "dataset_id": "uci-wine-quality",
+      "question": "How many wine samples are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q2",
+      "test_id": "internet-029",
+      "dataset_id": "uci-wine-quality",
+      "question": "Sabse zyada average alcohol kis quality level me hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "quality",
+      "expected_metric_columns": [
+        "alcohol"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q3",
+      "test_id": "internet-029",
+      "dataset_id": "uci-wine-quality",
+      "question": "How many wines have alcohol above 12 and quality at least 7?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "alcohol",
+        "quality"
+      ],
+      "expected_filters": [
+        "alcohol > 12",
+        "quality >= 7"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q4",
+      "test_id": "internet-029",
+      "dataset_id": "uci-wine-quality",
+      "question": "Quality 7 ya usse zyada wale wines ka average sulphates kitna hai vs baaki?",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "comparison",
+      "expected_group_column": "quality_band",
+      "expected_metric_columns": [
+        "sulphates",
+        "quality"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 2,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-029-q5",
+      "test_id": "internet-029",
+      "dataset_id": "uci-wine-quality",
+      "question": "acchi wine kaunsi hai",
+      "language": "shorthand",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    },
+    {
+      "q_id": "internet-030-q1",
+      "test_id": "internet-030",
+      "dataset_id": "uci-energy-efficiency",
+      "question": "How many building samples are there?",
+      "language": "english",
+      "difficulty": "simple",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "row_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q2",
+      "test_id": "internet-030",
+      "dataset_id": "uci-energy-efficiency",
+      "question": "Sabse zyada average heating load kis overall height ki buildings me hai?",
+      "language": "hinglish",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "group_rank",
+      "expected_group_column": "overall_height",
+      "expected_metric_columns": [
+        "heating_load"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q3",
+      "test_id": "internet-030",
+      "dataset_id": "uci-energy-efficiency",
+      "question": "How many buildings have glazing area above 0.25 and cooling load above 30?",
+      "language": "english",
+      "difficulty": "medium",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "filtered_count",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "glazing_area",
+        "cooling_load"
+      ],
+      "expected_filters": [
+        "glazing_area > 0.25",
+        "cooling_load > 30"
+      ],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q4",
+      "test_id": "internet-030",
+      "dataset_id": "uci-energy-efficiency",
+      "question": "Heating load aur cooling load ka correlation bata.",
+      "language": "hinglish",
+      "difficulty": "hard",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "correlation",
+      "expected_group_column": null,
+      "expected_metric_columns": [
+        "heating_load",
+        "cooling_load"
+      ],
+      "expected_filters": [],
+      "expected_row_count": 1,
+      "needs_clarification": false
+    },
+    {
+      "q_id": "internet-030-q5",
+      "test_id": "internet-030",
+      "dataset_id": "uci-energy-efficiency",
+      "question": "energy efficient kaunsi building hai?",
+      "language": "hinglish",
+      "difficulty": "ambiguous",
+      "conversation_id": null,
+      "turn_index": 1,
+      "expected_intent": "ambiguous",
+      "expected_group_column": null,
+      "expected_metric_columns": [],
+      "expected_filters": [],
+      "expected_row_count": null,
+      "needs_clarification": true
+    }
+  ]
+}

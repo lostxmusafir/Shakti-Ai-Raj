@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Table, ChevronLeft, ChevronRight, Hash } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight, Download, Table2 } from "lucide-react";
+import { cellValue, type Row } from "@/lib/answer";
+import { cn } from "@/lib/cn";
+import { downloadText, formatNumber, toCsv } from "@/lib/format";
 
-interface ResultTableProps {
-  columns: string[];
-  rows: Record<string, any>[];
-  durationMs?: number;
+export interface ResultColumn {
+  key: string;
+  label: string;
 }
 
 function formatColumnHeader(col: string): string {
@@ -38,116 +40,134 @@ function formatColumnHeader(col: string): string {
   return col.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function ResultTable({ columns, rows, durationMs }: ResultTableProps) {
+/**
+ * Tabular result surface. Only rendered for genuinely tabular answers
+ * (more than one row); single values use the metric surfaces instead.
+ */
+export default function ResultTable({
+  columns,
+  rows,
+  failed = false,
+  pageSize = 10,
+}: {
+  columns: ResultColumn[];
+  rows: Row[];
+  failed?: boolean;
+  pageSize?: number;
+}) {
   const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const totalPages = Math.ceil(rows.length / pageSize) || 1;
-  const currentRows = rows.slice((page - 1) * pageSize, page * pageSize);
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const currentRows = rows.slice((safePage - 1) * pageSize, safePage * pageSize);
 
-  if (!columns || columns.length === 0) return null;
+  const numericColumns = useMemo(() => {
+    const flags = new Set<string>();
+    columns.forEach((column) => {
+      const sample = rows.slice(0, 20).map((row) => row[column.key]);
+      if (sample.length && sample.every((value) => value === null || value === undefined || typeof value === "number")) {
+        flags.add(column.key);
+      }
+    });
+    return flags;
+  }, [columns, rows]);
 
-  // Single-row summary / comparative view
-  if (rows.length === 1 && columns.length >= 2 && columns.every(c => typeof rows[0][c] === "number")) {
-    return (
-      <div className="my-4 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/90 text-xs text-slate-200">
-        <div className="border-b border-slate-800 px-4 py-2.5 font-semibold flex items-center justify-between">
-          <span>Comparative Metrics</span>
-          {durationMs !== undefined && (
-            <span className="text-[10px] text-slate-500 font-normal">
-              Engine latency: {durationMs}ms
-            </span>
-          )}
-        </div>
-        <table className="w-full text-left">
-          <thead className="bg-slate-800/60">
-            <tr>
-              <th className="px-4 py-2">Metric</th>
-              <th className="px-4 py-2">Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {columns.map(col => (
-              <tr key={col} className="border-t border-slate-800">
-                <td className="px-4 py-2 text-slate-300">{formatColumnHeader(col)}</td>
-                <td className="px-4 py-2 font-mono font-medium text-indigo-300">
-                  {typeof rows[0][col] === "number" ? rows[0][col].toLocaleString() : String(rows[0][col])}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+  if (!columns.length) return null;
+
+  const exportCsv = () => {
+    downloadText("analysis-result.csv", toCsv(columns.map((column) => column.key), rows), "text/csv");
+  };
 
   return (
-    <div className="my-4 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/90 shadow-xl">
-      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950/60 px-4 py-2.5">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-          <Table className="h-4 w-4 text-indigo-400" />
-          Deterministic Result Table ({rows.length} rows)
+    <div className={cn("overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50", failed && "border-amber-500/25")}>
+      <div className="flex items-center justify-between border-b border-slate-800/80 px-3 py-1.5">
+        <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+          <Table2 className="h-3.5 w-3.5 text-slate-500" />
+          <span className="tabular-nums">{formatNumber(rows.length)} rows</span>
         </div>
-        {durationMs !== undefined && (
-          <span className="text-[10px] text-slate-500">
-            Engine latency: {durationMs}ms
-          </span>
-        )}
+        <button
+          type="button"
+          onClick={exportCsv}
+          className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10.5px] text-slate-500 transition hover:bg-slate-800/60 hover:text-slate-200"
+        >
+          <Download className="h-3 w-3" />
+          Export CSV
+        </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-slate-800/60 text-slate-300">
+      <div className="max-h-[420px] overflow-auto">
+        <table className="w-full border-collapse text-[12px]">
+          <thead className="sticky top-0 z-10 bg-slate-900/95 text-slate-400 backdrop-blur">
             <tr>
-              <th className="w-12 px-3 py-2 text-center text-slate-500">#</th>
-              {columns.map((col) => (
-                <th key={col} className="px-3 py-2 font-semibold">
-                  {formatColumnHeader(col)}
+              {columns.map((column) => (
+                <th
+                  key={column.key}
+                  scope="col"
+                  className={cn(
+                    "whitespace-nowrap border-b border-slate-800 px-3 py-2 text-left font-medium",
+                    numericColumns.has(column.key) && "text-right",
+                  )}
+                >
+                  {formatColumnHeader(column.label)}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 font-mono text-slate-300">
-            {currentRows.map((row, idx) => (
-              <tr key={idx} className="hover:bg-slate-800/30">
-                <td className="px-3 py-2 text-center text-slate-500 text-[10px]">
-                  {(page - 1) * pageSize + idx + 1}
-                </td>
-                {columns.map((col) => (
-                  <td key={col} className="px-3 py-2">
-                    {row[col] !== null && row[col] !== undefined
-                      ? String(row[col])
-                      : <span className="text-slate-600 italic">null</span>}
-                  </td>
-                ))}
+          <tbody>
+            {currentRows.map((row, rowIndex) => (
+              <tr key={rowIndex} className="border-b border-slate-800/50 last:border-0 hover:bg-slate-800/25">
+                {columns.map((column) => {
+                  const value = cellValue(row[column.key]);
+                  return (
+                    <td
+                      key={column.key}
+                      className={cn(
+                        "max-w-[280px] truncate px-3 py-1.5 align-top text-slate-300",
+                        value.numeric && "text-right tabular-nums",
+                        value.empty && "italic text-slate-600",
+                      )}
+                      title={value.text}
+                    >
+                      {value.text}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-slate-800 bg-slate-950/40 px-4 py-2 text-xs text-slate-400">
-          <span>
-            Page {page} of {totalPages}
+      {totalPages > 1 ? (
+        <div className="flex items-center justify-between border-t border-slate-800/80 px-3 py-1.5 text-[11px] text-slate-500">
+          <span className="tabular-nums">
+            {formatNumber((safePage - 1) * pageSize + 1)}–{formatNumber(Math.min(safePage * pageSize, rows.length))} of{" "}
+            {formatNumber(rows.length)}
           </span>
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1">
             <button
-              onClick={() => setPage((p) => Math.max(p - 1, 1))}
-              disabled={page === 1}
-              className="rounded p-1 hover:bg-slate-800 disabled:opacity-40"
+              type="button"
+              onClick={() => setPage(Math.max(1, safePage - 1))}
+              disabled={safePage === 1}
+              aria-label="Previous page"
+              className="rounded p-1 transition hover:bg-slate-800 hover:text-slate-200 disabled:opacity-30 disabled:hover:bg-transparent"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </button>
+            <span className="tabular-nums">
+              {safePage} / {totalPages}
+            </span>
             <button
-              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-              disabled={page === totalPages}
-              className="rounded p-1 hover:bg-slate-800 disabled:opacity-40"
+              type="button"
+              onClick={() => setPage(Math.min(totalPages, safePage + 1))}
+              disabled={safePage === totalPages}
+              aria-label="Next page"
+              className="rounded p-1 transition hover:bg-slate-800 hover:text-slate-200 disabled:opacity-30 disabled:hover:bg-transparent"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

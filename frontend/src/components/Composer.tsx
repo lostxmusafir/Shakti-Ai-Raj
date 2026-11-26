@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Send, Paperclip, X, FileSpreadsheet } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUp, Check, FileSpreadsheet, Paperclip, X } from "lucide-react";
 import { StoredFile } from "@/lib/api";
+import Attachments from "@/components/ai-elements/Attachments";
+import { cn } from "@/lib/cn";
+import { formatNumber } from "@/lib/format";
 
 interface ComposerProps {
   files: StoredFile[];
@@ -21,128 +24,155 @@ export default function Composer({
 }: ComposerProps) {
   const [text, setText] = useState("");
   const [showFilePicker, setShowFilePicker] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!text.trim() || disabled) return;
-    onSend(text.trim(), selectedFileIds);
+  useEffect(() => {
+    const element = textareaRef.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.min(element.scrollHeight, 160)}px`;
+  }, [text]);
+
+  useEffect(() => {
+    if (!showFilePicker) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+        setShowFilePicker(false);
+      }
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [showFilePicker]);
+
+  const submit = () => {
+    const value = text.trim();
+    if (!value || disabled) return;
+    onSend(value, selectedFileIds);
     setText("");
   };
 
   const toggleFile = (id: string) => {
-    if (selectedFileIds.includes(id)) {
-      onSelectFileIds(selectedFileIds.filter((fid) => fid !== id));
-    } else {
-      onSelectFileIds([...selectedFileIds, id]);
-    }
+    onSelectFileIds(
+      selectedFileIds.includes(id) ? selectedFileIds.filter((fileId) => fileId !== id) : [...selectedFileIds, id],
+    );
   };
 
-  return (
-    <div className="relative border-t border-slate-800 bg-slate-900/95 p-4 backdrop-blur-md">
-      {/* File Drawer Popover */}
-      {showFilePicker && (
-        <div className="absolute bottom-full left-4 mb-2 w-80 rounded-xl border border-slate-700 bg-slate-800/95 p-3 shadow-2xl backdrop-blur-xl">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-700">
-            <span className="text-xs font-semibold text-slate-200">
-              Attach Datasets to Query
-            </span>
-            <button
-              onClick={() => setShowFilePicker(false)}
-              className="text-slate-400 hover:text-white"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="mt-2 max-h-48 overflow-y-auto space-y-1">
-            {files.length === 0 ? (
-              <div className="py-3 text-center text-xs text-slate-400">
-                No datasets uploaded yet. Visit Datasets tab.
-              </div>
-            ) : (
-              files.map((f) => {
-                const isSelected = selectedFileIds.includes(f.id);
-                return (
-                  <button
-                    key={f.id}
-                    onClick={() => toggleFile(f.id)}
-                    className={`flex w-full items-center justify-between rounded-lg p-2 text-left text-xs transition ${
-                      isSelected
-                        ? "bg-indigo-950/70 text-indigo-300 ring-1 ring-indigo-500/40"
-                        : "hover:bg-slate-700/50 text-slate-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      <FileSpreadsheet className="h-3.5 w-3.5 shrink-0 text-indigo-400" />
-                      <span className="truncate">{f.original_name}</span>
-                    </div>
-                    {f.schema_profile?.row_count !== undefined && (
-                      <span className="text-[10px] text-slate-400 shrink-0">
-                        {f.schema_profile.row_count} rows
-                      </span>
-                    )}
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </div>
-      )}
+  const selected = selectedFileIds.map((id) => {
+    const file = files.find((item) => item.id === id);
+    return {
+      id,
+      name: file?.original_name || "Dataset",
+      rows: file?.schema_profile?.row_count ?? null,
+      state: file?.status ?? null,
+    };
+  });
 
-      {/* Selected Files Badges */}
-      {selectedFileIds.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-1.5">
-          {selectedFileIds.map((fid) => {
-            const fileObj = files.find((f) => f.id === fid);
-            return (
-              <span
-                key={fid}
-                className="flex items-center gap-1.5 rounded-md bg-indigo-950/80 px-2 py-0.5 text-xs text-indigo-300 border border-indigo-800/40"
-              >
-                <FileSpreadsheet className="h-3 w-3 text-indigo-400" />
-                <span className="max-w-[150px] truncate">
-                  {fileObj ? fileObj.original_name : fid}
-                </span>
+  return (
+    <div className="border-t border-slate-800/80 bg-slate-950/80">
+      <div className="mx-auto w-full max-w-3xl px-5 py-3 sm:px-6">
+        {selected.length ? (
+          <Attachments items={selected} onRemove={toggleFile} className="mb-2" />
+        ) : null}
+
+        <div className="relative">
+          {showFilePicker ? (
+            <div
+              ref={pickerRef}
+              className="absolute bottom-full left-0 z-20 mb-2 w-[min(20rem,90vw)] overflow-hidden rounded-xl border border-slate-800 bg-slate-900 shadow-xl shadow-black/40"
+            >
+              <div className="flex items-center justify-between border-b border-slate-800 px-3 py-2">
+                <span className="text-[11px] font-medium text-slate-300">Attach datasets</span>
                 <button
                   type="button"
-                  onClick={() => toggleFile(fid)}
-                  className="hover:text-red-400"
+                  onClick={() => setShowFilePicker(false)}
+                  className="rounded p-0.5 text-slate-500 hover:text-slate-200"
+                  aria-label="Close dataset picker"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
-              </span>
-            );
-          })}
+              </div>
+              <div className="max-h-56 overflow-y-auto p-1">
+                {files.length === 0 ? (
+                  <div className="px-3 py-6 text-center text-[11.5px] text-slate-500">
+                    No datasets yet. Upload one in the Datasets tab.
+                  </div>
+                ) : (
+                  files.map((file) => {
+                    const isSelected = selectedFileIds.includes(file.id);
+                    return (
+                      <button
+                        key={file.id}
+                        type="button"
+                        onClick={() => toggleFile(file.id)}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[11.5px] transition",
+                          isSelected ? "bg-indigo-500/10 text-indigo-200" : "text-slate-300 hover:bg-slate-800/70",
+                        )}
+                      >
+                        <FileSpreadsheet className="h-3.5 w-3.5 shrink-0 text-indigo-300/70" />
+                        <span className="min-w-0 flex-1 truncate">{file.original_name}</span>
+                        {file.schema_profile?.row_count !== undefined ? (
+                          <span className="shrink-0 text-[10px] text-slate-500">
+                            {formatNumber(file.schema_profile.row_count)} rows
+                          </span>
+                        ) : null}
+                        {isSelected ? <Check className="h-3.5 w-3.5 shrink-0 text-indigo-300" /> : null}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="flex items-end gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-2 py-2 focus-within:border-slate-700 focus-within:ring-1 focus-within:ring-indigo-500/30">
+            <button
+              type="button"
+              onClick={() => setShowFilePicker((value) => !value)}
+              aria-label="Attach dataset"
+              title="Attach dataset"
+              className={cn(
+                "mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-800 hover:text-slate-200",
+                showFilePicker && "bg-slate-800 text-slate-200",
+              )}
+            >
+              <Paperclip className="h-4 w-4" />
+            </button>
+
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  submit();
+                }
+              }}
+              rows={1}
+              placeholder="Ask a question about your data…"
+              disabled={disabled}
+              className="max-h-40 min-h-[2rem] flex-1 resize-none bg-transparent py-1.5 text-[13.5px] leading-6 text-slate-100 placeholder:text-slate-500 focus:outline-none disabled:opacity-60"
+            />
+
+            <button
+              type="button"
+              onClick={submit}
+              disabled={disabled || !text.trim()}
+              aria-label="Send message"
+              className="mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-800 disabled:text-slate-500"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-      )}
 
-      {/* Form Input */}
-      <form onSubmit={handleSubmit} className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setShowFilePicker(!showFilePicker)}
-          title="Attach dataset file"
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition"
-        >
-          <Paperclip className="h-4 w-4" />
-        </button>
-
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Ask a question about your data or evaluate policy compliance..."
-          disabled={disabled}
-          className="flex-1 rounded-xl border border-slate-700 bg-slate-800/90 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-        />
-
-        <button
-          type="submit"
-          disabled={disabled || !text.trim()}
-          className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition hover:bg-indigo-500 disabled:opacity-40"
-        >
-          <Send className="h-4 w-4" />
-        </button>
-      </form>
+        <div className="mt-1.5 flex items-center justify-between px-1 text-[10.5px] text-slate-600">
+          <span>Enter to send · Shift+Enter for a new line</span>
+          {selected.length ? <span>{selected.length} dataset{selected.length > 1 ? "s" : ""} attached</span> : null}
+        </div>
+      </div>
     </div>
   );
 }
