@@ -3,11 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #090d16;
-  --foreground: #f8fafc;
-  --panel: #0f172a;
-  --border: #1e293b;
-  --accent: #4f46e5;
+  --background: #090a0d;
+  --foreground: #f3f4f6;
+  --panel: #111318;
+  --panel-raised: #171a21;
+  --border: #252932;
+  --border-strong: #343945;
+  --accent: #8b7cf6;
+  --accent-strong: #a89cff;
 }
 
 html {
@@ -24,6 +27,83 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-sidebar {
+  background: #0d0f13;
+  border-color: var(--border) !important;
+}
+
+.app-main {
+  background: var(--background);
+}
+
+.page-header {
+  border-color: var(--border) !important;
+}
+
+.surface-panel {
+  background: var(--panel) !important;
+  border-color: var(--border) !important;
+  box-shadow: none !important;
+}
+
+.surface-panel:hover {
+  border-color: var(--border-strong) !important;
+}
+
+.accent-action {
+  background: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+.accent-action:hover {
+  background: var(--accent-strong) !important;
+}
+
+@media (max-width: 720px) {
+  .app-sidebar {
+    width: 68px !important;
+  }
+
+  .sidebar-label,
+  .sidebar-section-label,
+  .sidebar-user-copy,
+  .sidebar-logout {
+    display: none !important;
+  }
+
+  .sidebar-brand {
+    justify-content: center;
+    padding-inline: 0.75rem !important;
+  }
+
+  .sidebar-brand-mark {
+    margin: 0;
+  }
+
+  .sidebar-action {
+    padding-inline: 0 !important;
+  }
+
+  .sidebar-action svg {
+    margin: 0;
+  }
+
+  .sidebar-nav-item {
+    justify-content: center;
+    padding-inline: 0 !important;
+  }
+
+  .sidebar-user {
+    justify-content: center;
+  }
 }
 
 code,

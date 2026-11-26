@@ -34,32 +34,32 @@ export default function PoliciesPage() {
   }, [router]);
 
   return (
-    <div className="flex h-screen bg-slate-950">
+    <div className="app-main flex h-screen">
       <Sidebar
         user={user}
         chats={chats}
         onNewChat={() => router.push("/chat")}
       />
 
-      <main className="flex flex-1 flex-col overflow-y-auto p-8">
-        <div className="pb-6 border-b border-slate-800">
-          <h1 className="text-xl font-bold tracking-tight text-white">
+      <main className="app-main flex min-w-0 flex-1 flex-col overflow-y-auto px-5 py-6 sm:px-8 sm:py-8">
+        <div className="page-header border-b pb-6">
+          <h1 className="text-2xl font-semibold tracking-[-0.03em] text-white">
             Company Policy Rule Books
           </h1>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
             Version-controlled organizational rules used by the AI engine to evaluate tabular dataset compliance.
           </p>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mx-auto mt-7 grid w-full max-w-[1180px] grid-cols-1 gap-4 xl:grid-cols-2">
           {policies.map((p) => (
             <div
               key={p.id}
-              className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl"
+              className="surface-panel rounded-xl border p-6"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600/20 text-indigo-400 ring-1 ring-indigo-500/30">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-400/20">
                     <ShieldCheck className="h-6 w-6" />
                   </div>
                   <div>

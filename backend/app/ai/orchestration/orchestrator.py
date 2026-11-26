@@ -372,6 +372,30 @@ class AnalysisOrchestrator:
         entry_plan = self._entry_count_plan(question, file_ids, files_map)
         if entry_plan:
             return entry_plan
+        if any(term in q_lower for term in ("kaun kaun", "which", "what are")) and "bank" in q_lower:
+            bank_col = next((c for c in available_cols if "bank" in c.lower() and "account" not in c.lower()), None)
+            if bank_col:
+                return AnalysisPlan(
+                    intent="grouped_distribution",
+                    result_shape="grouped_rows",
+                    requested_concepts=[bank_col],
+                    question=question,
+                    datasets=datasets,
+                    group_by=[bank_col],
+                    aggregations=[AggregateOperation(function="count", column="*", alias="records")],
+                    filters=[Condition(column=available_cols[cols_lower.index("record type")], operator="equals", value="Finance Transaction")] if "record type" in cols_lower else [],
+                    limit=100,
+                )
+        if "credit" in q_lower and any(term in q_lower for term in ("total", "sum", "amount")) and not any(term in q_lower for term in ("count", "entries", "kitne", "kitni")) and "credit" in cols_lower:
+            return AnalysisPlan(
+                intent="scalar_metric",
+                result_shape="scalar_metric",
+                requested_concepts=["total_credit"],
+                question=question,
+                datasets=datasets,
+                filters=[Condition(column=available_cols[cols_lower.index("record type")], operator="equals", value="Finance Transaction")] if "record type" in cols_lower else [],
+                aggregations=[AggregateOperation(function="sum", column=available_cols[cols_lower.index("credit")], alias="total_credit")],
+            )
 
         # Check if DLP incident dataset (NexusDynamics / email DLP / RajCom)
         is_dlp = any(c in cols_lower for c in ["destination", "policies", "source", "transaction size (kb)"])
@@ -580,15 +604,17 @@ class AnalysisOrchestrator:
                     sql_query="SELECT COUNT(*) AS total_records FROM v"
                 )
             # Test 04: Unique employees kitne hain?
-            if "unique" in q_lower and any(k in q_lower for k in ["employee", "employees", "user", "sender"]):
-                return AnalysisPlan(
-                    intent="scalar_count",
-                    result_shape="scalar_metric",
-                    requested_concepts=["unique_employees"],
-                    question=question,
-                    datasets=datasets,
-                    sql_query="SELECT COUNT(DISTINCT src) AS unique_employees FROM v"
-                )
+            if any(k in q_lower for k in ["unique", "distinct", "alag alag"]) and any(k in q_lower for k in ["employee", "employees", "user", "sender"]):
+                entity_col = next((c for c in available_cols if c.lower() in ["employee id", "employee_id", "employeeid", "employee name", "employee_name", "source"]), None)
+                if entity_col:
+                    return AnalysisPlan(
+                        intent="scalar_count",
+                        result_shape="scalar_metric",
+                        requested_concepts=["unique_employees"],
+                        question=question,
+                        datasets=datasets,
+                        aggregations=[AggregateOperation(function="count_distinct", column=entity_col, alias="unique_employees")]
+                    )
             # Additional DLP benchmarks
             if any(k in q_lower for k in ["critical severity", "critical kitne"]):
                 return AnalysisPlan(
@@ -708,15 +734,17 @@ class AnalysisOrchestrator:
                 datasets=datasets,
                 aggregations=[AggregateOperation(function="count", column="*", alias="total_records")]
             )
-        if "unique" in q_lower and "employee" in q_lower and "source" in cols_lower:
-            return AnalysisPlan(
-                intent="scalar_count",
-                result_shape="scalar_metric",
-                requested_concepts=["unique_employees"],
-                question=question,
-                datasets=datasets,
-                aggregations=[AggregateOperation(function="count_distinct", column="Source", alias="unique_employees")]
-            )
+        if any(k in q_lower for k in ["unique", "distinct"]) and "employee" in q_lower:
+            employee_col = next((c for c in available_cols if c.lower() in ["employee id", "employee_id", "employeeid", "employee name", "employee_name", "source"]), None)
+            if employee_col:
+                return AnalysisPlan(
+                    intent="scalar_count",
+                    result_shape="scalar_metric",
+                    requested_concepts=["unique_employees"],
+                    question=question,
+                    datasets=datasets,
+                    aggregations=[AggregateOperation(function="count_distinct", column=employee_col, alias="unique_employees")]
+                )
         if "customer" in q_lower and any(k in q_lower for k in ["total", "count"]):
             cust_col = next((c for c in available_cols if c.lower() in ["customerid", "customer_id", "customer"]), "*")
             return AnalysisPlan(
@@ -748,6 +776,21 @@ class AnalysisOrchestrator:
 
         # Use SemanticMapper to resolve concepts across English, Hindi, and Hinglish
         sem_res = SemanticMapper.resolve_semantics(question, available_cols, first_profile)
+
+        if any(term in q_lower for term in ("kaun kaun", "which", "what are")) and "bank" in q_lower:
+            bank_col = next((c for c in available_cols if "bank" in c.lower() and "account" not in c.lower()), None)
+            if bank_col:
+                return AnalysisPlan(
+                    intent="grouped_distribution",
+                    result_shape="grouped_rows",
+                    requested_concepts=[bank_col],
+                    question=question,
+                    datasets=datasets,
+                    group_by=[bank_col],
+                    aggregations=[AggregateOperation(function="count", column="*", alias="records")],
+                    filters=[Condition(column=available_cols[cols_lower.index("record type")], operator="equals", value="Finance Transaction")] if "record type" in cols_lower else [],
+                    limit=100,
+                )
 
         # Expense claims policy violation check (Test F)
         if any(c in cols_lower for c in ["claim_amount", "expense_claim_id"]) and any(k in q_lower for k in ["policy limit", "exceed", "upar", "violation", "breach"]):
@@ -857,6 +900,26 @@ class AnalysisOrchestrator:
         available_cols = [c["name"] for c in first_profile.get("columns", [])]
         cols_lower = [c.lower() for c in available_cols]
         is_dlp = any(c in cols_lower for c in ["destination", "policies", "source", "transaction size (kb)"])
+
+        if any(term in question.lower() for term in ("unique", "distinct")) and "employee" in question.lower():
+            employee_col = next((c for c in available_cols if c.lower() in {"employee id", "employee_id", "employeeid", "employee name", "employee_name"}), None)
+            if employee_col:
+                plan = AnalysisPlan(
+                    intent="scalar_count", result_shape="scalar_metric", requested_concepts=["unique_employees"],
+                    question=question, datasets=datasets,
+                    aggregations=[AggregateOperation(function="count_distinct", column=employee_col, alias="unique_employees")],
+                )
+                return PlanValidator.validate_plan(plan, files_map)
+
+        if "credit" in question.lower() and any(term in question.lower() for term in ("total", "sum", "amount", "kitna")) and not any(term in question.lower() for term in ("count", "kitne", "kitni")) and "credit" in cols_lower:
+            record_type_col = next((c for c in available_cols if c.lower() == "record type"), None)
+            plan = AnalysisPlan(
+                intent="scalar_metric", result_shape="scalar_metric", requested_concepts=["total_credit"],
+                question=question, datasets=datasets,
+                filters=[Condition(column=record_type_col, operator="equals", value="Finance Transaction")] if record_type_col else [],
+                aggregations=[AggregateOperation(function="sum", column=available_cols[cols_lower.index("credit")], alias="total_credit")],
+            )
+            return PlanValidator.validate_plan(plan, files_map)
 
         if is_dlp:
             dlp_plan = self._plan_fallback(question, file_ids, files_map, intent)
