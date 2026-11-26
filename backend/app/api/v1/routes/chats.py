@@ -178,7 +178,8 @@ async def send_message(
         unit_id=user.unit_id or "default_unit",
         role=user.role,
         chat_id=chat_id,
-        file_ids=req.file_ids
+        file_ids=req.file_ids,
+        ai_tier=req.ai_tier or "low",
     )
 
     async def execute_and_save_assistant_reply():

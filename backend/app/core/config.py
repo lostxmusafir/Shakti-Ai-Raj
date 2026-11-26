@@ -1,6 +1,6 @@
 import os
-from typing import List, Any
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import List, Any, Annotated
+from pydantic_settings import BaseSettings, SettingsConfigDict, NoDecode
 from pydantic import Field, field_validator
 
 class Settings(BaseSettings):
@@ -37,15 +37,20 @@ class Settings(BaseSettings):
 
     # Mistral AI Provider Configuration
     # Credentials must be supplied through the environment or a secret manager.
-    MISTRAL_API_KEYS: List[str] = []
+    MISTRAL_API_KEYS: Annotated[List[str], NoDecode] = []
     MISTRAL_BASE_URL: str = "https://api.mistral.ai/v1"
-    MISTRAL_DEFAULT_MODEL: str = "ministral-8b-latest"
-    MISTRAL_HIGHER_MODEL: str = "codestral-latest"
+    MISTRAL_DEFAULT_MODEL: str = "ministral-3b-latest"
+    MISTRAL_HIGHER_MODEL: str = "ministral-3b-latest"
     MISTRAL_EMBEDDING_MODEL: str = "mistral-embed"
 
-    @field_validator("MISTRAL_API_KEYS", mode="before")
+    # Zhipu AI (GLM) Provider Configuration
+    ZHIPU_API_KEYS: Annotated[List[str], NoDecode] = []
+    ZHIPU_BASE_URL: str = "https://open.bigmodel.cn/api/paas/v4"
+    ZHIPU_DEFAULT_MODEL: str = "glm-4.5-flash"
+
+    @field_validator("MISTRAL_API_KEYS", "ZHIPU_API_KEYS", mode="before")
     @classmethod
-    def assemble_mistral_keys(cls, v: Any) -> List[str]:
+    def assemble_api_keys(cls, v: Any) -> List[str]:
         if isinstance(v, str):
             return [k.strip() for k in v.split(",") if k.strip()]
         return v
