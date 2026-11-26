@@ -28,10 +28,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-xl">
+    <div className="flex min-h-screen items-center justify-center bg-[#090a0d] px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#111318] p-8 shadow-2xl shadow-black/30">
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600/20 text-indigo-400 ring-1 ring-indigo-500/30">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-400/20">
             <ShieldCheck className="h-8 w-8" />
           </div>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-white">
@@ -86,7 +86,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500 disabled:opacity-50"
+            className="accent-action flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold text-white transition disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Sign in to Workspace"}
             <ArrowRight className="h-4 w-4" />
