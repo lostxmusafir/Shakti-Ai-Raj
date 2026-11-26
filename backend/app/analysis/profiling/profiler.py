@@ -6,6 +6,7 @@ import duckdb
 import polars as pl
 import openpyxl
 from app.analysis.excel.workbook import ExcelWorkbookService
+from app.analysis.profiling.family_discovery import RowFamilyDiscovery
 
 logger = logging.getLogger(__name__)
 
@@ -203,9 +204,15 @@ class DataProfiler:
 
             columns_profile.append(col_meta)
 
+        family_res = RowFamilyDiscovery.discover(df)
+
         return {
             "sheets": sheet_names,
             "row_count": row_count,
             "column_count": len(df.columns),
-            "columns": columns_profile
+            "columns": columns_profile,
+            "is_mixed": family_res.get("is_mixed", False),
+            "discriminator_column": family_res.get("discriminator_column"),
+            "primary_domain": family_res.get("primary_domain"),
+            "record_families": family_res.get("families", []),
         }

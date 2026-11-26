@@ -9,6 +9,35 @@ interface ResultTableProps {
   durationMs?: number;
 }
 
+function formatColumnHeader(col: string): string {
+  const clean = col.toLowerCase().trim();
+  const aliasMap: Record<string, string> = {
+    n: "Count",
+    cnt: "Count",
+    agg_0: "Count",
+    count_1: "Count",
+    record_count: "Record Count",
+    incident_count: "Incident Count",
+    customer_count: "Customer Count",
+    blocked_count: "Blocked Incidents",
+    permitted_count: "Permitted Incidents",
+    external_incidents: "External Email Incidents",
+    external_email_incidents: "External Email Incidents",
+    blocked_external_incidents: "Blocked External Incidents",
+    debit_entries: "Debit Entries",
+    credit_entries: "Credit Entries",
+    total_size: "Total Size (KB)",
+    total_gb: "Total Data (GB)",
+    data_mb: "Data (MB)",
+    size_kb: "Size (KB)",
+    is_ext: "External",
+    src: "Sender",
+    dest: "Destination",
+  };
+  if (aliasMap[clean]) return aliasMap[clean];
+  return col.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function ResultTable({ columns, rows, durationMs }: ResultTableProps) {
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -17,16 +46,34 @@ export default function ResultTable({ columns, rows, durationMs }: ResultTablePr
 
   if (!columns || columns.length === 0) return null;
 
-  if (rows.length === 1 && columns.length === 2 &&
-      columns.includes("debit_entries") && columns.includes("credit_entries")) {
+  // Single-row summary / comparative view
+  if (rows.length === 1 && columns.length >= 2 && columns.every(c => typeof rows[0][c] === "number")) {
     return (
       <div className="my-4 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/90 text-xs text-slate-200">
-        <div className="border-b border-slate-800 px-4 py-2.5 font-semibold">Transaction entries</div>
+        <div className="border-b border-slate-800 px-4 py-2.5 font-semibold flex items-center justify-between">
+          <span>Comparative Metrics</span>
+          {durationMs !== undefined && (
+            <span className="text-[10px] text-slate-500 font-normal">
+              Engine latency: {durationMs}ms
+            </span>
+          )}
+        </div>
         <table className="w-full text-left">
-          <thead className="bg-slate-800/60"><tr><th className="px-4 py-2">Type</th><th className="px-4 py-2">Entries</th></tr></thead>
+          <thead className="bg-slate-800/60">
+            <tr>
+              <th className="px-4 py-2">Metric</th>
+              <th className="px-4 py-2">Value</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr className="border-t border-slate-800"><td className="px-4 py-2">Debit</td><td className="px-4 py-2">{rows[0].debit_entries}</td></tr>
-            <tr className="border-t border-slate-800"><td className="px-4 py-2">Credit</td><td className="px-4 py-2">{rows[0].credit_entries}</td></tr>
+            {columns.map(col => (
+              <tr key={col} className="border-t border-slate-800">
+                <td className="px-4 py-2 text-slate-300">{formatColumnHeader(col)}</td>
+                <td className="px-4 py-2 font-mono font-medium text-indigo-300">
+                  {typeof rows[0][col] === "number" ? rows[0][col].toLocaleString() : String(rows[0][col])}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -54,7 +101,7 @@ export default function ResultTable({ columns, rows, durationMs }: ResultTablePr
               <th className="w-12 px-3 py-2 text-center text-slate-500">#</th>
               {columns.map((col) => (
                 <th key={col} className="px-3 py-2 font-semibold">
-                  {col}
+                  {formatColumnHeader(col)}
                 </th>
               ))}
             </tr>

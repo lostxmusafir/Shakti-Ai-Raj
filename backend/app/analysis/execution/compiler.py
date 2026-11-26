@@ -50,6 +50,12 @@ class QueryCompiler:
                 where_parts.append(f"{col_id} IS NULL")
             elif op == "is_not_null":
                 where_parts.append(f"{col_id} IS NOT NULL")
+            elif op == "has_external_recipient":
+                dom_str = f"@{str(cond.value).lstrip('@').lower()}" if cond.value else "@"
+                where_parts.append(
+                    f"({col_id} IS NOT NULL AND len(list_filter(str_split(CAST({col_id} AS VARCHAR), ?), x -> NOT (trim(LOWER(x)) LIKE ?))) > 0)"
+                )
+                params.extend([";", f"%{dom_str}"])
             else:
                 raise ValueError(f"Unsupported filter operator: {cond.operator}")
 

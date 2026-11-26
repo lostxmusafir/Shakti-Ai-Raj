@@ -7,7 +7,8 @@ from app.models.file import StoredFile
 SUPPORTED_OPERATORS = {
     "equals", "not_equals", "greater_than", "less_than",
     "greater_than_or_equal", "less_than_or_equal",
-    "in", "not_in", "contains", "not_contains", "is_null", "is_not_null"
+    "in", "not_in", "contains", "not_contains", "is_null", "is_not_null",
+    "has_external_recipient"
 }
 
 SUPPORTED_AGGREGATES = {"count", "sum", "avg", "min", "max", "median", "count_distinct", "count_nonzero"}

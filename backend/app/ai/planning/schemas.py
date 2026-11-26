@@ -45,3 +45,4 @@ class AnalysisPlan(BaseModel):
     skills: List[str] = Field(default_factory=list)
     result_shape: Optional[str] = None  # scalar_metric, two_metrics, multi_metric, grouped_rows, ranked_rows
     requested_concepts: List[str] = Field(default_factory=list)
+    record_family: Optional[str] = None  # Bound logical record family in mixed datasets

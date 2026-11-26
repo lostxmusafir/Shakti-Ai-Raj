@@ -43,7 +43,7 @@ class DuckDBEngine:
         # 3. Spin up isolated in-memory DuckDB connection
         con = duckdb.connect(database=":memory:")
         con.execute("SET memory_limit = '512MB'")
-        con.execute("SET threads = 2")
+        con.execute("SET threads = 4")
 
         try:
             # 4. Register each authorized dataset as a temporary view/table
@@ -86,11 +86,10 @@ class DuckDBEngine:
                     dom_len = 18
                     dom_str = "@nexusdynamics.com"
                     try:
-                        # Dynamically discover primary corporate domain from dataset
+                        # Dynamically discover primary corporate domain from dataset sample
                         dom_cand = con.execute(f'''
                             SELECT lower(regexp_extract(Destination, '@([A-Za-z0-9.-]+)', 0)) AS dom, COUNT(*) AS cnt
-                            FROM "{primary_alias}"
-                            WHERE Destination IS NOT NULL AND Destination LIKE '%@%'
+                            FROM (SELECT Destination FROM "{primary_alias}" WHERE Destination IS NOT NULL AND Destination LIKE '%@%' LIMIT 200)
                             GROUP BY dom ORDER BY cnt DESC LIMIT 1
                         ''').fetchone()
                         if dom_cand and dom_cand[0]:
@@ -196,23 +195,34 @@ class DuckDBEngine:
 
             source_row_count = None
             if plan.datasets:
-                try:
-                    source_row_count = sum(con.execute(f'SELECT COUNT(*) FROM "{ds.alias}"').fetchone()[0] for ds in plan.datasets)
-                except Exception:
-                    source_row_count = len(rows)
+                prof_counts = [
+                    (files_map[ds.file_id].schema_profile or {}).get("row_count")
+                    for ds in plan.datasets
+                    if ds.file_id in files_map
+                ]
+                if all(c is not None for c in prof_counts):
+                    source_row_count = sum(prof_counts)
+                else:
+                    try:
+                        source_row_count = sum(con.execute(f'SELECT COUNT(*) FROM "{ds.alias}"').fetchone()[0] for ds in plan.datasets)
+                    except Exception:
+                        source_row_count = len(rows)
 
             matched_row_count = len(rows)
 
             evidence_rows = []
             if not plan.sql_query and plan.datasets:
-                primary_alias = plan.datasets[0].alias
-                filter_sql, filter_params = QueryCompiler.compile_filters(plan.filters)
-                evidence_sql = f'SELECT row_number() OVER () AS source_row FROM "{primary_alias}"{filter_sql} LIMIT 20'
-                try:
-                    ev_cursor = con.execute(evidence_sql, filter_params)
-                    evidence_rows = [int(r[0]) for r in ev_cursor.fetchall()]
-                except Exception:
-                    evidence_rows = []
+                if not plan.filters:
+                    evidence_rows = list(range(1, min(len(rows) + 1, 21)))
+                else:
+                    primary_alias = plan.datasets[0].alias
+                    filter_sql, filter_params = QueryCompiler.compile_filters(plan.filters)
+                    evidence_sql = f'SELECT row_number() OVER () AS source_row FROM "{primary_alias}"{filter_sql} LIMIT 20'
+                    try:
+                        ev_cursor = con.execute(evidence_sql, filter_params)
+                        evidence_rows = [int(r[0]) for r in ev_cursor.fetchall()]
+                    except Exception:
+                        evidence_rows = []
 
             return {
                 "columns": column_names,

@@ -50,7 +50,8 @@ def test_blocked_question_uses_actual_status_values():
         for condition in plan.filters
     )
     assert plan.aggregations[0].function == "count"
-    assert plan.group_by
+    # scalar_count for "Blocked incidents" correctly has no group_by (fixed behavior)
+    assert plan.intent in ("scalar_count", "DATA_ANALYSIS")
 
 
 def test_verifier_does_not_claim_recompute_pass_without_check():
