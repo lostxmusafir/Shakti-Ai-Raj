@@ -267,6 +267,7 @@ class ResultVerifier:
             and all(check["status"] in {"passed", "not_applicable"} for check in checks)
         )
 
+        resolved_bindings = getattr(plan, "resolved_bindings", None) or []
         provenance = {
             "source_files": source_files,
             "source_sheets": sorted(set(source_sheets)),
@@ -276,6 +277,7 @@ class ResultVerifier:
             "evidence_rows": result.get("evidence_rows", []),
             "source_row_count": result.get("source_row_count"),
             "matched_row_count": result.get("matched_row_count"),
+            "resolved_bindings": resolved_bindings,
             "execution_status": execution_status,
             "semantic_status": semantic_status,
             "verification_status": "passed" if passed else "failed",

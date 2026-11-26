@@ -9,6 +9,7 @@ class AnalysisState(str, Enum):
     VALIDATING_PLAN = "validating_plan"
     EXECUTING = "executing"
     VERIFYING = "verifying"
+    INTERRUPTED = "interrupted"
     GENERATING_ANSWER = "generating_answer"
     COMPLETED = "completed"
     FAILED = "failed"

@@ -98,6 +98,29 @@ export interface Policy {
   status: string;
 }
 
+export interface InterruptOption {
+  id: string;
+  label: string;
+  value?: string;
+}
+
+export interface PendingInterruptPayload {
+  interrupt_id: string;
+  type: "choice" | "confirmation" | "free_text";
+  reason: string;
+  question: string;
+  options: InterruptOption[];
+  placeholder?: string;
+  context?: Record<string, any>;
+}
+
+export interface PendingInterruptState {
+  pending: boolean;
+  analysis_id: string | null;
+  thread_id?: string | null;
+  interrupt: PendingInterruptPayload | null;
+}
+
 export interface AnalysisProvenance {
   source_files?: string[];
   source_sheets?: string[];
@@ -324,6 +347,27 @@ export const api = {
   // Analysis & Verification
   async getAnalysis(analysisId: string): Promise<AnalysisResult> {
     return fetchWithAuth(`/api/v1/analysis/${analysisId}`);
+  },
+
+  async getPendingInterrupt(chatId: string): Promise<PendingInterruptState> {
+    return fetchWithAuth(`/api/v1/chats/${chatId}/pending-interrupt`);
+  },
+
+  async resumeAnalysis(
+    analysisId: string,
+    interruptId: string,
+    response: any
+  ): Promise<any> {
+    return fetchWithAuth(`/api/v1/analysis/${analysisId}/resume`, {
+      method: "POST",
+      body: JSON.stringify({ interrupt_id: interruptId, response }),
+    });
+  },
+
+  async cancelAnalysis(analysisId: string): Promise<{ analysis_id: string; status: string }> {
+    return fetchWithAuth(`/api/v1/analysis/${analysisId}/cancel`, {
+      method: "POST",
+    });
   },
 
   async submitAnalysisFeedback(
