@@ -252,7 +252,123 @@ class SemanticMapper:
         active_cols = selected_family.get("active_columns", columns) if selected_family else columns
 
         # -------------------------------------------------------------
-        # 4. Resolve Sender / Entity
+        # 4. Generic Dimension & Measure Helpers (Schema-driven)
+        # -------------------------------------------------------------
+        def _match_dimension() -> Optional[str]:
+            for c in active_cols:
+                role = col_roles.get(c, "dimension")
+                if role in ("measure", "sparse_measure", "timestamp"):
+                    continue
+                cl = c.lower()
+                # Exact or spaced name match
+                if cl in q_norm or cl.replace("_", " ") in q_norm:
+                    return c
+                # Natural token match (e.g., DestinationDomain -> domain/domains, EmployeeName -> employee)
+                parts = [p for p in re.findall(r"[a-z]+", re.sub(r"([a-z])([A-Z])", r"\1 \2", c).lower()) if len(p) >= 4]
+                for p in parts:
+                    if p in ("name", "level", "type", "time", "date", "size"):
+                        continue
+                    if re.search(rf"\b{re.escape(p)}s?\b", q_norm):
+                        return c
+            return None
+
+        def _match_measure() -> Optional[str]:
+            num_candidates = [
+                c for c in active_cols
+                if col_roles.get(c, "") in ("measure", "sparse_measure")
+                or any(
+                    cp.get("name") == c and cp.get("inferred_type") in ("integer", "float")
+                    for cp in prof.get("columns", [])
+                )
+            ]
+            for c in num_candidates:
+                cl = c.lower()
+                if cl in q_norm or cl.replace("_", " ") in q_norm:
+                    return c
+            # Domain-agnostic volume / bandwidth / transfer synonym match
+            if any(k in q_norm for k in ("bandwidth", "data transfer", "transferred", "traffic", "volume", "mb", "gb", "kb", "bytes")):
+                for c in num_candidates:
+                    cl = c.lower()
+                    if any(u in cl for u in ("mb", "gb", "kb", "bytes", "transfer", "bandwidth", "size")):
+                        return c
+            return None
+
+        is_breakdown = (
+            any(k in q_norm for k in ("breakdown", "distribution", "wise", " vs ", " versus "))
+            and not ("debit" in q_norm and "credit" in q_norm)
+        )
+        matched_dim = _match_dimension()
+        matched_meas = _match_measure()
+
+        if is_breakdown and matched_dim:
+            mapped_cols["dimension"] = matched_dim
+            alias_name = f"total_{cls._slug(matched_meas)}" if hasattr(cls, "_slug") else "count"
+            if matched_meas and any(k in q_norm for k in ("bandwidth", "data", "sum", "total", "amount", "revenue", "sales", "mb", "gb")):
+                aggs = [{"function": "sum", "column": matched_meas, "alias": "total_value"}]
+                sort = {"column": "total_value", "ascending": False, "limit": 50}
+            else:
+                aggs = [{"function": "count", "column": "*", "alias": "count"}]
+                sort = {"column": "count", "ascending": False, "limit": 50}
+            return SemanticResolution(
+                intent="grouped_distribution",
+                target_concept=matched_dim,
+                result_shape="grouped_rows",
+                requested_concepts=[matched_dim] + ([matched_meas] if matched_meas else []),
+                record_family=selected_family_name,
+                mapped_columns=mapped_cols,
+                suggested_aggregates=aggs,
+                suggested_filters=filters,
+                suggested_sort=sort,
+                suggested_group_by=[matched_dim],
+                notes=[f"Grouped distribution by '{matched_dim}'"],
+            )
+
+        # Generic Top-N / Ranking (e.g., "Sabse zyada bandwidth kis department ne consume ki?", "Top 5 domains")
+        has_ranking = any(k in q_norm for k in cls.KEYWORD_CONCEPTS["RANKING_TOP"])
+        if has_ranking and matched_dim and not ("debit" in q_norm and "credit" in q_norm):
+            mapped_cols["dimension"] = matched_dim
+            top_limit = 5 if "top 5" in q_norm else (10 if "top 10" in q_norm else (1 if "sabse zyada" in q_norm or "most" in q_norm or "highest" in q_norm else 5))
+            if matched_meas:
+                mapped_cols["measure"] = matched_meas
+                agg_alias = "total_value"
+                aggs = [{"function": "sum", "column": matched_meas, "alias": agg_alias}]
+            else:
+                agg_alias = "count"
+                aggs = [{"function": "count", "column": "*", "alias": agg_alias}]
+            return SemanticResolution(
+                intent="top_n",
+                target_concept=matched_dim,
+                result_shape="ranked_rows",
+                requested_concepts=[matched_dim] + ([matched_meas] if matched_meas else []),
+                record_family=selected_family_name,
+                limit=top_limit,
+                mapped_columns=mapped_cols,
+                suggested_aggregates=aggs,
+                suggested_filters=filters,
+                suggested_sort={"column": agg_alias, "ascending": False, "limit": top_limit},
+                suggested_group_by=[matched_dim],
+                notes=[f"Ranked '{matched_dim}' by '{agg_alias}'"],
+            )
+
+        # Generic scalar SUM when measure is matched with total/overall/sum (no group_by)
+        if matched_meas and not matched_dim and any(k in q_norm for k in ("total", "overall", "sum")) and not any(
+            k in q_norm for k in ("count", "rows", "records", "events", "entries", "debit", "credit")
+        ):
+            mapped_cols["measure"] = matched_meas
+            return SemanticResolution(
+                intent="scalar_count",
+                target_concept=matched_meas,
+                result_shape="scalar_metric",
+                requested_concepts=[matched_meas],
+                record_family=selected_family_name,
+                mapped_columns=mapped_cols,
+                suggested_aggregates=[{"function": "sum", "column": matched_meas, "alias": f"total_{re.sub(r'[^a-z0-9]+', '_', matched_meas.lower()).strip('_')}"}],
+                suggested_filters=filters,
+                notes=[f"Scalar sum of '{matched_meas}'"],
+            )
+
+        # -------------------------------------------------------------
+        # 5. Resolve Sender / Entity
         # -------------------------------------------------------------
         has_sender = any(k in q_lower for k in cls.KEYWORD_CONCEPTS["SENDER_ENTITY"])
         if has_sender:
@@ -286,7 +402,7 @@ class SemanticMapper:
         # -------------------------------------------------------------
         has_volume = any(k in q_lower for k in cls.KEYWORD_CONCEPTS["DATA_VOLUME"])
         if has_volume:
-            for candidate in ["size_kb", "transaction size (kb)", "data_size_bytes", "bytes", "size"]:
+            for candidate in ["size_kb", "transaction size (kb)", "data_size_bytes", "bytes", "size", "datatransferredmb"]:
                 if candidate in cols_lower:
                     mapped_cols["data_size"] = cols_lower[candidate]
                     aggs.append({"function": "sum", "column": cols_lower[candidate], "alias": "total_size"})
