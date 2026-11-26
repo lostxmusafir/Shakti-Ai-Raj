@@ -8,9 +8,12 @@ class AnalysisResponse(BaseModel):
     message_id: str
     user_id: str
     status: str
+    thread_id: Optional[str] = None
     intent: Optional[str] = None
     question: str
     plan: Optional[Dict[str, Any]] = None
+    pending_interrupt: Optional[Dict[str, Any]] = None
+    resolved_bindings: List[Dict[str, Any]] = Field(default_factory=list)
     result: Optional[Dict[str, Any]] = None
     verification: Optional[Dict[str, Any]] = None
     provenance: Optional[Dict[str, Any]] = None

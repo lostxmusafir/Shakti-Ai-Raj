@@ -12,6 +12,8 @@ from app.storage.local import storage_service
 from app.ai.orchestration.context import AIContext
 from app.ai.orchestration.state import AnalysisState
 from app.ai.orchestration.intent import IntentClassifier
+from app.ai.orchestration.ambiguity import AmbiguityDetector
+from app.ai.orchestration.langgraph_workflow import LangGraphAnalystWorkflow
 from app.ai.planning.schemas import AnalysisPlan, DatasetRef, AggregateOperation, Condition, JoinRule, SortRule
 from app.ai.planning.validator import PlanValidator
 from app.analysis.execution.duckdb_engine import DuckDBEngine
@@ -36,6 +38,7 @@ class AnalysisOrchestrator:
         self.analysis_repo = BaseRepository("analysis_runs", AnalysisRun)
         self.file_repo = BaseRepository("files", StoredFile)
         self.ai_provider = get_ai_provider()
+        self.workflow = LangGraphAnalystWorkflow(self)
 
     @staticmethod
     def _entry_count_plan(question: str, file_ids: List[str], files_map: Dict[str, StoredFile]) -> Optional[AnalysisPlan]:
@@ -112,6 +115,24 @@ class AnalysisOrchestrator:
                 "data": data,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             })
+
+    async def _emit_status(self, analysis_id: str, status: str):
+        await self.analysis_repo.update(analysis_id, {"status": status})
+        await self._emit_event(analysis_id, "analysis.status", {"status": status})
+
+    async def _load_authorized_files(
+        self, file_ids: List[str], unit_id: str, role: str
+    ) -> tuple[Dict[str, StoredFile], Dict[str, str]]:
+        files_map: Dict[str, StoredFile] = {}
+        file_paths_map: Dict[str, str] = {}
+        for fid in file_ids:
+            f_record = await self.file_repo.get_by_id(fid, unit_id=unit_id)
+            if not f_record and role == "super_admin":
+                f_record = await self.file_repo.get_by_id(fid)
+            if f_record:
+                files_map[fid] = f_record
+                file_paths_map[fid] = storage_service.get_file_path(f_record.storage_key)
+        return files_map, file_paths_map
 
     async def run(
         self,
@@ -939,30 +960,11 @@ class AnalysisOrchestrator:
         file_paths_map: Dict[str, str],
         intent: str
     ) -> Dict[str, Any]:
-        # 1. State: PLANNING
-        await self.analysis_repo.update(analysis_id, {"status": AnalysisState.PLANNING.value})
-        await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.PLANNING.value})
-
-        # Construct plan via AI with fallback
-        plan = await self._plan_with_ai(question, file_ids, files_map, intent)
+        # 1. Run via persistent LangGraph HITL workflow (with checkpointing)
+        thread_id = f"{ctx.chat_id}:{analysis_id}"
         skill_route = SkillRegistry.route(question, files_map)
-        plan.skills = skill_route["skills"]
 
-        # 2. State: VALIDATING_PLAN
-        await self.analysis_repo.update(analysis_id, {
-            "status": AnalysisState.VALIDATING_PLAN.value,
-            "plan": plan.model_dump()
-        })
-        await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.VALIDATING_PLAN.value})
-
-        validated_plan = PlanValidator.validate_plan(plan, files_map)
-
-        # 3. State: EXECUTING
-        await self.analysis_repo.update(analysis_id, {"status": AnalysisState.EXECUTING.value})
-        await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.EXECUTING.value})
-
-        # Specialized workbook operations remain read-only and deterministic. The
-        # normal SQL planner continues to handle ordinary single-sheet questions.
+        # Specialized workbook operations remain read-only and deterministic.
         if "microsoft-excel" in skill_route["skills"] and file_ids:
             primary_file = files_map.get(file_ids[0])
             primary_path = file_paths_map.get(file_ids[0])
@@ -977,8 +979,7 @@ class AnalysisOrchestrator:
                 except ExcelWorkbookError as exc:
                     raise AppException("EXCEL_ANALYSIS_REJECTED", str(exc), status_code=400) from exc
                 if excel_result:
-                    await self.analysis_repo.update(analysis_id, {"status": AnalysisState.VERIFYING.value})
-                    await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.VERIFYING.value})
+                    await self._emit_status(analysis_id, AnalysisState.VERIFYING.value)
                     provenance = {
                         "source_files": file_ids,
                         "source_sheets": (primary_file.schema_profile or {}).get("sheets", []),
@@ -1005,40 +1006,211 @@ class AnalysisOrchestrator:
                         ],
                         "provenance": provenance,
                     }
-                    await self.analysis_repo.update(analysis_id, {"status": AnalysisState.GENERATING_ANSWER.value})
-                    await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.GENERATING_ANSWER.value})
+                    await self._emit_status(analysis_id, AnalysisState.GENERATING_ANSWER.value)
                     explanation = ExcelWorkbookService.explain(excel_result, question)
                     explanation += "\n\n📊 **Verified read-only Excel execution**"
                     await self._emit_event(analysis_id, "assistant.delta", {"delta": explanation})
                     return await self._finalize_success(
-                        analysis_id,
-                        ctx,
-                        question,
-                        explanation,
-                        result=excel_result,
-                        verification=verification,
-                        provenance=provenance,
+                        analysis_id, ctx, question, explanation,
+                        result=excel_result, verification=verification, provenance=provenance,
                     )
 
-        engine_result = DuckDBEngine.execute(validated_plan, files_map, file_paths_map)
-
-        # 4. State: VERIFYING
-        await self.analysis_repo.update(analysis_id, {"status": AnalysisState.VERIFYING.value})
-        await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.VERIFYING.value})
-
-        verification = ResultVerifier.verify(
-            validated_plan,
-            engine_result,
-            files_map,
-            user_unit_id=ctx.unit_id,
-            user_role=ctx.role
+        wf_out = await self.workflow.start(
+            {
+                "analysis_id": analysis_id,
+                "thread_id": thread_id,
+                "user_id": ctx.user_id,
+                "unit_id": ctx.unit_id,
+                "role": ctx.role,
+                "question": question,
+                "resolved_question": question,
+                "file_ids": file_ids,
+                "intent": intent,
+                "resolved_bindings": [],
+                "cancelled": False,
+            },
+            files_map=files_map,
+            file_paths_map=file_paths_map,
         )
+
+        if wf_out["status"] == AnalysisState.INTERRUPTED.value:
+            intr_payload = wf_out["interrupt"]
+            await self.analysis_repo.update(analysis_id, {
+                "status": AnalysisState.INTERRUPTED.value,
+                "thread_id": thread_id,
+                "pending_interrupt": intr_payload,
+            })
+            await self._emit_event(analysis_id, "analysis.interrupted", {
+                "analysis_id": analysis_id,
+                "thread_id": thread_id,
+                "interrupt": intr_payload,
+            })
+            return {
+                "analysis_id": analysis_id,
+                "status": AnalysisState.INTERRUPTED.value,
+                "thread_id": thread_id,
+                "interrupt": intr_payload,
+            }
+
+        if wf_out["status"] == AnalysisState.CANCELLED.value:
+            await self.analysis_repo.update(analysis_id, {
+                "status": AnalysisState.CANCELLED.value,
+                "pending_interrupt": None,
+            })
+            await self._emit_event(analysis_id, "analysis.cancelled", {"analysis_id": analysis_id})
+            return {"analysis_id": analysis_id, "status": AnalysisState.CANCELLED.value}
+
+        state_out = wf_out["state"]
+        engine_result = state_out["engine_result"]
+        verification = state_out["verification"]
         verification["provenance"]["skills"] = skill_route["skills"]
         verification["provenance"]["guidance_only_capabilities"] = skill_route["guidance_only"]
+        explanation = state_out["explanation"]
+        await self.analysis_repo.update(analysis_id, {
+            "thread_id": thread_id,
+            "plan": state_out.get("plan_dict") or {},
+            "pending_interrupt": None,
+            "resolved_bindings": state_out.get("resolved_bindings") or [],
+        })
+        await self._emit_event(analysis_id, "assistant.delta", {"delta": explanation})
+        return await self._finalize_success(
+            analysis_id,
+            ctx,
+            question,
+            explanation,
+            result=engine_result,
+            verification=verification,
+            provenance=verification["provenance"],
+        )
 
-        # 5. State: GENERATING_ANSWER
-        await self.analysis_repo.update(analysis_id, {"status": AnalysisState.GENERATING_ANSWER.value})
-        await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.GENERATING_ANSWER.value})
+    async def resume_analysis(
+        self,
+        analysis_id: str,
+        ctx: AIContext,
+        interrupt_id: Optional[str],
+        user_response: Any,
+    ) -> Dict[str, Any]:
+        run = await self.analysis_repo.get_by_id(analysis_id)
+        if not run:
+            raise AppException("NOT_FOUND", "Analysis run not found", status_code=404)
+
+        # Idempotency guard
+        if interrupt_id and interrupt_id in (run.consumed_interrupt_ids or []):
+            return {
+                "analysis_id": analysis_id,
+                "status": run.status,
+                "idempotent_replay": True,
+                "result": run.result,
+                "verification": run.verification,
+                "provenance": run.provenance,
+            }
+        if run.status == AnalysisState.COMPLETED.value:
+            return {
+                "analysis_id": analysis_id,
+                "status": run.status,
+                "idempotent_replay": True,
+                "result": run.result,
+                "verification": run.verification,
+                "provenance": run.provenance,
+            }
+        if run.status != AnalysisState.INTERRUPTED.value or not run.pending_interrupt:
+            raise AppException("INVALID_STATE", "Analysis is not awaiting clarification.", status_code=409)
+
+        if interrupt_id and run.pending_interrupt.get("interrupt_id") != interrupt_id:
+            raise AppException("STALE_INTERRUPT", "Interrupt ID does not match active clarification.", status_code=409)
+
+        # Validate user response before resuming LangGraph
+        try:
+            AmbiguityDetector.validate_resume_response(run.pending_interrupt, user_response)
+        except ValueError as exc:
+            raise AppException("INVALID_CLARIFICATION_RESPONSE", str(exc), status_code=400) from exc
+
+        consumed = list(run.consumed_interrupt_ids or [])
+        active_intr_id = run.pending_interrupt.get("interrupt_id")
+        if active_intr_id:
+            consumed.append(active_intr_id)
+        await self.analysis_repo.update(analysis_id, {"consumed_interrupt_ids": consumed})
+
+        queue = asyncio.Queue()
+        active_analysis_queues[analysis_id] = queue
+        try:
+            files_map, file_paths_map = await self._load_authorized_files(
+                run.input_file_ids, ctx.unit_id, ctx.role
+            )
+            thread_id = run.thread_id or f"{ctx.chat_id}:{analysis_id}"
+            wf_out = await self.workflow.resume(
+                thread_id, user_response, files_map=files_map, file_paths_map=file_paths_map
+            )
+
+            if wf_out["status"] == AnalysisState.INTERRUPTED.value:
+                intr_payload = wf_out["interrupt"]
+                await self.analysis_repo.update(analysis_id, {
+                    "status": AnalysisState.INTERRUPTED.value,
+                    "pending_interrupt": intr_payload,
+                })
+                await self._emit_event(analysis_id, "analysis.interrupted", {
+                    "analysis_id": analysis_id,
+                    "thread_id": thread_id,
+                    "interrupt": intr_payload,
+                })
+                return {
+                    "analysis_id": analysis_id,
+                    "status": AnalysisState.INTERRUPTED.value,
+                    "interrupt": intr_payload,
+                }
+
+            if wf_out["status"] == AnalysisState.CANCELLED.value:
+                await self.analysis_repo.update(analysis_id, {
+                    "status": AnalysisState.CANCELLED.value,
+                    "pending_interrupt": None,
+                })
+                await self._emit_event(analysis_id, "analysis.cancelled", {"analysis_id": analysis_id})
+                return {"analysis_id": analysis_id, "status": AnalysisState.CANCELLED.value}
+
+            state_out = wf_out["state"]
+            engine_result = state_out["engine_result"]
+            verification = state_out["verification"]
+            skill_route = SkillRegistry.route(run.question, files_map)
+            verification["provenance"]["skills"] = skill_route["skills"]
+            verification["provenance"]["guidance_only_capabilities"] = skill_route["guidance_only"]
+            explanation = state_out["explanation"]
+
+            await self.analysis_repo.update(analysis_id, {
+                "plan": state_out.get("plan_dict") or {},
+                "pending_interrupt": None,
+                "resolved_bindings": state_out.get("resolved_bindings") or [],
+            })
+            await self._emit_event(analysis_id, "assistant.delta", {"delta": explanation})
+            return await self._finalize_success(
+                analysis_id,
+                ctx,
+                run.question,
+                explanation,
+                result=engine_result,
+                verification=verification,
+                provenance=verification["provenance"],
+            )
+        finally:
+            await queue.put(None)
+
+    async def cancel_analysis(self, analysis_id: str) -> Dict[str, Any]:
+        await self.analysis_repo.update(analysis_id, {
+            "status": AnalysisState.CANCELLED.value,
+            "pending_interrupt": None,
+            "completed_at": datetime.now(timezone.utc),
+        })
+        await self._emit_event(analysis_id, "analysis.cancelled", {"analysis_id": analysis_id})
+        if analysis_id in active_analysis_queues:
+            await active_analysis_queues[analysis_id].put(None)
+        return {"analysis_id": analysis_id, "status": AnalysisState.CANCELLED.value}
+
+    async def _format_executive_answer(
+        self,
+        question: str,
+        validated_plan: AnalysisPlan,
+        engine_result: Dict[str, Any],
+        verification: Dict[str, Any],
+    ) -> str:
 
         row_count = engine_result["row_count"]
         
@@ -1157,18 +1329,7 @@ class AnalysisOrchestrator:
         execution_label = "Verified DuckDB Execution" if verification["passed"] else "DuckDB Execution (verification failed)"
         explanation += f"📊 **{execution_label}** ({engine_result['duration_ms']}ms, {row_count:,} records analyzed)\n"
         explanation += f"Verification Status: ✅ {verification['provenance']['verification_status'].upper()}"
-
-        await self._emit_event(analysis_id, "assistant.delta", {"delta": explanation})
-
-        return await self._finalize_success(
-            analysis_id,
-            ctx,
-            question,
-            explanation,
-            result=engine_result,
-            verification=verification,
-            provenance=verification["provenance"]
-        )
+        return explanation
 
     async def _finalize_success(
         self,

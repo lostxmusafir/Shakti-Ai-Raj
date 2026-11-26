@@ -1,4 +1,4 @@
-from typing import List, Optional, Any, Union
+from typing import List, Optional, Any, Union, Dict
 from pydantic import BaseModel, Field
 
 class Condition(BaseModel):
@@ -46,3 +46,4 @@ class AnalysisPlan(BaseModel):
     result_shape: Optional[str] = None  # scalar_metric, two_metrics, multi_metric, grouped_rows, ranked_rows
     requested_concepts: List[str] = Field(default_factory=list)
     record_family: Optional[str] = None  # Bound logical record family in mixed datasets
+    resolved_bindings: List[Dict[str, Any]] = Field(default_factory=list)

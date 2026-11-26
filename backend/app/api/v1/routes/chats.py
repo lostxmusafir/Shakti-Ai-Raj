@@ -189,21 +189,21 @@ async def send_message(
                 question=req.content,
                 file_ids=req.file_ids
             )
-            # Create assistant message in history with full metadata
-            assistant_msg = ChatMessage(
-                chat_id=chat_id,
-                user_id=user.id,
-                role="assistant",
-                content=res["explanation"],
-                attachments=req.file_ids,
-                analysis_id=saved_analysis.id,
-                metadata={
-                    "result": res.get("result"),
-                    "verification": res.get("verification"),
-                    "provenance": res.get("provenance")
-                }
-            )
-            await message_repo.create(assistant_msg)
+            if res.get("status") == "completed":
+                assistant_msg = ChatMessage(
+                    chat_id=chat_id,
+                    user_id=user.id,
+                    role="assistant",
+                    content=res["explanation"],
+                    attachments=req.file_ids,
+                    analysis_id=saved_analysis.id,
+                    metadata={
+                        "result": res.get("result"),
+                        "verification": res.get("verification"),
+                        "provenance": res.get("provenance")
+                    }
+                )
+                await message_repo.create(assistant_msg)
         except Exception:
             pass
 
@@ -213,4 +213,24 @@ async def send_message(
         "message_id": saved_user_msg.id,
         "analysis_id": saved_analysis.id,
         "status": "queued"
+    }
+
+
+@router.get("/{chat_id}/pending-interrupt")
+async def get_pending_interrupt(chat_id: str, user: User = Depends(get_current_active_user)):
+    session = await chat_repo.get_by_id(chat_id)
+    if not session:
+        raise NotFoundError("Chat session", chat_id)
+    if session.user_id != user.id and user.role != "super_admin":
+        raise ForbiddenError("You cannot access this chat session.")
+
+    runs = await analysis_repo.find_many({"chat_id": chat_id, "status": "interrupted"}, sort_by="created_at", direction=-1)
+    if not runs:
+        return {"pending": False, "analysis_id": None, "interrupt": None}
+    latest = runs[0]
+    return {
+        "pending": True,
+        "analysis_id": latest.id,
+        "thread_id": latest.thread_id,
+        "interrupt": latest.pending_interrupt,
     }
