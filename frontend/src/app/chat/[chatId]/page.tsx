@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { AlertCircle, ArrowUpRight, Database, GitCompareArrows, ScanSearch, ShieldCheck, Sparkles, Table2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { api, User, ChatSession, ChatMessage, StoredFile, PendingInterruptPayload } from "@/lib/api";
 import Sidebar from "@/components/Sidebar";
 import AssistantThread from "@/components/AssistantThread";
@@ -11,27 +10,22 @@ import { cn } from "@/lib/cn";
 
 const QUICK_ACTIONS = [
   {
-    icon: Database,
     label: "Analyze dataset",
     prompt: "Give me an overview of this dataset: row count, columns and the key totals.",
   },
   {
-    icon: GitCompareArrows,
     label: "Compare files",
     prompt: "Compare Sheet1 and Sheet2 in this workbook and list the differences.",
   },
   {
-    icon: ScanSearch,
     label: "Find anomalies",
     prompt: "Find unusual values or anomalies in this dataset.",
   },
   {
-    icon: ShieldCheck,
     label: "Check policy",
     prompt: "Check this dataset against our security policy and list any violations.",
   },
   {
-    icon: Table2,
     label: "Summarize workbook",
     prompt: "Summarize this workbook: sheets, columns, missing values and the main totals.",
   },
@@ -230,21 +224,6 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-slate-300" />
-      </div>
-    );
-  }
-
-  const currentChat = chats.find((chat) => chat.id === chatId);
-  const knownFiles = files.map((file) => ({
-    id: file.id,
-    original_name: file.original_name,
-    row_count: file.schema_profile?.row_count ?? null,
-  }));
-
   const handleResumeInterrupt = useCallback(
     async (response: string) => {
       if (!activeAnalysisId || !pendingInterrupt) return;
@@ -294,62 +273,23 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
     }
   }, [activeAnalysisId]);
 
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-950">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-slate-300" />
+      </div>
+    );
+  }
+
+  const currentChat = chats.find((chat) => chat.id === chatId);
+  const knownFiles = files.map((file) => ({
+    id: file.id,
+    original_name: file.original_name,
+    row_count: file.schema_profile?.row_count ?? null,
+  }));
+
   const busy = Boolean(activeAnalysisId);
   const hasFiles = files.length > 0;
-
-  const emptyState = (
-    <div className="flex flex-1 items-center justify-center py-10">
-      <div className="w-full max-w-xl">
-        <div className="mb-6 text-center">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-300 ring-1 ring-inset ring-indigo-400/20">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <h2 className="mt-3 text-[17px] font-semibold tracking-tight text-white">
-            What would you like to analyze?
-          </h2>
-          <p className="mx-auto mt-1 max-w-sm text-[12.5px] leading-6 text-slate-400">
-            Ask in English or Hinglish. Queries run through DuckDB and every answer is verified against your
-            policy rules.
-          </p>
-        </div>
-
-        <div className="grid gap-2 sm:grid-cols-2">
-          {QUICK_ACTIONS.map((action) => {
-            const Icon = action.icon;
-            return (
-              <button
-                key={action.label}
-                type="button"
-                disabled={!hasFiles}
-                onClick={() => handleSendMessage(action.prompt, selectedFileIds)}
-                className={cn(
-                  "group flex items-start gap-2.5 rounded-xl border border-slate-800 bg-slate-900/40 px-3 py-2.5 text-left transition",
-                  hasFiles
-                    ? "hover:border-slate-700 hover:bg-slate-900/80"
-                    : "cursor-not-allowed opacity-50",
-                )}
-              >
-                <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500 group-hover:text-indigo-300" />
-                <span className="text-[12px] leading-5 text-slate-300">
-                  <span className="block font-medium text-slate-200">{action.label}</span>
-                  <span className="text-[11px] text-slate-500">{action.prompt}</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {!hasFiles ? (
-          <p className="mt-4 text-center text-[11.5px] text-slate-500">
-            Upload a dataset first —{" "}
-            <Link href="/files" className="inline-flex items-center gap-0.5 text-indigo-300 hover:text-indigo-200">
-              open Datasets <ArrowUpRight className="h-3 w-3" />
-            </Link>
-          </p>
-        ) : null}
-      </div>
-    </div>
-  );
 
   const errorBanner = error ? (
     <div className="flex items-start gap-2 rounded-lg border border-red-500/25 bg-red-500/[0.06] px-3 py-2 text-[12px] text-red-200">
@@ -362,11 +302,11 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
   ) : null;
 
   return (
-    <div className="flex h-screen bg-slate-950">
+    <div className="flex h-screen bg-[#090d16]">
       <Sidebar user={user} chats={chats} activeChatId={chatId} onNewChat={handleNewChat} />
 
       <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-800/80 px-5 sm:px-6">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.06] px-5 sm:px-6">
           <div className="min-w-0">
             <h1 className="truncate text-[13px] font-medium text-slate-100">
               {currentChat?.title || "Data Analysis Session"}
@@ -380,6 +320,7 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
         </header>
 
         <AssistantThread
+          userName={user?.name}
           messages={messages}
           files={files}
           knownFiles={knownFiles}
@@ -389,13 +330,13 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
           busy={busy}
           streamText={streamText}
           analysisStatus={analysisStatus}
+          suggestions={QUICK_ACTIONS}
           pendingInterrupt={pendingInterrupt}
           interruptSubmitting={interruptSubmitting}
           resolvedInterruptLabel={resolvedInterruptLabel}
           interruptCancelled={interruptCancelled}
           onResumeInterrupt={handleResumeInterrupt}
           onCancelInterrupt={handleCancelInterrupt}
-          emptyState={emptyState}
           errorBanner={errorBanner}
         />
       </main>
