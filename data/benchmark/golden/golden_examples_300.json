@@ -15398,5 +15398,523 @@
       ]
     },
     "unit_id": "unit_1"
+  },
+  {
+    "example_id": "gold-fw-0001",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Total kitne firewall log events capture hue?",
+    "language": "hinglish",
+    "intent": "scalar_count",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "count": "*"
+    },
+    "sql_query": "SELECT COUNT(*) AS total_events FROM ds_1",
+    "expected_answer": {
+      "columns": [
+        "total_events"
+      ],
+      "row_count": 1,
+      "rows": [
+        {
+          "total_events": 200
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0002",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Firewall actions ka breakdown kya hai (ALLOW vs BLOCK vs DROP vs ALERT)?",
+    "language": "hinglish",
+    "intent": "grouped_distribution",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "group_by": "Action"
+    },
+    "sql_query": "SELECT Action, COUNT(*) AS event_count FROM ds_1 GROUP BY Action ORDER BY event_count DESC",
+    "expected_answer": {
+      "columns": [
+        "Action",
+        "event_count"
+      ],
+      "row_count": 4,
+      "rows": [
+        {
+          "Action": "ALLOW",
+          "event_count": 145
+        },
+        {
+          "Action": "BLOCK",
+          "event_count": 33
+        },
+        {
+          "Action": "DROP",
+          "event_count": 15
+        },
+        {
+          "Action": "ALERT",
+          "event_count": 7
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0003",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Sabse zyada bandwidth (DataTransferredMB) kis department ne consume ki?",
+    "language": "hinglish",
+    "intent": "top_n",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "group_by": "Department",
+      "measure": "DataTransferredMB"
+    },
+    "sql_query": "SELECT Department, ROUND(SUM(DataTransferredMB), 2) AS total_mb FROM ds_1 GROUP BY Department ORDER BY total_mb DESC",
+    "expected_answer": {
+      "columns": [
+        "Department",
+        "total_mb"
+      ],
+      "row_count": 7,
+      "rows": [
+        {
+          "Department": "Finance",
+          "total_mb": 6837.88
+        },
+        {
+          "Department": "IT_Security",
+          "total_mb": 5895.09
+        },
+        {
+          "Department": "Sales",
+          "total_mb": 4261.79
+        },
+        {
+          "Department": "Marketing",
+          "total_mb": 4186.48
+        },
+        {
+          "Department": "Legal",
+          "total_mb": 3606.19
+        },
+        {
+          "Department": "Engineering",
+          "total_mb": 3228.17
+        },
+        {
+          "Department": "HR",
+          "total_mb": 3028.1
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0004",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Kis employee ke sabse zyada access attempts BLOCK ya DROP hue?",
+    "language": "hinglish",
+    "intent": "top_n",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "group_by": "EmployeeName",
+      "filter": "Action"
+    },
+    "sql_query": "SELECT EmployeeName, Department, COUNT(*) AS blocked_attempts FROM ds_1 WHERE Action IN ('BLOCK', 'DROP') GROUP BY EmployeeName, Department ORDER BY blocked_attempts DESC LIMIT 5",
+    "expected_answer": {
+      "columns": [
+        "EmployeeName",
+        "Department",
+        "blocked_attempts"
+      ],
+      "row_count": 5,
+      "rows": [
+        {
+          "EmployeeName": "Tara Sutaria",
+          "Department": "Marketing",
+          "blocked_attempts": 8
+        },
+        {
+          "EmployeeName": "Manish Malhotra",
+          "Department": "Legal",
+          "blocked_attempts": 7
+        },
+        {
+          "EmployeeName": "Deepika Joshi",
+          "Department": "HR",
+          "blocked_attempts": 5
+        },
+        {
+          "EmployeeName": "Zoya Akhtar",
+          "Department": "IT_Security",
+          "blocked_attempts": 5
+        },
+        {
+          "EmployeeName": "Gauri Khan",
+          "Department": "Legal",
+          "blocked_attempts": 4
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0005",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Critical Threat Level ke kaunse events detect hue aur kaunse employees involved the?",
+    "language": "hinglish",
+    "intent": "filtered_list",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "filter": "ThreatLevel"
+    },
+    "sql_query": "SELECT LogID, EmployeeName, Department, DestinationDomain, Action FROM ds_1 WHERE ThreatLevel = 'Critical' ORDER BY LogID",
+    "expected_answer": {
+      "columns": [
+        "LogID",
+        "EmployeeName",
+        "Department",
+        "DestinationDomain",
+        "Action"
+      ],
+      "row_count": 28,
+      "rows": [
+        {
+          "LogID": "FW-2026-1010",
+          "EmployeeName": "Alia Bhatt",
+          "Department": "Sales",
+          "DestinationDomain": "torrent-tracker.org",
+          "Action": "BLOCK"
+        },
+        {
+          "LogID": "FW-2026-1013",
+          "EmployeeName": "Manish Malhotra",
+          "Department": "Legal",
+          "DestinationDomain": "darkweb-leak.ru",
+          "Action": "DROP"
+        },
+        {
+          "LogID": "FW-2026-1037",
+          "EmployeeName": "Tara Sutaria",
+          "Department": "Marketing",
+          "DestinationDomain": "torrent-tracker.org",
+          "Action": "BLOCK"
+        },
+        {
+          "LogID": "FW-2026-1043",
+          "EmployeeName": "Kartik Aaryan",
+          "Department": "Sales",
+          "DestinationDomain": "darkweb-leak.ru",
+          "Action": "DROP"
+        },
+        {
+          "LogID": "FW-2026-1045",
+          "EmployeeName": "Manish Malhotra",
+          "Department": "Legal",
+          "DestinationDomain": "torrent-tracker.org",
+          "Action": "BLOCK"
+        },
+        {
+          "LogID": "FW-2026-1052",
+          "EmployeeName": "Gauri Khan",
+          "Department": "Legal",
+          "DestinationDomain": "darkweb-leak.ru",
+          "Action": "DROP"
+        },
+        {
+          "LogID": "FW-2026-1059",
+          "EmployeeName": "Deepika Joshi",
+          "Department": "HR",
+          "DestinationDomain": "torrent-tracker.org",
+          "Action": "BLOCK"
+        },
+        {
+          "LogID": "FW-2026-1063",
+          "EmployeeName": "Manish Malhotra",
+          "Department": "Legal",
+          "DestinationDomain": "torrent-tracker.org",
+          "Action": "BLOCK"
+        },
+        {
+          "LogID": "FW-2026-1065",
+          "EmployeeName": "Kriti Sanon",
+          "Department": "Sales",
+          "DestinationDomain": "unknown-c2-server.net",
+          "Action": "DROP"
+        },
+        {
+          "LogID": "FW-2026-1070",
+          "EmployeeName": "Deepika Joshi",
+          "Department": "HR",
+          "DestinationDomain": "unknown-c2-server.net",
+          "Action": "DROP"
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0006",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Top 5 most frequently accessed domains kaunse the?",
+    "language": "hinglish",
+    "intent": "top_n",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "group_by": "DestinationDomain"
+    },
+    "sql_query": "SELECT DestinationDomain, COUNT(*) AS request_count FROM ds_1 GROUP BY DestinationDomain ORDER BY request_count DESC LIMIT 5",
+    "expected_answer": {
+      "columns": [
+        "DestinationDomain",
+        "request_count"
+      ],
+      "row_count": 5,
+      "rows": [
+        {
+          "DestinationDomain": "youtube.com",
+          "request_count": 23
+        },
+        {
+          "DestinationDomain": "jira.company.com",
+          "request_count": 17
+        },
+        {
+          "DestinationDomain": "github.com",
+          "request_count": 17
+        },
+        {
+          "DestinationDomain": "slack.com",
+          "request_count": 16
+        },
+        {
+          "DestinationDomain": "salesforce.com",
+          "request_count": 15
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0007",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Unauthorized Cloud Storage (e.g., Dropbox) access karne ki koshish kisne ki?",
+    "language": "hinglish",
+    "intent": "filtered_list",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "filter": "Category"
+    },
+    "sql_query": "SELECT EmployeeName, Department, DestinationDomain, Action FROM ds_1 WHERE Category = 'Cloud Storage' ORDER BY LogID",
+    "expected_answer": {
+      "columns": [
+        "EmployeeName",
+        "Department",
+        "DestinationDomain",
+        "Action"
+      ],
+      "row_count": 10,
+      "rows": [
+        {
+          "EmployeeName": "Tara Sutaria",
+          "Department": "Marketing",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Zoya Akhtar",
+          "Department": "IT_Security",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Manish Malhotra",
+          "Department": "Legal",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Tara Sutaria",
+          "Department": "Marketing",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Kunal Verma",
+          "Department": "Engineering",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Tara Sutaria",
+          "Department": "Marketing",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Zoya Akhtar",
+          "Department": "IT_Security",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Sneha Reddy",
+          "Department": "Finance",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Rahul Roy",
+          "Department": "Finance",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Manish Malhotra",
+          "Department": "Legal",
+          "DestinationDomain": "dropbox.com",
+          "Action": "BLOCK"
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0008",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Insecure ya administrative protocols (SSH/RDP/FTP) use karne ki koshish kin employees ne ki?",
+    "language": "hinglish",
+    "intent": "filtered_list",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "filter": "Protocol"
+    },
+    "sql_query": "SELECT EmployeeName, Department, Protocol, Action FROM ds_1 WHERE Protocol LIKE '%SSH%' OR Protocol LIKE '%RDP%' OR Protocol LIKE '%FTP%' ORDER BY LogID",
+    "expected_answer": {
+      "columns": [
+        "EmployeeName",
+        "Department",
+        "Protocol",
+        "Action"
+      ],
+      "row_count": 22,
+      "rows": [
+        {
+          "EmployeeName": "Gauri Khan",
+          "Department": "Legal",
+          "Protocol": "TCP/FTP (21)",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Alia Bhatt",
+          "Department": "Sales",
+          "Protocol": "TCP/FTP (21)",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Kabir Khan",
+          "Department": "IT_Security",
+          "Protocol": "TCP/RDP (3389)",
+          "Action": "ALERT"
+        },
+        {
+          "EmployeeName": "Tara Sutaria",
+          "Department": "Marketing",
+          "Protocol": "TCP/FTP (21)",
+          "Action": "BLOCK"
+        },
+        {
+          "EmployeeName": "Manish Malhotra",
+          "Department": "Legal",
+          "Protocol": "TCP/RDP (3389)",
+          "Action": "ALERT"
+        },
+        {
+          "EmployeeName": "Vikram Singh",
+          "Department": "Engineering",
+          "Protocol": "TCP/RDP (3389)",
+          "Action": "ALERT"
+        },
+        {
+          "EmployeeName": "Rahul Roy",
+          "Department": "Finance",
+          "Protocol": "TCP/RDP (3389)",
+          "Action": "ALERT"
+        },
+        {
+          "EmployeeName": "Kartik Aaryan",
+          "Department": "Sales",
+          "Protocol": "TCP/RDP (3389)",
+          "Action": "ALERT"
+        },
+        {
+          "EmployeeName": "Kriti Sanon",
+          "Department": "Sales",
+          "Protocol": "TCP/SSH (22)",
+          "Action": "DROP"
+        },
+        {
+          "EmployeeName": "Deepika Joshi",
+          "Department": "HR",
+          "Protocol": "TCP/SSH (22)",
+          "Action": "DROP"
+        }
+      ]
+    },
+    "unit_id": "default_unit"
+  },
+  {
+    "example_id": "gold-fw-0009",
+    "dataset_name": "company_firewall_access_logs",
+    "question": "Overall company ka total data transfer kitna hua?",
+    "language": "hinglish",
+    "intent": "scalar_sum",
+    "split": "train",
+    "source_type": "public_eval",
+    "approval_status": "approved",
+    "approved_by": "admin",
+    "column_mapping": {
+      "measure": "DataTransferredMB"
+    },
+    "sql_query": "SELECT ROUND(SUM(DataTransferredMB), 2) AS total_mb FROM ds_1",
+    "expected_answer": {
+      "columns": [
+        "total_mb"
+      ],
+      "row_count": 1,
+      "rows": [
+        {
+          "total_mb": 31043.7
+        }
+      ]
+    },
+    "unit_id": "default_unit"
   }
 ]
