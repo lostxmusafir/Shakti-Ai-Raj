@@ -22,7 +22,7 @@ from app.ai.verification.verifier import ResultVerifier
 from app.policies.service import policy_service
 from app.policies.evaluator import PolicyEvaluator
 from app.audit.service import audit_service
-from app.ai.providers import get_ai_provider
+from app.ai.providers import get_ai_provider, get_ai_provider_for_tier
 from app.ai.skills.registry import SkillRegistry
 from app.ai.learning.example_retrieval import ExampleRetriever
 from app.ai.learning.semantic_mapping import SemanticMapper
@@ -169,11 +169,11 @@ class AnalysisOrchestrator:
 
             # Route based on intent
             if intent == "GENERAL_CHAT":
-                response_text = await self._handle_general_chat(analysis_id, question)
+                response_text = await self._handle_general_chat(analysis_id, question, ai_tier=ctx.ai_tier)
                 return await self._finalize_success(analysis_id, ctx, question, response_text)
 
             elif intent == "DATA_INSPECTION":
-                response_text, result_data = await self._handle_data_inspection(analysis_id, question, files_map)
+                response_text, result_data = await self._handle_data_inspection(analysis_id, question, files_map, ai_tier=ctx.ai_tier)
                 return await self._finalize_success(analysis_id, ctx, question, response_text, result=result_data)
 
             elif intent == "POLICY_EVALUATION":
@@ -207,10 +207,11 @@ class AnalysisOrchestrator:
         finally:
             await queue.put(None)
 
-    async def _handle_general_chat(self, analysis_id: str, question: str) -> str:
+    async def _handle_general_chat(self, analysis_id: str, question: str, ai_tier: Optional[str] = None) -> str:
         await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.GENERATING_ANSWER.value})
         messages = [{"role": "user", "content": question}]
-        response = await self.ai_provider.generate(messages)
+        provider = get_ai_provider_for_tier(ai_tier) if ai_tier else self.ai_provider
+        response = await provider.generate(messages)
         await self._emit_event(analysis_id, "assistant.delta", {"delta": response})
         return response
 
@@ -232,7 +233,8 @@ class AnalysisOrchestrator:
         self,
         analysis_id: str,
         question: str,
-        files_map: Dict[str, StoredFile]
+        files_map: Dict[str, StoredFile],
+        ai_tier: Optional[str] = None,
     ) -> tuple[str, Dict[str, Any]]:
         await self._emit_event(analysis_id, "analysis.status", {"status": AnalysisState.GENERATING_ANSWER.value})
         
@@ -274,7 +276,8 @@ class AnalysisOrchestrator:
         ]
 
         try:
-            ai_summary = await self.ai_provider.generate(summary_messages)
+            provider = get_ai_provider_for_tier(ai_tier) if ai_tier else self.ai_provider
+            ai_summary = await provider.generate(summary_messages)
             resp = f"{ai_summary}\n\n---\n{context_str}"
         except Exception as e:
             logger.warning(f"AI inspection summary failed: {e}. Using deterministic fallback.")
@@ -840,7 +843,8 @@ class AnalysisOrchestrator:
         question: str,
         file_ids: List[str],
         files_map: Dict[str, StoredFile],
-        intent: str
+        intent: str,
+        ai_tier: Optional[str] = None,
     ) -> AnalysisPlan:
         """Invokes AI Provider with dataset schemas to construct a deterministic AnalysisPlan AST."""
         datasets = [DatasetRef(file_id=fid, alias=f"ds_{idx+1}") for idx, fid in enumerate(file_ids)]
@@ -932,7 +936,8 @@ class AnalysisOrchestrator:
         ]
 
         try:
-            plan = await self.ai_provider.generate_structured(planner_messages, schema=AnalysisPlan)
+            provider = get_ai_provider_for_tier(ai_tier) if ai_tier else self.ai_provider
+            plan = await provider.generate_structured(planner_messages, schema=AnalysisPlan)
             if not plan.datasets:
                 plan.datasets = datasets
             return PlanValidator.validate_plan(plan, files_map)
@@ -1026,6 +1031,7 @@ class AnalysisOrchestrator:
                 "resolved_question": question,
                 "file_ids": file_ids,
                 "intent": intent,
+                "ai_tier": getattr(ctx, "ai_tier", "low"),
                 "resolved_bindings": [],
                 "cancelled": False,
             },
@@ -1210,6 +1216,7 @@ class AnalysisOrchestrator:
         validated_plan: AnalysisPlan,
         engine_result: Dict[str, Any],
         verification: Dict[str, Any],
+        ai_tier: Optional[str] = None,
     ) -> str:
 
         row_count = engine_result["row_count"]
@@ -1241,7 +1248,8 @@ class AnalysisOrchestrator:
         ]
 
         try:
-            executive_answer = await self.ai_provider.generate(explainer_messages)
+            provider = get_ai_provider_for_tier(ai_tier) if ai_tier else self.ai_provider
+            executive_answer = await provider.generate(explainer_messages)
         except Exception as e:
             logger.warning(f"AI explanation generation failed: {e}. Using deterministic preview.")
             executive_answer = ""

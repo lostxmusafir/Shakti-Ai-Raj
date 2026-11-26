@@ -43,6 +43,8 @@ interface AssistantThreadProps {
   knownFiles: KnownFile[];
   selectedFileIds: string[];
   onSelectFileIds: (ids: string[]) => void;
+  aiTier?: "low" | "pro";
+  onChangeAiTier?: (tier: "low" | "pro") => void;
   onSend: (content: string, fileIds: string[]) => Promise<void>;
   busy: boolean;
   streamText: string | null;
@@ -79,9 +81,9 @@ function firstName(name?: string | null): string {
 function AuiGreeting({ userName }: { userName?: string | null }) {
   const first = firstName(userName);
   return (
-    <div className="mx-auto mb-8 flex w-full max-w-[44rem] flex-col items-center text-center">
-      <p className="text-2xl font-semibold tracking-tight text-slate-100 sm:text-[28px]">
-        {first ? `Welcome back, ${first}.` : "How can I help you today?"}
+    <div className="mb-6 flex flex-col px-2">
+      <p className="text-2xl font-medium tracking-tight text-slate-100">
+        {first ? `How can I help you, ${first}?` : "How can I help you today?"}
       </p>
     </div>
   );
@@ -107,10 +109,10 @@ function AuiUserMessage({ files }: { files: StoredFile[] }) {
   return (
     <MessagePrimitive.Root
       data-role="user"
-      className="mx-auto flex w-full max-w-[44rem] flex-col items-end"
+      className="grid auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] content-start gap-y-2 px-2 [&:where(>*)]:col-start-2"
     >
-      <div className="relative max-w-[80%]">
-        <div className="rounded-2xl bg-white/[0.08] px-4 py-2 text-[15px] leading-6 text-slate-100 break-words">
+      <div className="relative col-start-2 min-w-0">
+        <div className="rounded-[var(--composer-radius)] bg-white/[0.08] px-4 py-2 text-[15px] leading-6 text-slate-100 break-words">
           <div className="whitespace-pre-wrap">{raw?.content ?? textPart}</div>
           {attachmentItems.length ? (
             <Attachments items={attachmentItems} compact className="mt-2 justify-end" />
@@ -131,9 +133,9 @@ function AuiAssistantMessage({ knownFiles }: { knownFiles: KnownFile[] }) {
   return (
     <MessagePrimitive.Root
       data-role="assistant"
-      className="group relative mx-auto flex w-full max-w-[44rem] flex-col"
+      className="group relative -mb-7.5 pb-7.5"
     >
-      <div className="w-full space-y-2 text-[15px] leading-7 text-slate-200">
+      <div className="px-2 text-[15px] leading-7 text-slate-200">
         <AnswerBody
           content={raw?.content ?? textPart}
           result={raw?.metadata?.result}
@@ -145,7 +147,7 @@ function AuiAssistantMessage({ knownFiles }: { knownFiles: KnownFile[] }) {
       <ActionBarPrimitive.Root
         hideWhenRunning
         autohide="not-last"
-        className="mt-1.5 flex items-center gap-1 text-slate-500"
+        className="mt-1 flex min-h-7 items-center gap-1 pl-2 text-slate-500"
       >
         <ActionBarPrimitive.Copy asChild>
           <button
@@ -170,6 +172,8 @@ export default function AssistantThread({
   knownFiles,
   selectedFileIds,
   onSelectFileIds,
+  aiTier = "low",
+  onChangeAiTier,
   onSend,
   busy,
   streamText,
@@ -217,63 +221,64 @@ export default function AssistantThread({
 
   return (
     <AssistantRuntimeProvider runtime={runtime}>
-      <ThreadPrimitive.Root className="flex min-h-0 flex-1 flex-col bg-[#090d16] text-slate-100">
+      <ThreadPrimitive.Root
+        className="flex min-h-0 flex-1 flex-col bg-[#090a0d] text-slate-100"
+        style={{
+          ["--thread-max-width" as string]: "44rem",
+          ["--composer-bg" as string]: "rgba(255,255,255,0.035)",
+          ["--composer-radius" as string]: "1rem",
+          ["--composer-padding" as string]: "8px",
+        }}
+      >
         <ThreadPrimitive.Viewport
           turnAnchor="top"
           className={cn(
-            "relative flex flex-1 flex-col overflow-y-auto px-4 pt-6 md:px-6",
-            isEmpty && "justify-center",
+            "relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll scroll-smooth",
           )}
         >
-          {isEmpty ? <AuiGreeting userName={userName} /> : null}
+          <div className={cn("mx-auto flex w-full max-w-[var(--thread-max-width)] flex-1 flex-col px-4 pt-4", isEmpty && "justify-center")}>
+            {isEmpty ? <AuiGreeting userName={userName} /> : null}
 
-          <div className="mb-12 flex flex-col gap-y-6 empty:hidden">
-            <ThreadPrimitive.Messages
-              components={{
-                UserMessage: () => <AuiUserMessage files={files} />,
-                AssistantMessage: () => <AuiAssistantMessage knownFiles={knownFiles} />,
-              }}
-            />
+            <div className="mb-14 flex flex-col gap-y-6 empty:hidden">
+              <ThreadPrimitive.Messages
+                components={{
+                  UserMessage: () => <AuiUserMessage files={files} />,
+                  AssistantMessage: () => <AuiAssistantMessage knownFiles={knownFiles} />,
+                }}
+              />
 
-            {pendingInterrupt && onResumeInterrupt ? (
-              <div className="mx-auto w-full max-w-[44rem]">
-                <InterruptCard
-                  interrupt={pendingInterrupt}
-                  submitting={interruptSubmitting}
-                  resolvedLabel={resolvedInterruptLabel}
-                  cancelled={interruptCancelled}
-                  onSubmit={onResumeInterrupt}
-                  onCancel={onCancelInterrupt}
-                />
-              </div>
-            ) : null}
+              {pendingInterrupt && onResumeInterrupt ? (
+                <div className="w-full">
+                  <InterruptCard
+                    interrupt={pendingInterrupt}
+                    submitting={interruptSubmitting}
+                    resolvedLabel={resolvedInterruptLabel}
+                    cancelled={interruptCancelled}
+                    onSubmit={onResumeInterrupt}
+                    onCancel={onCancelInterrupt}
+                  />
+                </div>
+              ) : null}
 
-            {busy && !pendingInterrupt ? (
-              <div className="mx-auto w-full max-w-[44rem]">
-                {streamText ? (
-                  <AnswerBody content={streamText} streaming />
-                ) : (
-                  <AnalysisStatusIndicator status={analysisStatus || "queued"} />
-                )}
-              </div>
-            ) : null}
+              {busy && !pendingInterrupt ? (
+                <div className="w-full px-2">
+                  {streamText ? (
+                    <AnswerBody content={streamText} streaming />
+                  ) : (
+                    <AnalysisStatusIndicator status={analysisStatus || "queued"} />
+                  )}
+                </div>
+              ) : null}
 
-            {errorBanner ? (
-              <div className="mx-auto w-full max-w-[44rem]">{errorBanner}</div>
-            ) : null}
-          </div>
+              {errorBanner ? <div className="w-full px-2">{errorBanner}</div> : null}
+            </div>
 
-          <ThreadPrimitive.ViewportFooter
-            className={cn(
-              "mx-auto flex w-full max-w-[44rem] flex-col gap-3 overflow-visible bg-[#090d16] pb-5",
-              !isEmpty && "sticky bottom-0 mt-auto",
-            )}
-          >
+            <ThreadPrimitive.ViewportFooter className={cn("flex flex-col gap-4 overflow-visible bg-[#090a0d] pb-4 md:pb-6", !isEmpty && "sticky bottom-0 mt-auto rounded-t-[var(--composer-radius)]")}>
             <ThreadPrimitive.ScrollToBottom asChild>
               <button
                 type="button"
                 aria-label="Scroll to bottom"
-                className="absolute -top-11 z-10 grid size-8 place-items-center self-center rounded-lg border border-white/10 bg-[#090d16] text-slate-300 transition-colors hover:border-white/25 hover:text-white disabled:invisible"
+                className="absolute -top-11 z-10 grid size-8 place-items-center self-center rounded-lg border border-white/10 bg-[#111318] text-slate-300 transition-colors hover:border-white/25 hover:text-white disabled:invisible"
               >
                 <ArrowDownIcon className="size-4" />
               </button>
@@ -306,7 +311,7 @@ export default function AssistantThread({
                 </div>
               ) : null}
 
-              <div className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] transition-colors focus-within:border-white/25">
+              <div className="flex w-full flex-col gap-2 rounded-[var(--composer-radius)] border border-white/10 bg-[var(--composer-bg)] p-[var(--composer-padding)] transition-colors focus-within:border-white/25">
                 {selectedFileIds.length > 0 ? (
                   <div className="flex flex-wrap items-center gap-1.5 px-3 pt-2.5">
                     {selectedFileIds.map((id) => {
@@ -338,11 +343,11 @@ export default function AssistantThread({
                     placeholder="Send a message..."
                     disabled={busy}
                     rows={1}
-                    className="max-h-48 min-h-[44px] w-full resize-none bg-transparent px-4 pt-3 pb-2 text-[15px] leading-6 text-slate-100 placeholder:text-slate-500 focus:outline-none disabled:opacity-50"
+                    className="max-h-48 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-base leading-6 text-slate-100 placeholder:text-slate-500 focus:outline-none disabled:opacity-50"
                   />
                 </ComposerPrimitive.Input>
 
-                <div className="flex items-center justify-between gap-2 px-2 pb-2">
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex min-w-0 items-center gap-1">
                     {files.length > 0 ? (
                       <button
@@ -367,9 +372,34 @@ export default function AssistantThread({
                         <span>Upload dataset</span>
                       </Link>
                     )}
-                    <span className="px-2 text-[12px] text-slate-500">
-                      DuckDB · Verified
-                    </span>
+                    <div className="inline-flex items-center rounded-lg border border-white/10 bg-white/[0.03] p-0.5 text-[11.5px]">
+                      <button
+                        type="button"
+                        onClick={() => onChangeAiTier?.("low")}
+                        title="Mistral 3B (Round-Robin)"
+                        className={cn(
+                          "rounded-md px-2 py-0.5 font-medium transition-colors",
+                          aiTier === "low"
+                            ? "bg-white/15 text-white"
+                            : "text-slate-400 hover:text-slate-200",
+                        )}
+                      >
+                        AI Low
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onChangeAiTier?.("pro")}
+                        title="Zhipu GLM-4-Flash (Round-Robin)"
+                        className={cn(
+                          "rounded-md px-2 py-0.5 font-medium transition-colors",
+                          aiTier === "pro"
+                            ? "bg-indigo-500/30 text-indigo-200"
+                            : "text-slate-400 hover:text-slate-200",
+                        )}
+                      >
+                        AI Pro
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex shrink-0 items-center gap-1">
@@ -402,21 +432,23 @@ export default function AssistantThread({
 
             {/* Official assistant-ui Suggestion chips on empty thread */}
             {isEmpty && suggestions.length > 0 ? (
-              <div className="mx-auto flex max-w-[38rem] flex-wrap items-center justify-center gap-2 pt-1">
+              <div className="flex w-full flex-col">
                 {suggestions.map((suggestion) => (
                   <ThreadPrimitive.Suggestion
                     key={suggestion.prompt}
                     prompt={suggestion.prompt}
                     send
                     disabled={files.length === 0}
-                    className="h-8 rounded-lg border border-white/10 bg-[#090d16] px-3 text-[13px] text-slate-400 transition-colors hover:border-white/25 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="group flex w-full items-baseline gap-2.5 rounded-md px-2 py-2 text-left text-sm text-slate-400 transition-colors hover:bg-white/[0.03] hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    {suggestion.label}
+                    <span className="font-mono text-xs text-slate-600 group-hover:text-slate-300">&gt;</span>
+                    <span className="truncate">{suggestion.label}</span>
                   </ThreadPrimitive.Suggestion>
                 ))}
               </div>
             ) : null}
-          </ThreadPrimitive.ViewportFooter>
+            </ThreadPrimitive.ViewportFooter>
+          </div>
         </ThreadPrimitive.Viewport>
       </ThreadPrimitive.Root>
     </AssistantRuntimeProvider>

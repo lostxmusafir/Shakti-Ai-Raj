@@ -94,13 +94,13 @@ class MistralAIProvider:
                         if attempt + 1 < attempts:
                             await asyncio.sleep(delay)
                         continue
-                    if resp.status_code >= 500:
+                    if resp.status_code in (401, 402, 403) or resp.status_code >= 500:
                         self._stats[key]["errors"] += 1
                         logger.warning(
-                            f"Mistral key ...{key[-6:]} server error {resp.status_code}. "
+                            f"Provider key ...{key[-6:]} returned HTTP {resp.status_code}. "
                             f"Rotating to next key (attempt {attempt+1}/{attempts})."
                         )
-                        last_exception = httpx.HTTPStatusError(f"{resp.status_code} Server Error", request=resp.request, response=resp)
+                        last_exception = httpx.HTTPStatusError(f"{resp.status_code} Error", request=resp.request, response=resp)
                         continue
                     resp.raise_for_status()
                     self._stats[key]["success"] += 1

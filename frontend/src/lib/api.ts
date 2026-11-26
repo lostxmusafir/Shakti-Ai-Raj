@@ -327,11 +327,12 @@ export const api = {
   async sendMessage(
     chatId: string,
     content: string,
-    fileIds: string[] = []
+    fileIds: string[] = [],
+    aiTier: "low" | "pro" = "low"
   ): Promise<{ message_id: string; analysis_id: string; status: string }> {
     return fetchWithAuth(`/api/v1/chats/${chatId}/messages`, {
       method: "POST",
-      body: JSON.stringify({ content, file_ids: fileIds }),
+      body: JSON.stringify({ content, file_ids: fileIds, ai_tier: aiTier }),
     });
   },
 

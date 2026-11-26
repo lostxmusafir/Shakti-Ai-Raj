@@ -40,6 +40,7 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [files, setFiles] = useState<StoredFile[]>([]);
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
+  const [aiTier, setAiTier] = useState<"low" | "pro">("low");
   const [activeAnalysisId, setActiveAnalysisId] = useState<string | null>(null);
   const [analysisStatus, setAnalysisStatus] = useState<string>("");
   const [pendingInterrupt, setPendingInterrupt] = useState<PendingInterruptPayload | null>(null);
@@ -205,14 +206,14 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
       setAnalysisStatus("queued");
 
       try {
-        const response = await api.sendMessage(chatId, content, fileIds);
+        const response = await api.sendMessage(chatId, content, fileIds, aiTier);
         if (response.analysis_id) setActiveAnalysisId(response.analysis_id);
       } catch (err) {
         setAnalysisStatus("");
         setError(err instanceof Error ? err.message : "Failed to send message.");
       }
     },
-    [chatId],
+    [chatId, aiTier],
   );
 
   const handleNewChat = async () => {
@@ -302,19 +303,19 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
   ) : null;
 
   return (
-    <div className="flex h-screen bg-[#090d16]">
+      <div className="app-main flex h-screen">
       <Sidebar user={user} chats={chats} activeChatId={chatId} onNewChat={handleNewChat} />
 
       <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.06] px-5 sm:px-6">
+        <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-white/[0.08] px-5 sm:px-8">
           <div className="min-w-0">
-            <h1 className="truncate text-[13px] font-medium text-slate-100">
+            <h1 className="truncate text-sm font-semibold text-slate-100">
               {currentChat?.title || "Data Analysis Session"}
             </h1>
-            <p className="truncate text-[11px] text-slate-500">Deterministic query engine · policy verification</p>
+            <p className="truncate text-xs text-slate-500">Verified analysis workspace · policy-aware results</p>
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-            <span className={cn("h-1.5 w-1.5 rounded-full", hasFiles ? "bg-emerald-500" : "bg-slate-600")} />
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <span className={cn("h-2 w-2 rounded-full", hasFiles ? "bg-emerald-400" : "bg-slate-600")} />
             {hasFiles ? `${files.length} dataset${files.length > 1 ? "s" : ""}` : "No datasets"}
           </div>
         </header>
@@ -326,6 +327,8 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
           knownFiles={knownFiles}
           selectedFileIds={selectedFileIds}
           onSelectFileIds={setSelectedFileIds}
+          aiTier={aiTier}
+          onChangeAiTier={setAiTier}
           onSend={handleSendMessage}
           busy={busy}
           streamText={streamText}

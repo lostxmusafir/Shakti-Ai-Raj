@@ -16,6 +16,7 @@ class ChatSessionResponse(BaseModel):
 class SendMessageRequest(BaseModel):
     content: str
     file_ids: List[str] = Field(default_factory=list)
+    ai_tier: Optional[str] = "low"  # "low" -> Mistral 3B, "pro" -> Zhipu GLM-4-Flash
 
 class MessageResponse(BaseModel):
     id: str

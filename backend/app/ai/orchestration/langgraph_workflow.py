@@ -34,6 +34,7 @@ class AnalystGraphState(TypedDict, total=False):
     resolved_question: str
     file_ids: List[str]
     intent: str
+    ai_tier: str
     record_family: Optional[str]
     resolved_bindings: List[Dict[str, Any]]
     cancelled: bool
@@ -193,7 +194,11 @@ class LangGraphAnalystWorkflow:
         files_map, _ = await self._load_files_for_state(state)
         effective_q = state.get("resolved_question") or state["question"]
         plan = await self.orchestrator._plan_with_ai(
-            effective_q, state.get("file_ids", []), files_map, state.get("intent", "DATA_ANALYSIS")
+            effective_q,
+            state.get("file_ids", []),
+            files_map,
+            state.get("intent", "DATA_ANALYSIS"),
+            ai_tier=state.get("ai_tier", "low"),
         )
         bindings = state.get("resolved_bindings") or []
         if bindings:
@@ -238,6 +243,7 @@ class LangGraphAnalystWorkflow:
             plan,
             state["engine_result"],
             state["verification"],
+            ai_tier=state.get("ai_tier", "low"),
         )
         return {"explanation": explanation}
 

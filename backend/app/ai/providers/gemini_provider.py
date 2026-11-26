@@ -85,11 +85,33 @@ class GeminiAIProvider:
     async def health_check(self) -> bool:
         return bool(self.api_key)
 
+_TIER_PROVIDERS: Dict[str, AIProvider] = {}
+
+
 def get_ai_provider() -> AIProvider:
     provider_name = settings.AI_PROVIDER.lower().strip()
     if provider_name == "mistral":
         from app.ai.providers.mistral_provider import MistralAIProvider
         return MistralAIProvider()
+    elif provider_name == "zhipu":
+        from app.ai.providers.zhipu_provider import ZhipuAIProvider
+        return ZhipuAIProvider()
     elif provider_name == "gemini" and settings.AI_API_KEY:
         return GeminiAIProvider()
     return MockAIProvider()
+
+
+def get_ai_provider_for_tier(ai_tier: Optional[str] = None) -> AIProvider:
+    tier = (ai_tier or "low").lower().strip()
+    if tier in _TIER_PROVIDERS:
+        return _TIER_PROVIDERS[tier]
+    if tier == "pro":
+        from app.ai.providers.zhipu_provider import ZhipuAIProvider
+        provider = ZhipuAIProvider()
+    elif tier == "low":
+        from app.ai.providers.mistral_provider import MistralAIProvider
+        provider = MistralAIProvider()
+    else:
+        provider = get_ai_provider()
+    _TIER_PROVIDERS[tier] = provider
+    return provider
