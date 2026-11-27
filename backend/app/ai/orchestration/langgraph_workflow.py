@@ -289,8 +289,17 @@ class LangGraphAnalystWorkflow:
 
         date_binding.update(window)
         plan.resolved_bindings = bindings
-        if not any(f.operator == "date_range" and f.column == date_column for f in plan.filters):
-            plan.filters.append(Condition(column=date_column, operator="date_range", value={"start": window["start"], "end": window["end"]}))
+        # The selected calendar scope is authoritative. Remove every
+        # provider-supplied date range first so an expression-valued or
+        # duplicate date filter cannot leak into compilation.
+        plan.filters = [f for f in plan.filters if f.operator != "date_range"]
+        plan.filters.append(
+            Condition(
+                column=date_column,
+                operator="date_range",
+                value={"start": window["start"], "end": window["end"]},
+            )
+        )
 
     async def _node_validate_plan(self, state: AnalystGraphState) -> Dict[str, Any]:
         await self.orchestrator._emit_status(state["analysis_id"], AnalysisState.VALIDATING_PLAN.value)
@@ -375,8 +384,9 @@ class LangGraphAnalystWorkflow:
         return None
 
     async def close(self) -> None:
-        await self._reset_managed_checkpointer()
-        self._runtime_cache.clear()
+        async with self._get_ensure_lock():
+            await self._reset_managed_checkpointer()
+            self._runtime_cache.clear()
 
     async def aclose(self) -> None:
         await self.close()

@@ -161,7 +161,7 @@ def test_mistral_and_zhipu_providers_across_multiple_event_loops(monkeypatch):
 
     tier_low = get_ai_provider_for_tier("low")
     tier_pro = get_ai_provider_for_tier("pro")
-    assert isinstance(tier_low, MistralAIProvider)
+    assert isinstance(tier_low, ZhipuAIProvider)
     assert isinstance(tier_pro, ZhipuAIProvider)
 
     async def contend_keys(provider, count: int):
@@ -174,7 +174,7 @@ def test_mistral_and_zhipu_providers_across_multiple_event_loops(monkeypatch):
     l1_pro = asyncio.run(contend_keys(tier_pro, 6))
     assert len(l1_m) == 10 and set(l1_m) == {"k1", "k2", "k3"}
     assert len(l1_z) == 10 and set(l1_z) == {"z1", "z2"}
-    assert len(l1_low) == 6 and set(l1_low) == {"mk1", "mk2"}
+    assert len(l1_low) == 6 and set(l1_low) == {"zk1", "zk2"}
     assert len(l1_pro) == 6 and set(l1_pro) == {"zk1", "zk2"}
 
     # Loop 2: contend locks again and run generate() against mocked HTTP transport
@@ -197,6 +197,6 @@ def test_mistral_and_zhipu_providers_across_multiple_event_loops(monkeypatch):
     r_m, r_z, r_low, r_pro, g_m, g_z, g_low, g_pro = asyncio.run(loop2_work())
     assert len(r_m) == 10 and r_m[0] == "k2"
     assert len(r_z) == 10 and r_z[0] == "z1"
-    assert len(r_low) == 6
+    assert len(r_low) == 6 and set(r_low) == {"zk1", "zk2"}
     assert len(r_pro) == 6
     assert g_m == g_z == g_low == g_pro == "ok"

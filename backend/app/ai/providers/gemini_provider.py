@@ -109,8 +109,8 @@ def get_ai_provider_for_tier(ai_tier: Optional[str] = None) -> AIProvider:
         from app.ai.providers.zhipu_provider import ZhipuAIProvider
         provider = ZhipuAIProvider()
     elif tier == "low":
-        from app.ai.providers.mistral_provider import MistralAIProvider
-        provider = MistralAIProvider()
+        from app.ai.providers.zhipu_provider import ZhipuAIProvider
+        provider = ZhipuAIProvider()
     else:
         provider = get_ai_provider()
     _TIER_PROVIDERS[tier] = provider

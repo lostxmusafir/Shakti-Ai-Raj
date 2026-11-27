@@ -94,6 +94,145 @@ def test_semantic_mapper_retail_hindi():
     assert res.suggested_sort is not None
     assert res.suggested_sort["limit"] == 10
 
+    # Even when Product and Revenue exist as explicit columns, "by revenue" specifies the ranking metric
+    res_direct = SemanticMapper.resolve_semantics("Top 10 products by revenue batao", ["Product", "Revenue"])
+    assert res_direct.intent == "top_n"
+    assert res_direct.suggested_group_by == ["Product"]
+    assert res_direct.suggested_sort == {"column": "total_revenue", "ascending": False, "limit": 10}
+    assert res_direct.limit == 10
+
+
+def test_semantic_mapper_exact_dim_precedence_over_measure_subtoken():
+    cols = ["Unit", "Country", "Units Sold", "Profit"]
+    res_country = SemanticMapper.resolve_semantics("Which country had the highest units sold?", cols)
+    assert res_country.suggested_group_by == ["Country"]
+    assert res_country.mapped_columns["dimension"] == "Country"
+    assert res_country.mapped_columns["measure"] == "Units Sold"
+
+    profile = {
+        "columns": [
+            {"name": "Unit", "role": "dimension", "inferred_type": "string"},
+            {"name": "Country", "role": "dimension", "inferred_type": "string"},
+            {"name": "Units Sold", "role": "measure", "inferred_type": "integer"},
+            {"name": "Profit", "role": "measure", "inferred_type": "float"},
+        ]
+    }
+    res_country_prof = SemanticMapper.resolve_semantics("Which country had the highest units sold?", cols, profile)
+    assert res_country_prof.suggested_group_by == ["Country"]
+    assert res_country_prof.mapped_columns["dimension"] == "Country"
+
+    res_unit = SemanticMapper.resolve_semantics("Which unit had the highest profit?", cols)
+    assert res_unit.suggested_group_by == ["Unit"]
+    assert res_unit.mapped_columns["dimension"] == "Unit"
+    assert res_unit.mapped_columns["measure"] == "Profit"
+
+
+def test_semantic_mapper_generic_grouped_by_per_har_and_ausat():
+    cols_dpcp = ["Date", "Profit", "Country", "Product"]
+    res_har_prod = SemanticMapper.resolve_semantics("Har product ka profit dikhao", cols_dpcp)
+    assert res_har_prod.intent == "grouped_distribution"
+    assert res_har_prod.result_shape == "grouped_rows"
+    assert res_har_prod.suggested_group_by == ["Product"]
+    assert res_har_prod.suggested_aggregates == [{"function": "sum", "column": "Profit", "alias": "total_profit"}]
+
+    res_by_prod = SemanticMapper.resolve_semantics("Profit by product", ["Country", "Product", "Profit", "Sales"])
+    assert res_by_prod.intent == "grouped_distribution"
+    assert res_by_prod.result_shape == "grouped_rows"
+    assert res_by_prod.suggested_group_by == ["Product"]
+    assert res_by_prod.suggested_aggregates[0]["column"] == "Profit"
+
+    res_ausat = SemanticMapper.resolve_semantics("Har country ka ausat profit dikhao", cols_dpcp)
+    assert res_ausat.intent == "grouped_distribution"
+    assert res_ausat.result_shape == "grouped_rows"
+    assert res_ausat.suggested_group_by == ["Country"]
+    assert res_ausat.suggested_aggregates == [{"function": "avg", "column": "Profit", "alias": "avg_profit"}]
+    assert res_ausat.target_concept == "avg_profit"
+
+
+def test_semantic_mapper_per_dimension_counts():
+    cols = ["Profit", "Country", "Product", "Sales"]
+    for q, expected_dim in [
+        ("How many orders per country?", "Country"),
+        ("How many orders per product?", "Product"),
+    ]:
+        res = SemanticMapper.resolve_semantics(q, cols)
+        assert res.intent == "grouped_distribution"
+        assert res.result_shape == "grouped_rows"
+        assert res.suggested_group_by == [expected_dim]
+        assert res.suggested_aggregates[0]["function"] == "count"
+
+
+def test_semantic_mapper_multiword_dimension_and_combined_ranking_breakdown():
+    res_region = SemanticMapper.resolve_semantics("Which sales region had the highest profit?", ["Sales Region", "Profit"])
+    assert res_region.intent == "top_n"
+    assert res_region.result_shape == "ranked_rows"
+    assert res_region.suggested_group_by == ["Sales Region"]
+    assert res_region.suggested_aggregates == [{"function": "sum", "column": "Profit", "alias": "total_profit"}]
+
+    res_bottom = SemanticMapper.resolve_semantics("Country wise bottom 3 profit", ["Country", "Product", "Profit", "Sales"])
+    assert res_bottom.intent == "top_n"
+    assert res_bottom.suggested_group_by == ["Country"]
+    assert res_bottom.suggested_sort == {"column": "total_profit", "ascending": True, "limit": 3}
+    assert res_bottom.limit == 3
+
+
+def test_semantic_mapper_does_not_treat_candidate_as_temporal():
+    res = SemanticMapper.resolve_semantics("Which candidate received the highest score?", ["Candidate", "Score"])
+    assert res.intent == "top_n"
+    assert res.suggested_group_by == ["Candidate"]
+    assert res.mapped_columns["dimension"] == "Candidate"
+    assert res.mapped_columns["score"] == "Score"
+    assert res.suggested_aggregates == [{"function": "sum", "column": "Score", "alias": "total_score"}]
+
+    # Integer-typed temporal column lacking explicit role must still not be treated as a measure
+    partial_profile = {
+        "columns": [
+            {"name": "OrderDate", "inferred_type": "integer"},
+            {"name": "Region", "inferred_type": "string"},
+            {"name": "Profit", "inferred_type": "float"},
+        ]
+    }
+    res_date = SemanticMapper.resolve_semantics("Which region had the highest order date profit?", ["OrderDate", "Region", "Profit"], partial_profile)
+    assert res_date.suggested_group_by == ["Region"]
+    assert res_date.suggested_aggregates[0]["column"] == "Profit"
+
+
+def test_semantic_mapper_r2_regression_probes():
+    # 1-3: Unprofiled multi-word dimension ("Cost Center") must resolve as dimension, not measure
+    res1 = SemanticMapper.resolve_semantics("Which cost center had the highest profit?", ["Cost Center", "Profit"])
+    assert res1.intent == "top_n"
+    assert res1.suggested_group_by == ["Cost Center"]
+    assert res1.suggested_aggregates[0]["column"] == "Profit"
+
+    res2 = SemanticMapper.resolve_semantics("Amount by cost center", ["Cost Center", "Amount"])
+    assert res2.intent == "grouped_distribution"
+    assert res2.suggested_group_by == ["Cost Center"]
+    assert res2.suggested_aggregates[0]["column"] == "Amount"
+
+    res3 = SemanticMapper.resolve_semantics("How many orders per cost center?", ["Cost Center", "Amount"])
+    assert res3.intent == "grouped_distribution"
+    assert res3.suggested_group_by == ["Cost Center"]
+    assert res3.suggested_aggregates[0]["function"] == "count"
+
+    # 4-5: Pluralized full column names must beat earlier compound columns
+    res4 = SemanticMapper.resolve_semantics("Profit by categories", ["SubCategory", "Category", "Profit"])
+    assert res4.suggested_group_by == ["Category"]
+
+    res5 = SemanticMapper.resolve_semantics("How many orders per cities?", ["Home City", "City", "Amount"])
+    assert res5.suggested_group_by == ["City"]
+
+    # 6: Longest-first measure matching ("Gross Profit" over "Profit")
+    res6 = SemanticMapper.resolve_semantics("Which country had the highest gross profit?", ["Profit", "Gross Profit", "Country"])
+    assert res6.suggested_aggregates[0]["column"] == "Gross Profit"
+
+    # 7: -y/-ies plural morphology in measure matching ("salaries" -> "Salary")
+    res7 = SemanticMapper.resolve_semantics("Which department had the highest salaries?", ["Department", "Salary"])
+    assert res7.suggested_aggregates[0]["column"] == "Salary"
+
+    # 8: Sibilant -es plural morphology in dimension matching ("branches" -> "Branch")
+    res8 = SemanticMapper.resolve_semantics("How many orders per branches?", ["Branch", "Amount"])
+    assert res8.suggested_group_by == ["Branch"]
+
 def test_example_retriever_load_and_retrieve():
     examples = ExampleRetriever.load_examples()
     assert len(examples) >= 300, f"Expected at least 300 examples, found {len(examples)}"
