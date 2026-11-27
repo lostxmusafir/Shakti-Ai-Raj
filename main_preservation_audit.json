@@ -1,0 +1,32 @@
+{
+  "baseline": "ac6a3618fd4ed081d195717a376caea19e514fe6",
+  "target_code_commits": [
+    "cd3cdec",
+    "9aee06e",
+    "e130407",
+    "2e7056b",
+    "d033e16",
+    "f0d4e9d",
+    "1a97bf1",
+    "7114223"
+  ],
+  "files_deleted_from_main": 0,
+  "production_behavior_affected": [
+    "generic semantic planning and multilingual query mapping",
+    "persistent human-in-the-loop analysis interrupts",
+    "free-provider tier routing",
+    "verified temporal filtering",
+    "chat and dataset profiling UI"
+  ],
+  "experimental_files_excluded": [
+    "data/benchmark/golden/golden_examples_300.json",
+    "backend/eval/phase2/**",
+    "data/benchmark/reports/**",
+    "data/langgraph_checkpoints.sqlite*",
+    ".playwright-mcp/**"
+  ],
+  "known_risks": [
+    "Provider key rotation was intentionally not changed.",
+    "The candidate contains a large additive HITL/UI delta and requires full gates before main push."
+  ]
+}
