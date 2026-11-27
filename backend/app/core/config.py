@@ -62,5 +62,30 @@ class Settings(BaseSettings):
 
     # Feature Flags
     ENABLE_GENERIC_PLANNER: bool = False
+    RATE_LIMIT_ENABLED: bool = False
+    RATE_LIMIT_LOGIN_PER_MINUTE: int = 5
+    RATE_LIMIT_UPLOADS_PER_HOUR: int = 10
+    RATE_LIMIT_ANALYSES_PER_HOUR: int = 30
+
+    def validate_runtime(self) -> None:
+        """Reject unsafe production defaults before the service accepts traffic."""
+        if self.ENVIRONMENT.lower() != "production":
+            return
+
+        errors = []
+        if self.USE_MOCK_DB:
+            errors.append("USE_MOCK_DB must be false")
+        if not self.MONGODB_URI or self.MONGODB_URI == "mongodb://localhost:27017":
+            errors.append("MONGODB_URI must point to the production database")
+        if len(self.JWT_SECRET_KEY) < 32 or self.JWT_SECRET_KEY == "dev-secret-key-change-in-production-universal-ai-analyst-2026":
+            errors.append("JWT_SECRET_KEY must be a non-default value of at least 32 characters")
+        if not self.SEED_ADMIN_PASSWORD or self.SEED_ADMIN_PASSWORD == "AdminSecret123!":
+            errors.append("SEED_ADMIN_PASSWORD must be explicitly configured")
+        if not self.CORS_ORIGINS or "*" in self.CORS_ORIGINS:
+            errors.append("CORS_ORIGINS must contain explicit trusted origins")
+        if not self.RATE_LIMIT_ENABLED:
+            errors.append("RATE_LIMIT_ENABLED must be true")
+        if errors:
+            raise RuntimeError("Invalid production configuration: " + "; ".join(errors))
 
 settings = Settings()

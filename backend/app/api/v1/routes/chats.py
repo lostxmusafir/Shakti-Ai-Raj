@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 from typing import List
 from fastapi import APIRouter, Depends, BackgroundTasks
 from app.auth.dependencies import get_current_active_user
@@ -15,6 +16,11 @@ from app.schemas.chat import (
 from app.ai.orchestration.context import AIContext
 from app.ai.orchestration.orchestrator import orchestrator
 from app.audit.service import audit_service
+from app.core.config import settings
+from app.core.rate_limit import RateLimitRule, rate_limit_service
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 chat_repo = BaseRepository("chat_sessions", ChatSession)
@@ -149,6 +155,11 @@ async def send_message(
         raise NotFoundError("Chat session", chat_id)
     if session.user_id != user.id and user.role != "super_admin":
         raise ForbiddenError()
+    await rate_limit_service.enforce(
+        "analysis",
+        user.id,
+        RateLimitRule(settings.RATE_LIMIT_ANALYSES_PER_HOUR, 3600),
+    )
 
     # 1. Save user message
     user_msg = ChatMessage(
@@ -206,7 +217,34 @@ async def send_message(
                 )
                 await message_repo.create(assistant_msg)
         except Exception:
-            pass
+            failed_run = await analysis_repo.get_by_id(saved_analysis.id)
+            error_message = failed_run.error if failed_run else None
+            request_id = error_message.rsplit("Reference: ", 1)[-1] if error_message and "Reference: " in error_message else f"req_{uuid.uuid4().hex[:10]}"
+            error_message = error_message or f"Analysis failed. Reference: {request_id}"
+            logger.exception("Background analysis failed: %s", request_id)
+            await analysis_repo.update(
+                saved_analysis.id,
+                {
+                    "status": "failed",
+                    "error": error_message,
+                },
+            )
+            existing = await message_repo.find_many(
+                {"analysis_id": saved_analysis.id, "role": "assistant"},
+                limit=1,
+            )
+            if not existing:
+                await message_repo.create(
+                    ChatMessage(
+                        chat_id=chat_id,
+                        user_id=user.id,
+                        role="assistant",
+                        content=f"{error_message} Please retry.",
+                        attachments=req.file_ids,
+                        analysis_id=saved_analysis.id,
+                        metadata={"error_code": "ANALYSIS_FAILED", "request_id": request_id},
+                    )
+                )
 
     background_tasks.add_task(execute_and_save_assistant_reply)
 

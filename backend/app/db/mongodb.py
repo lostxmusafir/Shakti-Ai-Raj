@@ -154,6 +154,9 @@ class MongoDBManager:
             cls.is_mock = False
             logger.info("Successfully connected to MongoDB Atlas.")
         except Exception as e:
+            if settings.ENVIRONMENT.lower() == "production":
+                logger.error("Could not connect to the production MongoDB instance.", exc_info=True)
+                raise RuntimeError("Production MongoDB connection failed.") from e
             logger.warning(f"Could not connect to live MongoDB: {e}. Falling back to in-memory Mock MongoDB.")
             cls.client = None
             cls.db = MockAsyncDatabase()

@@ -11,6 +11,7 @@ from app.auth.service import auth_service
 from app.policies.service import policy_service
 from app.api.v1.api import api_router
 from app.ai.orchestration.orchestrator import orchestrator
+from app.core.rate_limit import rate_limit_service
 
 logging.basicConfig(
     level=logging.INFO,
@@ -22,7 +23,9 @@ logger = logging.getLogger("universal_ai_analyst")
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting Universal AI Analyst backend service...")
+    settings.validate_runtime()
     await MongoDBManager.connect()
+    await rate_limit_service.ensure_indexes()
     await auth_service.ensure_seed_admin()
     await policy_service.ensure_seed_policies()
     logger.info("Universal AI Analyst backend initialization complete.")
@@ -65,7 +68,8 @@ async def app_exception_handler(request: Request, exc: AppException):
                 "request_id": request_id,
                 "details": exc.details
             }
-        }
+        },
+        headers=exc.headers,
     )
 
 @app.exception_handler(Exception)

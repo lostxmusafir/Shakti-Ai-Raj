@@ -10,6 +10,8 @@ from app.storage.local import storage_service
 from app.analysis.profiling.profiler import DataProfiler
 from app.schemas.file import FileResponse
 from app.audit.service import audit_service
+from app.core.config import settings
+from app.core.rate_limit import RateLimitRule, rate_limit_service
 
 router = APIRouter()
 file_repo = BaseRepository("files", StoredFile)
@@ -21,6 +23,11 @@ async def upload_file(
     file: UploadFile = File(...),
     user: User = Depends(get_current_active_user)
 ):
+    await rate_limit_service.enforce(
+        "upload",
+        user.id,
+        RateLimitRule(settings.RATE_LIMIT_UPLOADS_PER_HOUR, 3600),
+    )
     filename = file.filename or "unknown"
     ext = os.path.splitext(filename)[1].lower()
     if ext not in ALLOWED_EXTENSIONS:

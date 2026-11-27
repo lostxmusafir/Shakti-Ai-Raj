@@ -1,9 +1,15 @@
 import inspect
+import os
+from pathlib import Path
 
 import pytest_asyncio
 
 from app.ai.orchestration.langgraph_workflow import LangGraphAnalystWorkflow
 from app.ai.orchestration.orchestrator import orchestrator
+
+
+# Keep relative fixture references stable when pytest is invoked from backend/ or repo root.
+os.chdir(Path(__file__).resolve().parents[2])
 
 
 @pytest_asyncio.fixture(autouse=True, loop_scope="function")

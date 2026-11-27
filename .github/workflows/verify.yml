@@ -1,0 +1,43 @@
+name: Verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install backend dependencies
+        run: python -m pip install -r backend/requirements.txt
+      - name: Run deterministic backend gates
+        env:
+          PYTHONPATH: backend
+        run: >-
+          python -m pytest backend/tests -q
+          --ignore=backend/tests/test_golden_evaluation.py
+          --ignore=backend/tests/test_internet_blind_eval.py
+          --ignore=backend/tests/test_mistral_provider.py
+          --ignore=backend/tests/test_nexus_10_qa.py
+          --ignore=backend/tests/test_nexus_30_qa.py
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

@@ -17,5 +17,6 @@ class AnalysisResponse(BaseModel):
     result: Optional[Dict[str, Any]] = None
     verification: Optional[Dict[str, Any]] = None
     provenance: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
     created_at: datetime
     completed_at: Optional[datetime] = None

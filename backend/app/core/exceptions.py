@@ -7,11 +7,13 @@ class AppException(Exception):
         message: str,
         status_code: int = 400,
         details: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
     ):
         self.code = code
         self.message = message
         self.status_code = status_code
         self.details = details or {}
+        self.headers = headers or {}
         super().__init__(self.message)
 
 class NotFoundError(AppException):
@@ -63,4 +65,13 @@ class VerificationError(AppException):
             message=message,
             status_code=422,
             details=details,
+        )
+
+class RateLimitError(AppException):
+    def __init__(self, message: str, headers: Dict[str, str]):
+        super().__init__(
+            code="RATE_LIMITED",
+            message=message,
+            status_code=429,
+            headers=headers,
         )

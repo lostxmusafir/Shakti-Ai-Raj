@@ -190,18 +190,23 @@ class AnalysisOrchestrator:
                 )
 
         except Exception as e:
-            logger.error(f"Analysis failed: {str(e)}", exc_info=True)
+            request_id = f"req_{uuid.uuid4().hex[:10]}"
+            safe_error = f"Analysis failed. Reference: {request_id}"
+            logger.error("Analysis failed: %s", request_id, exc_info=True)
             await self.analysis_repo.update(analysis_id, {
                 "status": AnalysisState.FAILED.value,
-                "error": str(e),
+                "error": safe_error,
                 "completed_at": datetime.now(timezone.utc)
             })
-            await self._emit_event(analysis_id, "analysis.failed", {"error": str(e)})
+            await self._emit_event(analysis_id, "analysis.failed", {
+                "error": safe_error,
+                "request_id": request_id,
+            })
             await audit_service.log_event(
                 "analysis.failed",
                 user_id=ctx.user_id,
                 unit_id=ctx.unit_id,
-                details={"analysis_id": analysis_id, "error": str(e)}
+                details={"analysis_id": analysis_id, "request_id": request_id}
             )
             raise e
         finally:

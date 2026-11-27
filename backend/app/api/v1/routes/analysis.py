@@ -47,6 +47,7 @@ async def get_analysis(analysis_id: str, user: User = Depends(get_current_active
         result=run.result,
         verification=run.verification,
         provenance=run.provenance,
+        error=run.error,
         created_at=run.created_at,
         completed_at=run.completed_at
     )

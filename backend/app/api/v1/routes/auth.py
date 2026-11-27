@@ -1,5 +1,5 @@
 import uuid
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 from app.auth.service import auth_service
 from app.auth.dependencies import get_current_active_user, require_roles
 from app.models.user import User
@@ -9,12 +9,19 @@ from app.schemas.auth import (
 from app.core.exceptions import ForbiddenError, NotFoundError
 from app.audit.service import audit_service
 from app.db.repository import BaseRepository
+from app.core.config import settings
+from app.core.rate_limit import RateLimitRule, rate_limit_service
 
 router = APIRouter()
 user_repo = BaseRepository("users", User)
 
 @router.post("/login", response_model=TokenResponse)
-async def login(req: LoginRequest, response: Response):
+async def login(req: LoginRequest, request: Request, response: Response):
+    await rate_limit_service.enforce(
+        "login",
+        "unknown" if not request.client else request.client.host,
+        RateLimitRule(settings.RATE_LIMIT_LOGIN_PER_MINUTE, 60),
+    )
     user = await auth_service.authenticate(req.email, req.password)
     token = auth_service.create_token_for_user(user)
     csrf_token = uuid.uuid4().hex
