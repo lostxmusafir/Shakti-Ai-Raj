@@ -380,6 +380,7 @@ class AnalysisOrchestrator:
             any(term in q_lower for term in ("maximum", "max", "highest", "largest", "biggest", "sabse bada"))
             and any(term in q_lower for term in ("transaction", "transfer", "data size"))
             and " action " not in f" {q_lower} "
+            and not any(term in q_lower for term in ("external", "bahar", "outside", "personal", "webmail"))
         ):
             transfer_col = next(
                 (
@@ -498,7 +499,7 @@ class AnalysisOrchestrator:
                     sql_query="SELECT COUNT(*) AS incidents, ROUND(SUM(size_kb)/1024.0, 1) AS data_mb FROM v WHERE gmail=1"
                 )
             # Q6. Sabse bada external transfer
-            if any(k in q_lower for k in ["largest transfer", "biggest transfer", "largest file", "bada external transfer"]) and any(
+            if any(k in q_lower for k in ["sabse bada external transfer", "largest transfer", "biggest transfer", "largest file", "bada external transfer"]) and any(
                 term in q_lower for term in ("external", "bahar", "outside", "personal", "webmail")
             ):
                 return AnalysisPlan(
