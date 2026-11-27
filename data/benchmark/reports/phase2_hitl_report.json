@@ -1,0 +1,38 @@
+{
+  "corpus_version": "phase2-interactions-1.0",
+  "model_training": false,
+  "external_provider_called": false,
+  "total": 4,
+  "passed": 4,
+  "failed": 0,
+  "results": [
+    {
+      "q_id": "p2-hitl-001",
+      "question": "Amount kitna hai?",
+      "expected_reason": "AMBIGUOUS_METRIC",
+      "actual_reason": "AMBIGUOUS_METRIC",
+      "passed": true
+    },
+    {
+      "q_id": "p2-hitl-002",
+      "question": "Last month ka Transaction Amount batao",
+      "expected_reason": "AMBIGUOUS_DATE",
+      "actual_reason": "AMBIGUOUS_DATE",
+      "passed": true
+    },
+    {
+      "q_id": "p2-hitl-003",
+      "question": "Which company domain is internal?",
+      "expected_reason": "AMBIGUOUS_DOMAIN",
+      "actual_reason": "AMBIGUOUS_DOMAIN",
+      "passed": true
+    },
+    {
+      "q_id": "p2-hitl-004",
+      "question": "Credit kitna hai?",
+      "expected_reason": "AMBIGUOUS_AGGREGATION",
+      "actual_reason": "AMBIGUOUS_AGGREGATION",
+      "passed": true
+    }
+  ]
+}

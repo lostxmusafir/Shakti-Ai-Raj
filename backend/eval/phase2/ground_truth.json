@@ -1,0 +1,19 @@
+{
+  "key_version": "phase2-curated-1.1",
+  "sealed": true,
+  "answers_separate": true,
+  "answers": [
+    {"q_id": "p2-fin-001", "dataset_id": "microsoft-financial-sample", "sql": "SELECT COUNT(*) AS record_count FROM data", "expected_columns": ["record_count"]},
+    {"q_id": "p2-fin-002", "dataset_id": "microsoft-financial-sample", "sql": "SELECT ROUND(SUM(\"Profit\"), 2) AS total_profit FROM data", "expected_columns": ["total_profit"]},
+    {"q_id": "p2-fin-003", "dataset_id": "microsoft-financial-sample", "sql": "SELECT \"Country\", ROUND(SUM(\"Profit\"), 2) AS total_profit FROM data GROUP BY 1 ORDER BY total_profit DESC, \"Country\" LIMIT 1", "expected_columns": ["Country", "total_profit"]},
+    {"q_id": "p2-fin-004", "dataset_id": "microsoft-financial-sample", "sql": "SELECT \"Year\", ROUND(SUM(\"Sales\"), 2) AS total_sales FROM data GROUP BY 1 ORDER BY \"Year\"", "expected_columns": ["Year", "total_sales"]},
+    {"q_id": "p2-dlp-001", "dataset_id": "nexus-dynamics-incidents", "sql": "SELECT COUNT(*) AS incident_count FROM data", "expected_columns": ["incident_count"]},
+    {"q_id": "p2-dlp-002", "dataset_id": "nexus-dynamics-incidents", "sql": "SELECT COUNT(*) AS blocked_incidents FROM data WHERE \"Action\" = 'Blocked'", "expected_columns": ["blocked_incidents"]},
+    {"q_id": "p2-dlp-003", "dataset_id": "nexus-dynamics-incidents", "sql": "SELECT \"Severity\", COUNT(*) AS incident_count FROM data GROUP BY 1 ORDER BY 1", "expected_columns": ["Severity", "incident_count"]},
+    {"q_id": "p2-dlp-004", "dataset_id": "nexus-dynamics-incidents", "sql": "SELECT \"Source\", ROUND(SUM(\"Transaction Size (KB)\"), 2) AS total_size_kb FROM data GROUP BY 1 ORDER BY total_size_kb DESC, \"Source\" LIMIT 1", "expected_columns": ["Source", "total_size_kb"]},
+    {"q_id": "p2-hr-001", "dataset_id": "hr-employees", "sql": "SELECT COUNT(DISTINCT employee_id) AS unique_employees FROM data", "expected_columns": ["unique_employees"]},
+    {"q_id": "p2-hr-002", "dataset_id": "hr-employees", "sql": "SELECT department, COUNT(*) AS employee_count FROM data GROUP BY 1 ORDER BY 1", "expected_columns": ["department", "employee_count"]},
+    {"q_id": "p2-hr-003", "dataset_id": "hr-employees-payroll", "sql": "SELECT COUNT(*) AS missing_payroll_employees FROM employees e LEFT JOIN payroll p ON e.employee_id = p.employee_id WHERE p.employee_id IS NULL", "expected_columns": ["missing_payroll_employees"]},
+    {"q_id": "p2-hr-004", "dataset_id": "hr-payroll", "sql": "SELECT SUM(gross_pay) AS total_gross_pay FROM data", "expected_columns": ["total_gross_pay"]}
+  ]
+}

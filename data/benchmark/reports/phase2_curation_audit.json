@@ -1,0 +1,44 @@
+{
+  "corpus_version": "phase2-curated-1.1",
+  "question_count": 48,
+  "base_question_count": 12,
+  "unique_question_ids": true,
+  "answers_separate": true,
+  "ground_truth_sealed": true,
+  "question_file_has_no_answers": true,
+  "answer_keys_cover_base_questions": true,
+  "datasets": [
+    {
+      "dataset_id": "microsoft-financial-sample",
+      "path": "data/benchmark/public/Financial_Sample.xlsx",
+      "exists": true,
+      "checksum_ok": true,
+      "approval_status": "approved"
+    },
+    {
+      "dataset_id": "nexus-dynamics-incidents",
+      "path": "data/benchmark/public/NexusDynamics_Incidents_5000.csv",
+      "exists": true,
+      "checksum_ok": true,
+      "approval_status": "approved"
+    },
+    {
+      "dataset_id": "hr-employees",
+      "path": "data/benchmark/synthetic/hr/employees.csv",
+      "exists": true,
+      "checksum_ok": true,
+      "approval_status": "approved"
+    },
+    {
+      "dataset_id": "hr-payroll",
+      "path": "data/benchmark/synthetic/hr/payroll_summary.csv",
+      "exists": true,
+      "checksum_ok": true,
+      "approval_status": "approved"
+    }
+  ],
+  "all_datasets_present": true,
+  "all_checksums_valid": true,
+  "external_provider_called": false,
+  "model_training": false
+}

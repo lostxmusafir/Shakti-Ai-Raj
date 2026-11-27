@@ -1,0 +1,38 @@
+{
+  "manifest_version": "phase2-1.1",
+  "approved_only": true,
+  "datasets": [
+    {
+      "dataset_id": "microsoft-financial-sample",
+      "path": "data/benchmark/public/Financial_Sample.xlsx",
+      "checksum_sha256": "c3f17156ab7c192571ecfc742e88c16a4b7243a4d4b4a420fcb68dec44e10196",
+      "source": "Microsoft public financial sample",
+      "license": "Microsoft Public Sample",
+      "approval_status": "approved"
+    },
+    {
+      "dataset_id": "nexus-dynamics-incidents",
+      "path": "data/benchmark/public/NexusDynamics_Incidents_5000.csv",
+      "checksum_sha256": "c4c23dc8b5fc513676b22b802871ca10cec2d85f88f700819942963a1bf93a9c",
+      "source": "Authorized synthetic DLP benchmark",
+      "license": "Authorized Synthetic Benchmark Dataset",
+      "approval_status": "approved"
+    },
+    {
+      "dataset_id": "hr-employees",
+      "path": "data/benchmark/synthetic/hr/employees.csv",
+      "checksum_sha256": "C8B15F8CF3531F852556FA700671A4167AE4F4BF3C57AA98F945816F3B743D6E",
+      "source": "Local synthetic HR fixture",
+      "license": "Synthetic test fixture",
+      "approval_status": "approved"
+    },
+    {
+      "dataset_id": "hr-payroll",
+      "path": "data/benchmark/synthetic/hr/payroll_summary.csv",
+      "checksum_sha256": "7F2B36902F1FA397A0E522EF6206517D60247CD808E0B251C2EA9AA46D256C7F",
+      "source": "Local synthetic payroll fixture",
+      "license": "Synthetic test fixture",
+      "approval_status": "approved"
+    }
+  ]
+}

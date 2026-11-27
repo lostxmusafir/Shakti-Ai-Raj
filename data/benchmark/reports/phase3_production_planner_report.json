@@ -1,0 +1,2283 @@
+{
+  "phase": 3,
+  "corpus_version": "phase2-curated-1.1",
+  "model_training": false,
+  "external_provider_called": false,
+  "runner_changed_production_code": false,
+  "dataset_specific_production_change": false,
+  "source_under_test": "current working tree",
+  "planner_mode": "production_deterministic_fallback",
+  "total": 48,
+  "passed": 44,
+  "failed": 4,
+  "results": [
+    {
+      "q_id": "p2-fin-001-hinglish",
+      "base_q_id": "p2-fin-001",
+      "question": "Is dataset mein total records kitne hain?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 700
+        }
+      ],
+      "expected_columns": [
+        "record_count"
+      ],
+      "expected_rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-001-english",
+      "base_q_id": "p2-fin-001",
+      "question": "How many total records are in this dataset?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 700
+        }
+      ],
+      "expected_columns": [
+        "record_count"
+      ],
+      "expected_rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-001-hindi",
+      "base_q_id": "p2-fin-001",
+      "question": "Is dataset mein kul records kitne hain?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 700
+        }
+      ],
+      "expected_columns": [
+        "record_count"
+      ],
+      "expected_rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-001-short",
+      "base_q_id": "p2-fin-001",
+      "question": "Total records?",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 700
+        }
+      ],
+      "expected_columns": [
+        "record_count"
+      ],
+      "expected_rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-002-hinglish",
+      "base_q_id": "p2-fin-002",
+      "question": "Total profit kitna hai?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "Profit",
+          "function": "sum",
+          "alias": "total_profit",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"Profit\") AS \"total_profit\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_profit": 16893702.26000001
+        }
+      ],
+      "expected_columns": [
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-002-english",
+      "base_q_id": "p2-fin-002",
+      "question": "What is the total profit?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "Profit",
+          "function": "sum",
+          "alias": "total_profit",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"Profit\") AS \"total_profit\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_profit": 16893702.26000001
+        }
+      ],
+      "expected_columns": [
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-002-hindi",
+      "base_q_id": "p2-fin-002",
+      "question": "Kul munafa kitna hai?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": false,
+      "plan_shape_errors": [
+        "operation 'row_count' != 'sum'",
+        "aggregate functions {'count'} miss {'sum'}",
+        "missing metric 'Profit'"
+      ],
+      "result_match_passed": false,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 700
+        }
+      ],
+      "expected_columns": [
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": false
+    },
+    {
+      "q_id": "p2-fin-002-short",
+      "base_q_id": "p2-fin-002",
+      "question": "Profit total?",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "Profit",
+          "function": "sum",
+          "alias": "total_profit",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"Profit\") AS \"total_profit\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_profit": 16893702.26000001
+        }
+      ],
+      "expected_columns": [
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-003-hinglish",
+      "base_q_id": "p2-fin-003",
+      "question": "Kaunse country ka total profit sabse zyada hai?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "top_n",
+      "group_by": [
+        "Country"
+      ],
+      "aggregations": [
+        {
+          "column": "Profit",
+          "function": "sum",
+          "alias": "total_profit",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Country\", SUM(\"Profit\") AS \"total_profit\" FROM \"ds_1\" GROUP BY \"Country\" ORDER BY \"total_profit\" DESC LIMIT 1",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Country": "France",
+          "total_profit": 3781020.7800000007
+        }
+      ],
+      "expected_columns": [
+        "Country",
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-003-english",
+      "base_q_id": "p2-fin-003",
+      "question": "Which country has the highest total profit?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "top_n",
+      "group_by": [
+        "Country"
+      ],
+      "aggregations": [
+        {
+          "column": "Profit",
+          "function": "sum",
+          "alias": "total_profit",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Country\", SUM(\"Profit\") AS \"total_profit\" FROM \"ds_1\" GROUP BY \"Country\" ORDER BY \"total_profit\" DESC LIMIT 1",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Country": "France",
+          "total_profit": 3781020.7800000007
+        }
+      ],
+      "expected_columns": [
+        "Country",
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-003-hindi",
+      "base_q_id": "p2-fin-003",
+      "question": "Sabse zyada kul profit kis desh ka hai?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "Profit",
+          "function": "sum",
+          "alias": "total_profit",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"Profit\") AS \"total_profit\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": false,
+      "plan_shape_errors": [
+        "group_by [] != ['country']",
+        "operation 'sum' != 'group_rank'"
+      ],
+      "result_match_passed": false,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_profit": 16893702.26000001
+        }
+      ],
+      "expected_columns": [
+        "Country",
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": false
+    },
+    {
+      "q_id": "p2-fin-003-short",
+      "base_q_id": "p2-fin-003",
+      "question": "Top country by profit",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "top_n",
+      "group_by": [
+        "Country"
+      ],
+      "aggregations": [
+        {
+          "column": "Profit",
+          "function": "sum",
+          "alias": "total_profit",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Country\", SUM(\"Profit\") AS \"total_profit\" FROM \"ds_1\" GROUP BY \"Country\" ORDER BY \"total_profit\" DESC LIMIT 1",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Country": "France",
+          "total_profit": 3781020.7800000007
+        }
+      ],
+      "expected_columns": [
+        "Country",
+        "total_profit"
+      ],
+      "expected_rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-hinglish",
+      "base_q_id": "p2-fin-004",
+      "question": "Year wise total sales batao.",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Year"
+      ],
+      "aggregations": [
+        {
+          "column": " Sales",
+          "function": "sum",
+          "alias": "total_sales",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Year\", SUM(\" Sales\") AS \"total_sales\" FROM \"ds_1\" GROUP BY \"Year\" ORDER BY \"total_sales\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Year": "2014",
+          "total_sales": 92311094.74999999
+        },
+        {
+          "Year": "2013",
+          "total_sales": 26415255.51000001
+        }
+      ],
+      "expected_columns": [
+        "Year",
+        "total_sales"
+      ],
+      "expected_rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-english",
+      "base_q_id": "p2-fin-004",
+      "question": "Show total sales by year.",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Year"
+      ],
+      "aggregations": [
+        {
+          "column": " Sales",
+          "function": "sum",
+          "alias": "total_sales",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Year\", SUM(\" Sales\") AS \"total_sales\" FROM \"ds_1\" GROUP BY \"Year\" ORDER BY \"total_sales\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Year": "2014",
+          "total_sales": 92311094.74999999
+        },
+        {
+          "Year": "2013",
+          "total_sales": 26415255.51000001
+        }
+      ],
+      "expected_columns": [
+        "Year",
+        "total_sales"
+      ],
+      "expected_rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-hindi",
+      "base_q_id": "p2-fin-004",
+      "question": "Har saal ki kul sales batao.",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Year"
+      ],
+      "aggregations": [
+        {
+          "column": " Sales",
+          "function": "sum",
+          "alias": "total_sales",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Year\", SUM(\" Sales\") AS \"total_sales\" FROM \"ds_1\" GROUP BY \"Year\" ORDER BY \"total_sales\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Year": "2014",
+          "total_sales": 92311094.74999999
+        },
+        {
+          "Year": "2013",
+          "total_sales": 26415255.51000001
+        }
+      ],
+      "expected_columns": [
+        "Year",
+        "total_sales"
+      ],
+      "expected_rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-short",
+      "base_q_id": "p2-fin-004",
+      "question": "Sales by year",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Year"
+      ],
+      "aggregations": [
+        {
+          "column": " Sales",
+          "function": "sum",
+          "alias": "total_sales",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Year\", SUM(\" Sales\") AS \"total_sales\" FROM \"ds_1\" GROUP BY \"Year\" ORDER BY \"total_sales\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Year": "2014",
+          "total_sales": 92311094.74999999
+        },
+        {
+          "Year": "2013",
+          "total_sales": 26415255.51000001
+        }
+      ],
+      "expected_columns": [
+        "Year",
+        "total_sales"
+      ],
+      "expected_rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-hinglish",
+      "base_q_id": "p2-dlp-001",
+      "question": "Total incidents kitne hain?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 5000
+        }
+      ],
+      "expected_columns": [
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-english",
+      "base_q_id": "p2-dlp-001",
+      "question": "How many incidents are there in total?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 5000
+        }
+      ],
+      "expected_columns": [
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-hindi",
+      "base_q_id": "p2-dlp-001",
+      "question": "Kul incidents kitne hain?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 5000
+        }
+      ],
+      "expected_columns": [
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-short",
+      "base_q_id": "p2-dlp-001",
+      "question": "Incident count",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "total_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"total_records\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_records": 5000
+        }
+      ],
+      "expected_columns": [
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-hinglish",
+      "base_q_id": "p2-dlp-002",
+      "question": "Blocked incidents kitne hain?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS blocked_incidents FROM v WHERE action='Blocked'",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "blocked_incidents": 5
+        }
+      ],
+      "expected_columns": [
+        "blocked_incidents"
+      ],
+      "expected_rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-english",
+      "base_q_id": "p2-dlp-002",
+      "question": "How many incidents were blocked?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "blocked_incidents",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [
+        {
+          "column": "Action",
+          "operator": "equals",
+          "value": "Blocked"
+        }
+      ],
+      "sql": "SELECT COUNT(*) AS \"blocked_incidents\" FROM \"ds_1\" WHERE \"Action\" = ? LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "blocked_incidents": 5
+        }
+      ],
+      "expected_columns": [
+        "blocked_incidents"
+      ],
+      "expected_rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-hindi",
+      "base_q_id": "p2-dlp-002",
+      "question": "Blocked incidents ki ginti batao.",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "blocked_incidents",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [
+        {
+          "column": "Action",
+          "operator": "equals",
+          "value": "Blocked"
+        }
+      ],
+      "sql": "SELECT COUNT(*) AS \"blocked_incidents\" FROM \"ds_1\" WHERE \"Action\" = ? LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "blocked_incidents": 5
+        }
+      ],
+      "expected_columns": [
+        "blocked_incidents"
+      ],
+      "expected_rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-short",
+      "base_q_id": "p2-dlp-002",
+      "question": "Blocked count",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS blocked_incidents FROM v WHERE action='Blocked'",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "blocked_incidents": 5
+        }
+      ],
+      "expected_columns": [
+        "blocked_incidents"
+      ],
+      "expected_rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-hinglish",
+      "base_q_id": "p2-dlp-003",
+      "question": "Severity wise incidents ka count batao.",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Severity"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Severity\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"Severity\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Severity": "Low",
+          "count": 2044
+        },
+        {
+          "Severity": "Medium",
+          "count": 1987
+        },
+        {
+          "Severity": "High",
+          "count": 969
+        }
+      ],
+      "expected_columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-english",
+      "base_q_id": "p2-dlp-003",
+      "question": "Count incidents by severity.",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Severity"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Severity\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"Severity\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Severity": "Low",
+          "count": 2044
+        },
+        {
+          "Severity": "Medium",
+          "count": 1987
+        },
+        {
+          "Severity": "High",
+          "count": 969
+        }
+      ],
+      "expected_columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-hindi",
+      "base_q_id": "p2-dlp-003",
+      "question": "Severity ke hisaab se incidents gino.",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Severity"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Severity\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"Severity\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Severity": "Low",
+          "count": 2044
+        },
+        {
+          "Severity": "Medium",
+          "count": 1987
+        },
+        {
+          "Severity": "High",
+          "count": 969
+        }
+      ],
+      "expected_columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-short",
+      "base_q_id": "p2-dlp-003",
+      "question": "Severity breakdown",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "Severity"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Severity\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"Severity\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Severity": "Low",
+          "count": 2044
+        },
+        {
+          "Severity": "Medium",
+          "count": 1987
+        },
+        {
+          "Severity": "High",
+          "count": 969
+        }
+      ],
+      "expected_columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "expected_rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-004-hinglish",
+      "base_q_id": "p2-dlp-004",
+      "question": "Sabse zyada data kis source ne bheja?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "top_n",
+      "group_by": [
+        "Source"
+      ],
+      "aggregations": [
+        {
+          "column": "Transaction Size (KB)",
+          "function": "sum",
+          "alias": "total_size",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Source\", SUM(\"Transaction Size (KB)\") AS \"total_size\" FROM \"ds_1\" GROUP BY \"Source\" ORDER BY \"total_size\" DESC LIMIT 1",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Source": "NX-ENG086\\Isha Dave",
+          "total_size": 1520557.4999999998
+        }
+      ],
+      "expected_columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "expected_rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-004-english",
+      "base_q_id": "p2-dlp-004",
+      "question": "Which source sent the most data?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "top_n",
+      "group_by": [
+        "Source"
+      ],
+      "aggregations": [
+        {
+          "column": "Transaction Size (KB)",
+          "function": "sum",
+          "alias": "total_transaction_size_kb",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Source\", SUM(\"Transaction Size (KB)\") AS \"total_transaction_size_kb\" FROM \"ds_1\" GROUP BY \"Source\" ORDER BY \"total_transaction_size_kb\" DESC LIMIT 1",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Source": "NX-ENG086\\Isha Dave",
+          "total_transaction_size_kb": 1520557.4999999998
+        }
+      ],
+      "expected_columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "expected_rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-004-hindi",
+      "base_q_id": "p2-dlp-004",
+      "question": "Sabse adhik data kis source ne bheja?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "DATA_ANALYSIS",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "Transaction Size (KB)",
+          "function": "sum",
+          "alias": "total_size",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"Transaction Size (KB)\") AS \"total_size\" FROM \"ds_1\" LIMIT 50",
+      "plan_shape_passed": false,
+      "plan_shape_errors": [
+        "group_by [] != ['source']",
+        "operation 'sum' != 'group_rank'"
+      ],
+      "result_match_passed": false,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_size": 16650940.799999986
+        }
+      ],
+      "expected_columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "expected_rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": false
+    },
+    {
+      "q_id": "p2-dlp-004-short",
+      "base_q_id": "p2-dlp-004",
+      "question": "Top source by data",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "top_n",
+      "group_by": [
+        "Source"
+      ],
+      "aggregations": [
+        {
+          "column": "Transaction Size (KB)",
+          "function": "sum",
+          "alias": "total_transaction_size_kb",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"Source\", SUM(\"Transaction Size (KB)\") AS \"total_transaction_size_kb\" FROM \"ds_1\" GROUP BY \"Source\" ORDER BY \"total_transaction_size_kb\" DESC LIMIT 1",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "Source": "NX-ENG086\\Isha Dave",
+          "total_transaction_size_kb": 1520557.4999999998
+        }
+      ],
+      "expected_columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "expected_rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-hinglish",
+      "base_q_id": "p2-hr-001",
+      "question": "Kitne unique employees hain?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "employee_id",
+          "function": "count_distinct",
+          "alias": "unique_employees",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(DISTINCT \"employee_id\") AS \"unique_employees\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "unique_employees": 100
+        }
+      ],
+      "expected_columns": [
+        "unique_employees"
+      ],
+      "expected_rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-english",
+      "base_q_id": "p2-hr-001",
+      "question": "How many unique employees are there?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "employee_id",
+          "function": "count_distinct",
+          "alias": "unique_employees",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(DISTINCT \"employee_id\") AS \"unique_employees\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "unique_employees": 100
+        }
+      ],
+      "expected_columns": [
+        "unique_employees"
+      ],
+      "expected_rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-hindi",
+      "base_q_id": "p2-hr-001",
+      "question": "Kitne alag employees hain?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "employee_id",
+          "function": "count_distinct",
+          "alias": "unique_employees",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(DISTINCT \"employee_id\") AS \"unique_employees\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "unique_employees": 100
+        }
+      ],
+      "expected_columns": [
+        "unique_employees"
+      ],
+      "expected_rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-short",
+      "base_q_id": "p2-hr-001",
+      "question": "Unique employees",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "employee_id",
+          "function": "count_distinct",
+          "alias": "unique_employees",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(DISTINCT \"employee_id\") AS \"unique_employees\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "unique_employees": 100
+        }
+      ],
+      "expected_columns": [
+        "unique_employees"
+      ],
+      "expected_rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-hinglish",
+      "base_q_id": "p2-hr-002",
+      "question": "Department wise employees kitne hain?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "department"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"department\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"department\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "department": "Finance",
+          "count": 17
+        },
+        {
+          "department": "Operations",
+          "count": 17
+        },
+        {
+          "department": "Human Resources",
+          "count": 17
+        },
+        {
+          "department": "Sales",
+          "count": 17
+        },
+        {
+          "department": "Engineering",
+          "count": 16
+        },
+        {
+          "department": "Legal",
+          "count": 16
+        }
+      ],
+      "expected_columns": [
+        "department",
+        "employee_count"
+      ],
+      "expected_rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-english",
+      "base_q_id": "p2-hr-002",
+      "question": "How many employees are in each department?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "department"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"department\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"department\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "department": "Finance",
+          "count": 17
+        },
+        {
+          "department": "Operations",
+          "count": 17
+        },
+        {
+          "department": "Human Resources",
+          "count": 17
+        },
+        {
+          "department": "Sales",
+          "count": 17
+        },
+        {
+          "department": "Engineering",
+          "count": 16
+        },
+        {
+          "department": "Legal",
+          "count": 16
+        }
+      ],
+      "expected_columns": [
+        "department",
+        "employee_count"
+      ],
+      "expected_rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-hindi",
+      "base_q_id": "p2-hr-002",
+      "question": "Har department mein kitne employees hain?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "department"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"department\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"department\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "department": "Finance",
+          "count": 17
+        },
+        {
+          "department": "Operations",
+          "count": 17
+        },
+        {
+          "department": "Human Resources",
+          "count": 17
+        },
+        {
+          "department": "Sales",
+          "count": 17
+        },
+        {
+          "department": "Engineering",
+          "count": 16
+        },
+        {
+          "department": "Legal",
+          "count": 16
+        }
+      ],
+      "expected_columns": [
+        "department",
+        "employee_count"
+      ],
+      "expected_rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-short",
+      "base_q_id": "p2-hr-002",
+      "question": "Employees by department",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "grouped_distribution",
+      "group_by": [
+        "department"
+      ],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "count",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT \"department\", COUNT(*) AS \"count\" FROM \"ds_1\" GROUP BY \"department\" ORDER BY \"count\" DESC LIMIT 50",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "department": "Human Resources",
+          "count": 17
+        },
+        {
+          "department": "Operations",
+          "count": 17
+        },
+        {
+          "department": "Finance",
+          "count": 17
+        },
+        {
+          "department": "Sales",
+          "count": 17
+        },
+        {
+          "department": "Legal",
+          "count": 16
+        },
+        {
+          "department": "Engineering",
+          "count": 16
+        }
+      ],
+      "expected_columns": [
+        "department",
+        "employee_count"
+      ],
+      "expected_rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-hinglish",
+      "base_q_id": "p2-hr-003",
+      "question": "Master mein hain but payroll mein missing employees kitne hain?",
+      "language": "hinglish",
+      "intent_classifier": "MULTI_FILE_ANALYSIS",
+      "plan_intent": "anti_join_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "missing_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"missing_records\" FROM \"ds_1\" ANTI JOIN \"ds_2\" ON \"ds_1\".\"employee_id\" = \"ds_2\".\"employee_id\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "missing_records": 12
+        }
+      ],
+      "expected_columns": [
+        "missing_payroll_employees"
+      ],
+      "expected_rows": [
+        [
+          12
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-english",
+      "base_q_id": "p2-hr-003",
+      "question": "How many master employees are missing from payroll?",
+      "language": "english",
+      "intent_classifier": "MULTI_FILE_ANALYSIS",
+      "plan_intent": "anti_join_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "missing_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"missing_records\" FROM \"ds_1\" ANTI JOIN \"ds_2\" ON \"ds_1\".\"employee_id\" = \"ds_2\".\"employee_id\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "missing_records": 12
+        }
+      ],
+      "expected_columns": [
+        "missing_payroll_employees"
+      ],
+      "expected_rows": [
+        [
+          12
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-hindi",
+      "base_q_id": "p2-hr-003",
+      "question": "Payroll mein missing master employees kitne hain?",
+      "language": "hindi",
+      "intent_classifier": "MULTI_FILE_ANALYSIS",
+      "plan_intent": "anti_join_count",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "*",
+          "function": "count",
+          "alias": "missing_records",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT COUNT(*) AS \"missing_records\" FROM \"ds_1\" ANTI JOIN \"ds_2\" ON \"ds_1\".\"employee_id\" = \"ds_2\".\"employee_id\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "missing_records": 12
+        }
+      ],
+      "expected_columns": [
+        "missing_payroll_employees"
+      ],
+      "expected_rows": [
+        [
+          12
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-short",
+      "base_q_id": "p2-hr-003",
+      "question": "Employees missing in payroll",
+      "language": "shorthand",
+      "intent_classifier": "MULTI_FILE_ANALYSIS",
+      "plan_intent": "MULTI_FILE_ANALYSIS",
+      "group_by": [],
+      "aggregations": [],
+      "filters": [],
+      "sql": "SELECT ds_1.* FROM \"ds_1\" ds_1 LEFT JOIN \"ds_2\" ds_2 ON ds_1.\"employee_id\" = ds_2.\"employee_id\" WHERE ds_2.\"employee_id\" IS NULL",
+      "plan_shape_passed": false,
+      "plan_shape_errors": [
+        "operation 'multi_file_analysis' != 'anti_join_count'",
+        "aggregate functions set() miss {'count'}"
+      ],
+      "result_match_passed": false,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "employee_id": "EMP-0005",
+          "employee_name": "Tara Nair 5",
+          "department": "Legal",
+          "unit": "South",
+          "sender_email": "employee0005@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0012",
+          "employee_name": "Aarav Mehta 12",
+          "department": "Engineering",
+          "unit": "North",
+          "sender_email": "employee0012@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0019",
+          "employee_name": "Anika Shah 19",
+          "department": "Finance",
+          "unit": "West",
+          "sender_email": "employee0019@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0023",
+          "employee_name": "Tara Nair 23",
+          "department": "Legal",
+          "unit": "West",
+          "sender_email": "employee0023@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0031",
+          "employee_name": "Anika Shah 31",
+          "department": "Finance",
+          "unit": "West",
+          "sender_email": "employee0031@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0042",
+          "employee_name": "Aarav Mehta 42",
+          "department": "Engineering",
+          "unit": "East",
+          "sender_email": "employee0042@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0055",
+          "employee_name": "Anika Shah 55",
+          "department": "Finance",
+          "unit": "West",
+          "sender_email": "employee0055@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0067",
+          "employee_name": "Anika Shah 67",
+          "department": "Finance",
+          "unit": "West",
+          "sender_email": "employee0067@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0073",
+          "employee_name": "Anika Shah 73",
+          "department": "Finance",
+          "unit": "South",
+          "sender_email": "employee0073@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0081",
+          "employee_name": "Mira Iyer 81",
+          "department": "Sales",
+          "unit": "South",
+          "sender_email": "employee0081@example.test",
+          "employment_status": "inactive"
+        },
+        {
+          "employee_id": "EMP-0092",
+          "employee_name": "Kabir Rao 92",
+          "department": "Human Resources",
+          "unit": "North",
+          "sender_email": "employee0092@example.test",
+          "employment_status": "active"
+        },
+        {
+          "employee_id": "EMP-0099",
+          "employee_name": "Mira Iyer 99",
+          "department": "Sales",
+          "unit": "West",
+          "sender_email": "employee0099@example.test",
+          "employment_status": "inactive"
+        }
+      ],
+      "expected_columns": [
+        "missing_payroll_employees"
+      ],
+      "expected_rows": [
+        [
+          12
+        ]
+      ],
+      "passed": false
+    },
+    {
+      "q_id": "p2-hr-004-hinglish",
+      "base_q_id": "p2-hr-004",
+      "question": "Total gross payroll kitna hai?",
+      "language": "hinglish",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_metric",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "gross_pay",
+          "function": "sum",
+          "alias": "total_gross_pay",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"gross_pay\") AS \"total_gross_pay\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_gross_pay": 1011198
+        }
+      ],
+      "expected_columns": [
+        "total_gross_pay"
+      ],
+      "expected_rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-004-english",
+      "base_q_id": "p2-hr-004",
+      "question": "What is the total gross payroll?",
+      "language": "english",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_metric",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "gross_pay",
+          "function": "sum",
+          "alias": "total_gross_pay",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"gross_pay\") AS \"total_gross_pay\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_gross_pay": 1011198
+        }
+      ],
+      "expected_columns": [
+        "total_gross_pay"
+      ],
+      "expected_rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-004-hindi",
+      "base_q_id": "p2-hr-004",
+      "question": "Kul gross payroll kitna hai?",
+      "language": "hindi",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_metric",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "gross_pay",
+          "function": "sum",
+          "alias": "total_gross_pay",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"gross_pay\") AS \"total_gross_pay\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_gross_pay": 1011198
+        }
+      ],
+      "expected_columns": [
+        "total_gross_pay"
+      ],
+      "expected_rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-004-short",
+      "base_q_id": "p2-hr-004",
+      "question": "Gross payroll total",
+      "language": "shorthand",
+      "intent_classifier": "DATA_ANALYSIS",
+      "plan_intent": "scalar_metric",
+      "group_by": [],
+      "aggregations": [
+        {
+          "column": "gross_pay",
+          "function": "sum",
+          "alias": "total_gross_pay",
+          "distinct": false,
+          "filter_condition": null
+        }
+      ],
+      "filters": [],
+      "sql": "SELECT SUM(\"gross_pay\") AS \"total_gross_pay\" FROM \"ds_1\" LIMIT 100",
+      "plan_shape_passed": true,
+      "plan_shape_errors": [],
+      "result_match_passed": true,
+      "verification_passed": true,
+      "engine_rows": [
+        {
+          "total_gross_pay": 1011198
+        }
+      ],
+      "expected_columns": [
+        "total_gross_pay"
+      ],
+      "expected_rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    }
+  ]
+}

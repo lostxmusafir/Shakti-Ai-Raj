@@ -1,0 +1,199 @@
+{
+  "corpus_version": "phase2-curated-1.1",
+  "answers_separate": true,
+  "model_training": false,
+  "questions": [
+    {
+      "q_id": "p2-fin-001",
+      "dataset_id": "microsoft-financial-sample",
+      "expected_operation": "row_count",
+      "expected_group_by": [],
+      "expected_metric_columns": [],
+      "expected_aggregate_functions": ["count"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Is dataset mein total records kitne hain?", "language": "hinglish", "difficulty": "simple"},
+        {"suffix": "english", "question": "How many total records are in this dataset?", "language": "english", "difficulty": "simple"},
+        {"suffix": "hindi", "question": "Is dataset mein kul records kitne hain?", "language": "hindi", "difficulty": "simple"},
+        {"suffix": "short", "question": "Total records?", "language": "shorthand", "difficulty": "simple"}
+      ]
+    },
+    {
+      "q_id": "p2-fin-002",
+      "dataset_id": "microsoft-financial-sample",
+      "expected_operation": "sum",
+      "expected_group_by": [],
+      "expected_metric_columns": ["Profit"],
+      "expected_aggregate_functions": ["sum"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Total profit kitna hai?", "language": "hinglish", "difficulty": "simple"},
+        {"suffix": "english", "question": "What is the total profit?", "language": "english", "difficulty": "simple"},
+        {"suffix": "hindi", "question": "Kul munafa kitna hai?", "language": "hindi", "difficulty": "simple"},
+        {"suffix": "short", "question": "Profit total?", "language": "shorthand", "difficulty": "simple"}
+      ]
+    },
+    {
+      "q_id": "p2-fin-003",
+      "dataset_id": "microsoft-financial-sample",
+      "expected_operation": "group_rank",
+      "expected_group_by": ["Country"],
+      "expected_metric_columns": ["Profit"],
+      "expected_aggregate_functions": ["sum"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Kaunse country ka total profit sabse zyada hai?", "language": "hinglish", "difficulty": "medium"},
+        {"suffix": "english", "question": "Which country has the highest total profit?", "language": "english", "difficulty": "medium"},
+        {"suffix": "hindi", "question": "Sabse zyada kul profit kis desh ka hai?", "language": "hindi", "difficulty": "medium"},
+        {"suffix": "short", "question": "Top country by profit", "language": "shorthand", "difficulty": "medium"}
+      ]
+    },
+    {
+      "q_id": "p2-fin-004",
+      "dataset_id": "microsoft-financial-sample",
+      "expected_operation": "grouped_sum",
+      "expected_group_by": ["Year"],
+      "expected_metric_columns": ["Sales"],
+      "expected_aggregate_functions": ["sum"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 2,
+      "variants": [
+        {"suffix": "hinglish", "question": "Year wise total sales batao.", "language": "hinglish", "difficulty": "medium"},
+        {"suffix": "english", "question": "Show total sales by year.", "language": "english", "difficulty": "medium"},
+        {"suffix": "hindi", "question": "Har saal ki kul sales batao.", "language": "hindi", "difficulty": "medium"},
+        {"suffix": "short", "question": "Sales by year", "language": "shorthand", "difficulty": "medium"}
+      ]
+    },
+    {
+      "q_id": "p2-dlp-001",
+      "dataset_id": "nexus-dynamics-incidents",
+      "expected_operation": "row_count",
+      "expected_group_by": [],
+      "expected_metric_columns": [],
+      "expected_aggregate_functions": ["count"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Total incidents kitne hain?", "language": "hinglish", "difficulty": "simple"},
+        {"suffix": "english", "question": "How many incidents are there in total?", "language": "english", "difficulty": "simple"},
+        {"suffix": "hindi", "question": "Kul incidents kitne hain?", "language": "hindi", "difficulty": "simple"},
+        {"suffix": "short", "question": "Incident count", "language": "shorthand", "difficulty": "simple"}
+      ]
+    },
+    {
+      "q_id": "p2-dlp-002",
+      "dataset_id": "nexus-dynamics-incidents",
+      "expected_operation": "filtered_count",
+      "expected_group_by": [],
+      "expected_metric_columns": [],
+      "expected_aggregate_functions": ["count"],
+      "expected_filter_tokens": ["blocked"],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Blocked incidents kitne hain?", "language": "hinglish", "difficulty": "simple"},
+        {"suffix": "english", "question": "How many incidents were blocked?", "language": "english", "difficulty": "simple"},
+        {"suffix": "hindi", "question": "Blocked incidents ki ginti batao.", "language": "hindi", "difficulty": "simple"},
+        {"suffix": "short", "question": "Blocked count", "language": "shorthand", "difficulty": "simple"}
+      ]
+    },
+    {
+      "q_id": "p2-dlp-003",
+      "dataset_id": "nexus-dynamics-incidents",
+      "expected_operation": "grouped_count",
+      "expected_group_by": ["Severity"],
+      "expected_metric_columns": [],
+      "expected_aggregate_functions": ["count"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 3,
+      "variants": [
+        {"suffix": "hinglish", "question": "Severity wise incidents ka count batao.", "language": "hinglish", "difficulty": "medium"},
+        {"suffix": "english", "question": "Count incidents by severity.", "language": "english", "difficulty": "medium"},
+        {"suffix": "hindi", "question": "Severity ke hisaab se incidents gino.", "language": "hindi", "difficulty": "medium"},
+        {"suffix": "short", "question": "Severity breakdown", "language": "shorthand", "difficulty": "medium"}
+      ]
+    },
+    {
+      "q_id": "p2-dlp-004",
+      "dataset_id": "nexus-dynamics-incidents",
+      "expected_operation": "group_rank",
+      "expected_group_by": ["Source"],
+      "expected_metric_columns": ["Transaction Size (KB)"],
+      "expected_aggregate_functions": ["sum"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Sabse zyada data kis source ne bheja?", "language": "hinglish", "difficulty": "medium"},
+        {"suffix": "english", "question": "Which source sent the most data?", "language": "english", "difficulty": "medium"},
+        {"suffix": "hindi", "question": "Sabse adhik data kis source ne bheja?", "language": "hindi", "difficulty": "medium"},
+        {"suffix": "short", "question": "Top source by data", "language": "shorthand", "difficulty": "medium"}
+      ]
+    },
+    {
+      "q_id": "p2-hr-001",
+      "dataset_id": "hr-employees",
+      "expected_operation": "distinct_count",
+      "expected_group_by": [],
+      "expected_metric_columns": ["employee_id"],
+      "expected_aggregate_functions": ["count_distinct"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Kitne unique employees hain?", "language": "hinglish", "difficulty": "simple"},
+        {"suffix": "english", "question": "How many unique employees are there?", "language": "english", "difficulty": "simple"},
+        {"suffix": "hindi", "question": "Kitne alag employees hain?", "language": "hindi", "difficulty": "simple"},
+        {"suffix": "short", "question": "Unique employees", "language": "shorthand", "difficulty": "simple"}
+      ]
+    },
+    {
+      "q_id": "p2-hr-002",
+      "dataset_id": "hr-employees",
+      "expected_operation": "grouped_count",
+      "expected_group_by": ["department"],
+      "expected_metric_columns": [],
+      "expected_aggregate_functions": ["count"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 6,
+      "variants": [
+        {"suffix": "hinglish", "question": "Department wise employees kitne hain?", "language": "hinglish", "difficulty": "medium"},
+        {"suffix": "english", "question": "How many employees are in each department?", "language": "english", "difficulty": "medium"},
+        {"suffix": "hindi", "question": "Har department mein kitne employees hain?", "language": "hindi", "difficulty": "medium"},
+        {"suffix": "short", "question": "Employees by department", "language": "shorthand", "difficulty": "medium"}
+      ]
+    },
+    {
+      "q_id": "p2-hr-003",
+      "dataset_id": "hr-employees-payroll",
+      "expected_operation": "anti_join_count",
+      "expected_group_by": [],
+      "expected_metric_columns": ["employee_id"],
+      "expected_aggregate_functions": ["count"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Master mein hain but payroll mein missing employees kitne hain?", "language": "hinglish", "difficulty": "hard"},
+        {"suffix": "english", "question": "How many master employees are missing from payroll?", "language": "english", "difficulty": "hard"},
+        {"suffix": "hindi", "question": "Payroll mein missing master employees kitne hain?", "language": "hindi", "difficulty": "hard"},
+        {"suffix": "short", "question": "Employees missing in payroll", "language": "shorthand", "difficulty": "hard"}
+      ]
+    },
+    {
+      "q_id": "p2-hr-004",
+      "dataset_id": "hr-payroll",
+      "expected_operation": "sum",
+      "expected_group_by": [],
+      "expected_metric_columns": ["gross_pay"],
+      "expected_aggregate_functions": ["sum"],
+      "expected_filter_tokens": [],
+      "expected_row_count": 1,
+      "variants": [
+        {"suffix": "hinglish", "question": "Total gross payroll kitna hai?", "language": "hinglish", "difficulty": "simple"},
+        {"suffix": "english", "question": "What is the total gross payroll?", "language": "english", "difficulty": "simple"},
+        {"suffix": "hindi", "question": "Kul gross payroll kitna hai?", "language": "hindi", "difficulty": "simple"},
+        {"suffix": "short", "question": "Gross payroll total", "language": "shorthand", "difficulty": "simple"}
+      ]
+    }
+  ]
+}

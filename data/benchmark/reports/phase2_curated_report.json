@@ -1,0 +1,900 @@
+{
+  "phase": 2,
+  "corpus_version": "phase2-curated-1.1",
+  "model_training": false,
+  "external_provider_called": false,
+  "runner_changed_production_code": false,
+  "total": 48,
+  "passed": 48,
+  "failed": 0,
+  "results": [
+    {
+      "q_id": "p2-fin-001-hinglish",
+      "base_q_id": "p2-fin-001",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hinglish",
+      "columns": [
+        "record_count"
+      ],
+      "rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-001-english",
+      "base_q_id": "p2-fin-001",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "english",
+      "columns": [
+        "record_count"
+      ],
+      "rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-001-hindi",
+      "base_q_id": "p2-fin-001",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hindi",
+      "columns": [
+        "record_count"
+      ],
+      "rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-001-short",
+      "base_q_id": "p2-fin-001",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "shorthand",
+      "columns": [
+        "record_count"
+      ],
+      "rows": [
+        [
+          700
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-002-hinglish",
+      "base_q_id": "p2-fin-002",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hinglish",
+      "columns": [
+        "total_profit"
+      ],
+      "rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-002-english",
+      "base_q_id": "p2-fin-002",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "english",
+      "columns": [
+        "total_profit"
+      ],
+      "rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-002-hindi",
+      "base_q_id": "p2-fin-002",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hindi",
+      "columns": [
+        "total_profit"
+      ],
+      "rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-002-short",
+      "base_q_id": "p2-fin-002",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "shorthand",
+      "columns": [
+        "total_profit"
+      ],
+      "rows": [
+        [
+          16893702.26
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-003-hinglish",
+      "base_q_id": "p2-fin-003",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hinglish",
+      "columns": [
+        "Country",
+        "total_profit"
+      ],
+      "rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-003-english",
+      "base_q_id": "p2-fin-003",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "english",
+      "columns": [
+        "Country",
+        "total_profit"
+      ],
+      "rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-003-hindi",
+      "base_q_id": "p2-fin-003",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hindi",
+      "columns": [
+        "Country",
+        "total_profit"
+      ],
+      "rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-003-short",
+      "base_q_id": "p2-fin-003",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "shorthand",
+      "columns": [
+        "Country",
+        "total_profit"
+      ],
+      "rows": [
+        [
+          "France",
+          3781020.78
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-hinglish",
+      "base_q_id": "p2-fin-004",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hinglish",
+      "columns": [
+        "Year",
+        "total_sales"
+      ],
+      "rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-english",
+      "base_q_id": "p2-fin-004",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "english",
+      "columns": [
+        "Year",
+        "total_sales"
+      ],
+      "rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-hindi",
+      "base_q_id": "p2-fin-004",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "hindi",
+      "columns": [
+        "Year",
+        "total_sales"
+      ],
+      "rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-fin-004-short",
+      "base_q_id": "p2-fin-004",
+      "dataset_id": "microsoft-financial-sample",
+      "language": "shorthand",
+      "columns": [
+        "Year",
+        "total_sales"
+      ],
+      "rows": [
+        [
+          "2013",
+          26415255.51
+        ],
+        [
+          "2014",
+          92311094.75
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-hinglish",
+      "base_q_id": "p2-dlp-001",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hinglish",
+      "columns": [
+        "incident_count"
+      ],
+      "rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-english",
+      "base_q_id": "p2-dlp-001",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "english",
+      "columns": [
+        "incident_count"
+      ],
+      "rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-hindi",
+      "base_q_id": "p2-dlp-001",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hindi",
+      "columns": [
+        "incident_count"
+      ],
+      "rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-001-short",
+      "base_q_id": "p2-dlp-001",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "shorthand",
+      "columns": [
+        "incident_count"
+      ],
+      "rows": [
+        [
+          5000
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-hinglish",
+      "base_q_id": "p2-dlp-002",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hinglish",
+      "columns": [
+        "blocked_incidents"
+      ],
+      "rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-english",
+      "base_q_id": "p2-dlp-002",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "english",
+      "columns": [
+        "blocked_incidents"
+      ],
+      "rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-hindi",
+      "base_q_id": "p2-dlp-002",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hindi",
+      "columns": [
+        "blocked_incidents"
+      ],
+      "rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-002-short",
+      "base_q_id": "p2-dlp-002",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "shorthand",
+      "columns": [
+        "blocked_incidents"
+      ],
+      "rows": [
+        [
+          5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-hinglish",
+      "base_q_id": "p2-dlp-003",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hinglish",
+      "columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-english",
+      "base_q_id": "p2-dlp-003",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "english",
+      "columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-hindi",
+      "base_q_id": "p2-dlp-003",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hindi",
+      "columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-003-short",
+      "base_q_id": "p2-dlp-003",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "shorthand",
+      "columns": [
+        "Severity",
+        "incident_count"
+      ],
+      "rows": [
+        [
+          "High",
+          969
+        ],
+        [
+          "Low",
+          2044
+        ],
+        [
+          "Medium",
+          1987
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-004-hinglish",
+      "base_q_id": "p2-dlp-004",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hinglish",
+      "columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-004-english",
+      "base_q_id": "p2-dlp-004",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "english",
+      "columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-004-hindi",
+      "base_q_id": "p2-dlp-004",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "hindi",
+      "columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-dlp-004-short",
+      "base_q_id": "p2-dlp-004",
+      "dataset_id": "nexus-dynamics-incidents",
+      "language": "shorthand",
+      "columns": [
+        "Source",
+        "total_size_kb"
+      ],
+      "rows": [
+        [
+          "NX-ENG086\\Isha Dave",
+          1520557.5
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-hinglish",
+      "base_q_id": "p2-hr-001",
+      "dataset_id": "hr-employees",
+      "language": "hinglish",
+      "columns": [
+        "unique_employees"
+      ],
+      "rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-english",
+      "base_q_id": "p2-hr-001",
+      "dataset_id": "hr-employees",
+      "language": "english",
+      "columns": [
+        "unique_employees"
+      ],
+      "rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-hindi",
+      "base_q_id": "p2-hr-001",
+      "dataset_id": "hr-employees",
+      "language": "hindi",
+      "columns": [
+        "unique_employees"
+      ],
+      "rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-001-short",
+      "base_q_id": "p2-hr-001",
+      "dataset_id": "hr-employees",
+      "language": "shorthand",
+      "columns": [
+        "unique_employees"
+      ],
+      "rows": [
+        [
+          100
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-hinglish",
+      "base_q_id": "p2-hr-002",
+      "dataset_id": "hr-employees",
+      "language": "hinglish",
+      "columns": [
+        "department",
+        "employee_count"
+      ],
+      "rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-english",
+      "base_q_id": "p2-hr-002",
+      "dataset_id": "hr-employees",
+      "language": "english",
+      "columns": [
+        "department",
+        "employee_count"
+      ],
+      "rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-hindi",
+      "base_q_id": "p2-hr-002",
+      "dataset_id": "hr-employees",
+      "language": "hindi",
+      "columns": [
+        "department",
+        "employee_count"
+      ],
+      "rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-002-short",
+      "base_q_id": "p2-hr-002",
+      "dataset_id": "hr-employees",
+      "language": "shorthand",
+      "columns": [
+        "department",
+        "employee_count"
+      ],
+      "rows": [
+        [
+          "Engineering",
+          16
+        ],
+        [
+          "Finance",
+          17
+        ],
+        [
+          "Human Resources",
+          17
+        ],
+        [
+          "Legal",
+          16
+        ],
+        [
+          "Operations",
+          17
+        ],
+        [
+          "Sales",
+          17
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-hinglish",
+      "base_q_id": "p2-hr-003",
+      "dataset_id": "hr-employees-payroll",
+      "language": "hinglish",
+      "columns": [
+        "missing_payroll_employees"
+      ],
+      "rows": [
+        [
+          12
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-english",
+      "base_q_id": "p2-hr-003",
+      "dataset_id": "hr-employees-payroll",
+      "language": "english",
+      "columns": [
+        "missing_payroll_employees"
+      ],
+      "rows": [
+        [
+          12
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-hindi",
+      "base_q_id": "p2-hr-003",
+      "dataset_id": "hr-employees-payroll",
+      "language": "hindi",
+      "columns": [
+        "missing_payroll_employees"
+      ],
+      "rows": [
+        [
+          12
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-003-short",
+      "base_q_id": "p2-hr-003",
+      "dataset_id": "hr-employees-payroll",
+      "language": "shorthand",
+      "columns": [
+        "missing_payroll_employees"
+      ],
+      "rows": [
+        [
+          12
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-004-hinglish",
+      "base_q_id": "p2-hr-004",
+      "dataset_id": "hr-payroll",
+      "language": "hinglish",
+      "columns": [
+        "total_gross_pay"
+      ],
+      "rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-004-english",
+      "base_q_id": "p2-hr-004",
+      "dataset_id": "hr-payroll",
+      "language": "english",
+      "columns": [
+        "total_gross_pay"
+      ],
+      "rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-004-hindi",
+      "base_q_id": "p2-hr-004",
+      "dataset_id": "hr-payroll",
+      "language": "hindi",
+      "columns": [
+        "total_gross_pay"
+      ],
+      "rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "q_id": "p2-hr-004-short",
+      "base_q_id": "p2-hr-004",
+      "dataset_id": "hr-payroll",
+      "language": "shorthand",
+      "columns": [
+        "total_gross_pay"
+      ],
+      "rows": [
+        [
+          1011198
+        ]
+      ],
+      "passed": true
+    }
+  ]
+}

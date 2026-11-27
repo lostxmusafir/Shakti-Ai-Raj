@@ -1,0 +1,9 @@
+{
+  "corpus_version": "phase2-interactions-1.0",
+  "questions": [
+    {"q_id": "p2-hitl-001", "question": "Amount kitna hai?", "expected_reason": "AMBIGUOUS_METRIC"},
+    {"q_id": "p2-hitl-002", "question": "Last month ka Transaction Amount batao", "expected_reason": "AMBIGUOUS_DATE"},
+    {"q_id": "p2-hitl-003", "question": "Which company domain is internal?", "expected_reason": "AMBIGUOUS_DOMAIN"},
+    {"q_id": "p2-hitl-004", "question": "Credit kitna hai?", "expected_reason": "AMBIGUOUS_AGGREGATION"}
+  ]
+}
