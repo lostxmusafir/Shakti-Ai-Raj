@@ -81,9 +81,12 @@ function firstName(name?: string | null): string {
 function AuiGreeting({ userName }: { userName?: string | null }) {
   const first = firstName(userName);
   return (
-    <div className="mb-6 flex flex-col px-2">
-      <p className="text-2xl font-medium tracking-tight text-slate-100">
+    <div className="thread-greeting mb-8 flex flex-col px-2">
+      <p className="text-3xl font-semibold tracking-tight text-slate-100 sm:text-4xl">
         {first ? `How can I help you, ${first}?` : "How can I help you today?"}
+      </p>
+      <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">
+        Ask about the selected dataset. Every verified result keeps its evidence and query close by.
       </p>
     </div>
   );
@@ -138,7 +141,7 @@ function AuiAssistantMessage({ knownFiles }: { knownFiles: KnownFile[] }) {
   return (
     <MessagePrimitive.Root
       data-role="assistant"
-      className="group relative -mb-7.5 pb-7.5"
+      className="assistant-message group relative -mb-7.5 pb-7.5"
     >
       <div className="px-2 text-[15px] leading-7 text-slate-200">
         <AnswerBody
@@ -227,7 +230,7 @@ export default function AssistantThread({
   return (
     <AssistantRuntimeProvider runtime={runtime}>
       <ThreadPrimitive.Root
-        className="flex min-h-0 flex-1 flex-col bg-[#090a0d] text-slate-100"
+        className="flex min-h-0 flex-1 flex-col bg-[var(--background)] text-slate-100"
         style={{
           ["--thread-max-width" as string]: "44rem",
           ["--composer-bg" as string]: "rgba(255,255,255,0.035)",
@@ -238,7 +241,7 @@ export default function AssistantThread({
         <ThreadPrimitive.Viewport
           turnAnchor="top"
           className={cn(
-            "relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll scroll-smooth",
+            "relative flex flex-1 flex-col overflow-x-hidden overflow-y-scroll scroll-smooth",
           )}
         >
           <div className={cn("mx-auto flex w-full max-w-[var(--thread-max-width)] flex-1 flex-col px-4 pt-4", isEmpty && "justify-center")}>
@@ -279,12 +282,12 @@ export default function AssistantThread({
               {errorBanner ? <div className="w-full px-2">{errorBanner}</div> : null}
             </div>
 
-            <ThreadPrimitive.ViewportFooter className={cn("flex flex-col gap-4 overflow-visible bg-[#090a0d] pb-4 md:pb-6", !isEmpty && "sticky bottom-0 mt-auto rounded-t-[var(--composer-radius)]")}>
+            <ThreadPrimitive.ViewportFooter className={cn("flex flex-col gap-4 overflow-visible bg-[var(--background)] pb-4 md:pb-6", !isEmpty && "sticky bottom-0 mt-auto rounded-t-[var(--composer-radius)]")}>
             <ThreadPrimitive.ScrollToBottom asChild>
               <button
                 type="button"
                 aria-label="Scroll to bottom"
-                className="absolute -top-11 z-10 grid size-8 place-items-center self-center rounded-lg border border-white/10 bg-[#111318] text-slate-300 transition-colors hover:border-white/25 hover:text-white disabled:invisible"
+                className="absolute -top-11 z-10 grid size-8 place-items-center self-center rounded-md border border-white/10 bg-[#17191c] text-slate-300 transition-colors hover:border-white/25 hover:text-white disabled:invisible"
               >
                 <ArrowDownIcon className="size-4" />
               </button>
@@ -305,7 +308,7 @@ export default function AssistantThread({
                         className={cn(
                           "inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11.5px] transition-colors",
                           selected
-                            ? "border-indigo-400/40 bg-indigo-500/20 text-indigo-200"
+                            ? "border-white/20 bg-white/[0.10] text-[var(--accent-strong)]"
                             : "border-white/10 bg-white/[0.03] text-slate-400 hover:border-white/25 hover:text-slate-200",
                         )}
                       >
@@ -317,7 +320,7 @@ export default function AssistantThread({
                 </div>
               ) : null}
 
-              <div className="flex w-full flex-col gap-2 rounded-[var(--composer-radius)] border border-white/10 bg-[var(--composer-bg)] p-[var(--composer-padding)] transition-colors focus-within:border-white/25">
+              <div className="thread-composer flex w-full flex-col gap-2 rounded-[var(--composer-radius)] border p-[var(--composer-padding)] transition-colors focus-within:border-white/40">
                 {selectedFileIds.length > 0 ? (
                   <div className="flex flex-wrap items-center gap-1.5 px-3 pt-2.5">
                     {selectedFileIds.map((id) => {
@@ -328,7 +331,7 @@ export default function AssistantThread({
                           key={id}
                           className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[11.5px] text-slate-200"
                         >
-                          <DatabaseIcon className="size-3 text-indigo-300" />
+                          <DatabaseIcon className="size-3 text-[var(--accent)]" />
                           <span className="max-w-[180px] truncate">{f.original_name}</span>
                           <button
                             type="button"
@@ -378,7 +381,7 @@ export default function AssistantThread({
                         <span>Upload dataset</span>
                       </Link>
                     )}
-                    <div className="inline-flex items-center rounded-lg border border-white/10 bg-white/[0.03] p-0.5 text-[11.5px]">
+                    <div className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.03] p-0.5 text-[11.5px]" aria-label="AI tier">
                       <button
                         type="button"
                         onClick={() => onChangeAiTier?.("low")}
@@ -399,7 +402,7 @@ export default function AssistantThread({
                         className={cn(
                           "rounded-md px-2 py-0.5 font-medium transition-colors",
                           aiTier === "pro"
-                            ? "bg-indigo-500/30 text-indigo-200"
+                            ? "bg-white/15 text-white"
                             : "text-slate-400 hover:text-slate-200",
                         )}
                       >
@@ -448,7 +451,7 @@ export default function AssistantThread({
                     disabled={files.length === 0}
                     className="group flex w-full items-baseline gap-2.5 rounded-md px-2 py-2 text-left text-sm text-slate-400 transition-colors hover:bg-white/[0.03] hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    <span className="font-mono text-xs text-slate-600 group-hover:text-slate-300">&gt;</span>
+                    <span className="text-xs text-[var(--accent)] group-hover:text-white">↳</span>
                     <span className="truncate">{suggestion.label}</span>
                   </ThreadPrimitive.Suggestion>
                 ))}

@@ -39,7 +39,7 @@ export function Attachments({
           )}
           title={item.name}
         >
-          <FileSpreadsheet className="h-3.5 w-3.5 shrink-0 text-indigo-300/80" />
+          <FileSpreadsheet className="h-3.5 w-3.5 shrink-0 text-[var(--accent)]" />
           <span className="truncate">{shortFileName(item.name)}</span>
           <span className="shrink-0 rounded bg-slate-800 px-1 py-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-400">
             {fileKind(item.name)}

@@ -78,7 +78,7 @@ export default function ResultTable({
   };
 
   return (
-    <div className={cn("overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50", failed && "border-amber-500/25")}>
+    <div className={cn("data-table overflow-hidden rounded-lg border border-slate-800 bg-slate-900/50", failed && "border-amber-500/25")}>
       <div className="flex items-center justify-between border-b border-slate-800/80 px-3 py-1.5">
         <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
           <Table2 className="h-3.5 w-3.5 text-slate-500" />
@@ -95,8 +95,8 @@ export default function ResultTable({
       </div>
 
       <div className="max-h-[420px] overflow-auto">
-        <table className="w-full border-collapse text-[12px]">
-          <thead className="sticky top-0 z-10 bg-slate-900/95 text-slate-400 backdrop-blur">
+          <table className="w-full border-collapse text-[12px]" aria-label="Analysis result table">
+          <thead className="sticky top-0 z-10 text-slate-400">
             <tr>
               {columns.map((column) => (
                 <th

@@ -112,13 +112,13 @@ export default function AnswerBody({
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
         <span
           className={cn(
-            "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium",
+            "inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium",
             info.state === "verified" && "bg-emerald-500/10 text-emerald-300",
             info.state === "failed" && "bg-amber-500/10 text-amber-300",
-            info.state === "unverified" && "bg-slate-800/70 text-slate-400",
+            info.state === "unverified" && "bg-white/[0.06] text-slate-400",
           )}
         >
           {info.state === "verified" ? (
@@ -187,8 +187,8 @@ function Detail({ label, value, mono }: { label: string; value: string; mono?: b
 function ResultSurface({ view, failed }: { view: ResultView; failed: boolean }) {
   if (view.kind === "scalar") {
     return (
-      <div className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
-        <div className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{view.label}</div>
+      <div className="result-surface rounded-lg border px-4 py-3.5">
+        <div className="text-xs font-medium text-slate-400">{view.label}</div>
         <div
           className={cn(
             "mt-1 text-[26px] font-semibold leading-tight tracking-tight tabular-nums",
@@ -206,11 +206,11 @@ function ResultSurface({ view, failed }: { view: ResultView; failed: boolean }) 
 
   if (view.kind === "metrics") {
     return (
-      <div className="space-y-1.5">
-        <div className={cn("grid gap-2", view.items.length === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3")}>
+      <div className="result-surface grid gap-0 overflow-hidden rounded-lg border sm:grid-cols-2">
+        <div className={cn("contents", view.items.length === 2 ? "" : "sm:grid-cols-3")}>
           {view.items.map((item) => (
-            <div key={item.label} className="rounded-xl border border-slate-800 bg-slate-900/60 px-3 py-2.5">
-              <div className="truncate text-[10.5px] font-medium uppercase tracking-wide text-slate-400" title={item.label}>
+            <div key={item.label} className="result-metric border-b border-r border-slate-800/80 px-4 py-3.5 last:border-b-0 sm:border-b-0">
+              <div className="truncate text-xs font-medium text-slate-400" title={item.label}>
                 {item.label}
               </div>
               <div
@@ -226,7 +226,7 @@ function ResultSurface({ view, failed }: { view: ResultView; failed: boolean }) 
           ))}
         </div>
         {view.context ? (
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+          <div className="col-span-full flex items-center gap-1.5 border-t border-slate-800/80 px-4 py-2.5 text-xs text-slate-500">
             <FileSpreadsheet className="h-3 w-3" />
             {view.context}
           </div>

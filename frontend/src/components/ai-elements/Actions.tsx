@@ -23,7 +23,7 @@ export function ActionButton({
       aria-label={label}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] text-slate-500 transition",
-        "hover:bg-slate-800/60 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/60",
+        "hover:bg-slate-800/60 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
         className,
       )}
     >

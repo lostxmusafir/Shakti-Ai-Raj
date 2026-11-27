@@ -27,10 +27,10 @@ export default function ChatIndexPage() {
   }, [router]);
 
   return (
-    <div className="flex h-screen items-center justify-center bg-slate-950">
+    <div className="flex h-screen items-center justify-center bg-[var(--background)]">
       <div className="flex flex-col items-center gap-3">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
-        <p className="text-xs text-slate-400">Loading analysis workspace...</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-[var(--accent)]"></div>
+        <p className="text-sm text-slate-400">Opening analysis workspace…</p>
       </div>
     </div>
   );

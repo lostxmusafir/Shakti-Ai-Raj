@@ -94,6 +94,8 @@ export default function InterruptCard({
   return (
     <div
       aria-busy={submitting}
+      role="group"
+      aria-label="Analysis clarification"
       className={cn(
         "rounded-xl border px-4 py-3.5 text-[13px] transition",
         cancelled
@@ -102,7 +104,7 @@ export default function InterruptCard({
           ? "border-emerald-500/30 bg-emerald-500/[0.05] text-slate-200"
           : isConfirmation
           ? "border-amber-500/35 bg-amber-500/[0.06] text-slate-100"
-          : "border-indigo-500/35 bg-indigo-500/[0.06] text-slate-100",
+          : "border-white/20 bg-[var(--accent)]/[0.06] text-slate-100",
       )}
     >
       <div className="flex items-start gap-2.5">
@@ -113,7 +115,7 @@ export default function InterruptCard({
         ) : isConfirmation ? (
           <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
         ) : (
-          <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-indigo-400" />
+          <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
         )}
 
         <div className="min-w-0 flex-1 space-y-2.5">
@@ -121,7 +123,7 @@ export default function InterruptCard({
             {cancelled
               ? "Clarification cancelled"
               : resolvedLabel
-              ? `✓ ${resolvedLabel} selected`
+              ? `Selected: ${resolvedLabel}`
               : "I need one detail before I can calculate this."}
           </div>
 
@@ -140,12 +142,12 @@ export default function InterruptCard({
                 aria-label={interrupt.question}
                 aria-invalid={Boolean(localError)}
                 disabled={submitting || isDone}
-                className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-[12.5px] text-slate-100 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none disabled:opacity-50"
+                className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-[12.5px] text-slate-100 placeholder:text-slate-500 focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={submitting || isDone}
-                className="rounded-lg bg-indigo-600 px-3 py-1.5 text-[12px] font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
+                className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-[12px] font-medium text-[var(--primary-ink)] transition hover:bg-[var(--accent)] disabled:opacity-50"
               >
                 {submitting ? "Resuming..." : "Continue"}
               </button>
@@ -176,7 +178,7 @@ export default function InterruptCard({
                       ? "border-slate-700 bg-slate-900/60 text-slate-300 hover:border-slate-600 hover:bg-slate-800"
                       : isConfirmation && opt.id === "approve"
                       ? "border-amber-500/40 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25"
-                      : "border-indigo-500/40 bg-indigo-500/15 text-indigo-200 hover:bg-indigo-500/25",
+                      : "border-white/25 bg-white/[0.08] text-[var(--accent-strong)] hover:bg-[var(--accent)]/25",
                   )}
                 >
                   {opt.label}

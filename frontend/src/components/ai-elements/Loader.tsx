@@ -20,8 +20,7 @@ export function Shimmer({ children, className }: { children: React.ReactNode; cl
   return (
     <span
       className={cn(
-        "bg-gradient-to-r from-slate-400 via-slate-100 to-slate-400 bg-[length:200%_100%] bg-clip-text text-transparent",
-        "animate-[shimmer_1.8s_linear_infinite]",
+        "text-slate-300",
         className,
       )}
     >

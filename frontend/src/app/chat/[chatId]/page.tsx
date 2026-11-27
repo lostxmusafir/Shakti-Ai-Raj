@@ -416,7 +416,7 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
+      <div className="flex h-screen items-center justify-center bg-[var(--background)]">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-slate-300" />
       </div>
     );
@@ -443,20 +443,20 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
   ) : null;
 
   return (
-      <div className="app-main flex h-screen">
+      <div className="app-main flex h-screen min-h-0">
       <Sidebar user={user} chats={chats} activeChatId={chatId} onNewChat={handleNewChat} />
 
       <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-white/[0.08] px-5 sm:px-8">
+        <header className="app-header flex h-[68px] shrink-0 items-center justify-between border-b px-5 sm:px-8">
           <div className="min-w-0">
-            <h1 className="truncate text-sm font-semibold text-slate-100">
+            <h1 className="truncate text-base font-semibold text-slate-100">
               {currentChat?.title || "Data Analysis Session"}
             </h1>
-            <p className="truncate text-xs text-slate-500">Verified analysis workspace · policy-aware results</p>
+            <p className="truncate text-xs text-slate-500">Ask, inspect, and verify your data</p>
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span className={cn("h-2 w-2 rounded-full", hasFiles ? "bg-emerald-400" : "bg-slate-600")} />
-            {hasFiles ? `${files.length} dataset${files.length > 1 ? "s" : ""}` : "No datasets"}
+          <div className="flex items-center gap-2 text-xs text-slate-400" aria-live="polite">
+            <span className={cn("h-1.5 w-1.5 rounded-full", hasFiles ? "bg-emerald-400" : "bg-slate-600")} />
+            {hasFiles ? `${files.length} dataset${files.length > 1 ? "s" : ""} ready` : "No datasets yet"}
           </div>
         </header>
 

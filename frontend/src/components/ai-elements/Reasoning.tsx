@@ -31,7 +31,7 @@ export function Reasoning({
         {failed ? (
           <XCircle className="h-3.5 w-3.5 text-red-400" />
         ) : (
-          <Loader className="text-indigo-300" />
+          <Loader className="text-[var(--accent)]" />
         )}
         <span className={failed ? "text-red-300" : undefined}>{title}</span>
       </div>
@@ -42,7 +42,7 @@ export function Reasoning({
               {step.state === "done" ? (
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400/90" />
               ) : step.state === "active" ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-indigo-400" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--accent)]" />
               ) : step.state === "failed" ? (
                 <XCircle className="h-3.5 w-3.5 text-red-400" />
               ) : (

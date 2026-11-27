@@ -24,7 +24,7 @@ export function InlineCitation({
       {index !== undefined ? (
         <span className="rounded bg-slate-800 px-1 text-[9px] font-semibold text-slate-400">{index}</span>
       ) : (
-        <FileSpreadsheet className="h-3 w-3 text-indigo-300/80" />
+        <FileSpreadsheet className="h-3 w-3 text-[var(--accent)]" />
       )}
       <span className="max-w-[180px] truncate">{shortFileName(name, 34)}</span>
       {rows !== undefined && rows !== null ? (

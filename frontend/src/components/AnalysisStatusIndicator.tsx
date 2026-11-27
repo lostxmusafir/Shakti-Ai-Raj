@@ -57,10 +57,12 @@ export default function AnalysisStatusIndicator({ status }: { status: string }) 
   }));
 
   return (
-    <Reasoning
-      title={failed ? "Analysis failed" : "Analysing your data"}
-      steps={steps}
-      failed={failed}
-    />
+    <div aria-live="polite" aria-label={failed ? "Analysis failed" : "Analysis progress"}>
+      <Reasoning
+        title={failed ? "Analysis failed" : "Analysing your data"}
+        steps={steps}
+        failed={failed}
+      />
+    </div>
   );
 }

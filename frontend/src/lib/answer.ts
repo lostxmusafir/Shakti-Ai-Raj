@@ -61,7 +61,7 @@ export interface ParsedAnswer {
 }
 
 const EXECUTION_LINE =
-  /^(?:📊\s*)?\*\*(?:Verified DuckDB Execution|DuckDB Execution \(verification failed\)|Verified read-only Excel execution)\*\*/i;
+  /^(?:\p{Extended_Pictographic}\s*)?\*\*(?:Verified DuckDB Execution|DuckDB Execution \(verification failed\)|Verified read-only Excel execution)\*\*/iu;
 const VERIFICATION_LINE = /^Verification Status:\s*/i;
 const RAW_SUMMARY = /^Analysis results \((\d+)\s+records?\):/i;
 

@@ -38,7 +38,7 @@ export function Message({
 
   return (
     <div className={cn("flex gap-3.5", className)}>
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-500/15 text-indigo-300 ring-1 ring-inset ring-indigo-400/25">
+      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[var(--accent)] ring-1 ring-inset ring-white/10">
         <Bot className="h-3.5 w-3.5" />
       </div>
       <div className="min-w-0 flex-1">

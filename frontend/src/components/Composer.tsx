@@ -107,17 +107,17 @@ export default function Composer({
                         onClick={() => toggleFile(file.id)}
                         className={cn(
                           "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[11.5px] transition",
-                          isSelected ? "bg-indigo-500/10 text-indigo-200" : "text-slate-300 hover:bg-slate-800/70",
+                          isSelected ? "bg-white/[0.05] text-[var(--accent-strong)]" : "text-slate-300 hover:bg-slate-800/70",
                         )}
                       >
-                        <FileSpreadsheet className="h-3.5 w-3.5 shrink-0 text-indigo-300/70" />
+                        <FileSpreadsheet className="h-3.5 w-3.5 shrink-0 text-[var(--accent)]" />
                         <span className="min-w-0 flex-1 truncate">{file.original_name}</span>
                         {file.schema_profile?.row_count !== undefined ? (
                           <span className="shrink-0 text-[10px] text-slate-500">
                             {formatNumber(file.schema_profile.row_count)} rows
                           </span>
                         ) : null}
-                        {isSelected ? <Check className="h-3.5 w-3.5 shrink-0 text-indigo-300" /> : null}
+                        {isSelected ? <Check className="h-3.5 w-3.5 shrink-0 text-[var(--accent)]" /> : null}
                       </button>
                     );
                   })
@@ -126,7 +126,7 @@ export default function Composer({
             </div>
           ) : null}
 
-          <div className="flex items-end gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-2 py-2 focus-within:border-slate-700 focus-within:ring-1 focus-within:ring-indigo-500/30">
+          <div className="flex items-end gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 px-2 py-2 focus-within:border-slate-700 focus-within:ring-1 focus-within:ring-white/20">
             <button
               type="button"
               onClick={() => setShowFilePicker((value) => !value)}
@@ -161,7 +161,7 @@ export default function Composer({
               onClick={submit}
               disabled={disabled || !text.trim()}
               aria-label="Send message"
-              className="mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-800 disabled:text-slate-500"
+              className="mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--primary)] text-[var(--primary-ink)] transition hover:bg-[var(--accent)] disabled:cursor-not-allowed disabled:bg-slate-800 disabled:text-slate-500"
             >
               <ArrowUp className="h-4 w-4" />
             </button>

@@ -37,14 +37,14 @@ export default function Sidebar({
     <aside className="app-sidebar flex h-screen w-[252px] shrink-0 flex-col border-r">
       {/* Brand Header */}
       <div className="sidebar-brand flex h-[72px] items-center gap-3 border-b px-4">
-        <div className="sidebar-brand-mark flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-indigo-500 text-white">
+        <div className="sidebar-brand-mark flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[var(--accent)] text-white">
           <Layers className="h-5 w-5" />
         </div>
         <div className="sidebar-label min-w-0">
           <h2 className="truncate text-[13px] font-semibold tracking-tight text-white">
             Universal Analyst
           </h2>
-          <span className="text-[10px] font-medium text-indigo-300">
+          <span className="text-[10px] font-medium text-[var(--accent)]">
             Enterprise AI
           </span>
         </div>
@@ -54,15 +54,18 @@ export default function Sidebar({
       <div className="p-3">
         <button
           onClick={onNewChat}
+          title="New analysis"
           className="sidebar-action accent-action flex w-full items-center justify-center gap-2 rounded-lg py-2.5 px-3 text-xs font-semibold text-white transition"
         >
           <Plus className="h-3.5 w-3.5" />
-          New Analysis
+          <span>New Analysis</span>
         </button>
 
-        <nav className="mt-5 space-y-1">
+        <nav className="sidebar-nav mt-5 space-y-1" aria-label="Workspace navigation">
           <button
             onClick={() => router.push("/chat")}
+            aria-current={pathname?.startsWith("/chat") ? "page" : undefined}
+            title="AI Chat Analysis"
             className={`sidebar-nav-item flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium transition ${
               pathname?.startsWith("/chat")
                 ? "bg-white/[0.08] text-white"
@@ -70,10 +73,12 @@ export default function Sidebar({
             }`}
           >
             <MessageSquare className="h-4 w-4" />
-            <span className="sidebar-label">AI Chat Analysis</span>
+            <span className="sidebar-nav-label">AI Chat Analysis</span>
           </button>
           <button
             onClick={() => router.push("/files")}
+            aria-current={pathname === "/files" ? "page" : undefined}
+            title="Datasets and Profiler"
             className={`sidebar-nav-item flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium transition ${
               pathname === "/files"
                 ? "bg-white/[0.08] text-white"
@@ -81,10 +86,12 @@ export default function Sidebar({
             }`}
           >
             <FileSpreadsheet className="h-4 w-4" />
-            <span className="sidebar-label">Datasets & Profiler</span>
+            <span className="sidebar-nav-label">Datasets & Profiler</span>
           </button>
           <button
             onClick={() => router.push("/policies")}
+            aria-current={pathname === "/policies" ? "page" : undefined}
+            title="Policy Rule Books"
             className={`sidebar-nav-item flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium transition ${
               pathname === "/policies"
                 ? "bg-white/[0.08] text-white"
@@ -92,13 +99,13 @@ export default function Sidebar({
             }`}
           >
             <ShieldAlert className="h-4 w-4" />
-            <span className="sidebar-label">Policy Rule Books</span>
+            <span className="sidebar-nav-label">Policy Rule Books</span>
           </button>
         </nav>
       </div>
 
       {/* Chat Sessions History */}
-      <div className="flex-1 overflow-y-auto px-3 py-2">
+      <div className="sidebar-history flex-1 overflow-y-auto px-3 py-2">
         <div className="sidebar-section-label mb-2 px-2 text-[10px] font-medium uppercase tracking-[0.14em] text-slate-600">
           Recent Sessions
         </div>
@@ -107,9 +114,10 @@ export default function Sidebar({
             <button
               key={chat.id}
               onClick={() => router.push(`/chat/${chat.id}`)}
-              className={`flex w-full items-center gap-2 truncate rounded-md px-2 py-1.5 text-left text-xs transition ${
+              aria-current={activeChatId === chat.id ? "page" : undefined}
+              className={`sidebar-session flex w-full items-center gap-2 truncate rounded-md px-2 py-1.5 text-left text-xs transition ${
                 activeChatId === chat.id
-                  ? "bg-indigo-500/10 text-indigo-200 ring-1 ring-indigo-400/20"
+                  ? "bg-white/[0.05] text-[var(--accent-strong)] ring-1 ring-white/10"
                   : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-300"
               }`}
             >

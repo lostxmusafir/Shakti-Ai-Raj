@@ -38,7 +38,7 @@ export function inlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
     }
     if (part.startsWith("`") && part.endsWith("`") && part.length > 2) {
       return (
-        <code key={key} className="rounded bg-slate-800/80 px-1 py-0.5 font-mono text-[0.92em] text-indigo-200">
+        <code key={key} className="rounded bg-slate-800/80 px-1 py-0.5 font-mono text-[0.92em] text-[var(--accent-strong)]">
           {part.slice(1, -1)}
         </code>
       );
@@ -55,7 +55,7 @@ export function inlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
           href={href}
           target={external ? "_blank" : undefined}
           rel={external ? "noreferrer noopener" : undefined}
-          className="text-indigo-300 underline decoration-indigo-500/40 underline-offset-2 hover:text-indigo-200 hover:decoration-indigo-400"
+          className="text-[var(--accent)] underline decoration-white/30 underline-offset-2 hover:text-[var(--accent-strong)] hover:decoration-white"
         >
           {link[1]}
         </a>
@@ -275,7 +275,7 @@ function MarkdownMessageImpl({
             return (
               <blockquote
                 key={key}
-                className="my-3 border-l-2 border-indigo-500/50 bg-slate-900/40 py-1.5 pl-3 pr-2 text-slate-300"
+                className="my-3 border-l-2 border-white/25 bg-slate-900/40 py-1.5 pl-3 pr-2 text-slate-300"
               >
                 {block.lines.map((line, lineIndex) => (
                   <p key={`${key}-${lineIndex}`} className="my-0.5 whitespace-pre-wrap">
@@ -350,7 +350,7 @@ function Caret() {
   return (
     <span
       aria-hidden
-      className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] animate-pulse rounded-full bg-indigo-400 align-baseline"
+      className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] animate-pulse rounded-full bg-[var(--accent)] align-baseline"
     />
   );
 }

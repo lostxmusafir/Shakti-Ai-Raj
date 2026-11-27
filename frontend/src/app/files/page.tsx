@@ -9,10 +9,13 @@ import {
   FileSpreadsheet,
   Trash2,
   MessageSquare,
-  Layers,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+
+function statusLabel(status: StoredFile["status"]): string {
+  return status === "ready" ? "Ready to analyse" : status.replace(/_/g, " ");
+}
 
 export default function FilesPage() {
   const router = useRouter();
@@ -83,7 +86,7 @@ export default function FilesPage() {
   };
 
   return (
-    <div className="app-main flex h-screen">
+    <div className="app-main flex h-screen min-h-0">
       <Sidebar
         user={user}
         chats={chats}
@@ -94,10 +97,10 @@ export default function FilesPage() {
         <div className="page-header flex flex-wrap items-end justify-between gap-4 border-b pb-6">
           <div>
             <h1 className="text-2xl font-semibold tracking-[-0.03em] text-white">
-              Dataset Ingestion & Schema Profiling
+              Datasets
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-              Upload CSV and Excel files. Schemas, types, and column distributions are profiled server-side.
+              Upload a CSV or Excel file to profile its schema before asking questions in chat.
             </p>
           </div>
 
@@ -115,7 +118,7 @@ export default function FilesPage() {
               className="accent-action flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white transition disabled:opacity-50"
             >
               <UploadCloud className="h-4 w-4" />
-              {uploading ? "Profiling Dataset..." : "Upload New Dataset"}
+              {uploading ? "Profiling dataset…" : "Upload dataset"}
             </button>
           </div>
         </div>
@@ -123,14 +126,15 @@ export default function FilesPage() {
         {/* Datasets List */}
         <div className="mx-auto mt-7 w-full max-w-[1180px] space-y-4">
           {files.length === 0 ? (
-            <div className="surface-panel flex flex-col items-center justify-center rounded-xl border border-dashed p-14 text-center">
-              <FileSpreadsheet className="h-10 w-10 text-slate-600" />
-              <h3 className="mt-3 text-sm font-semibold text-slate-300">
-                No datasets uploaded yet
+            <div className="surface-panel rounded-lg border border-dashed p-8 sm:p-12">
+              <FileSpreadsheet className="h-5 w-5 text-[var(--accent)]" />
+              <h3 className="mt-4 text-lg font-semibold text-white">
+                Start with a dataset
               </h3>
-              <p className="mt-1 text-xs text-slate-500 max-w-sm">
-                Upload a CSV or Excel spreadsheet to generate an automated schema profile and begin natural language analysis.
+              <p className="mt-2 max-w-md text-sm leading-6 text-slate-400">
+                Upload a CSV or Excel spreadsheet. We’ll show the row count, fields, nulls, and sample values before analysis.
               </p>
+              <button onClick={() => fileInputRef.current?.click()} className="accent-action mt-6 rounded-md px-4 py-2.5 text-sm font-semibold">Upload your first dataset</button>
             </div>
           ) : (
             files.map((file) => {
@@ -139,19 +143,20 @@ export default function FilesPage() {
               return (
                 <div
                   key={file.id}
-                  className="surface-panel rounded-xl border p-5 transition"
+                  className="surface-panel rounded-lg border p-5 transition"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 ring-1 ring-indigo-400/20">
-                        <FileSpreadsheet className="h-5 w-5" />
-                      </div>
-                      <div>
+                    <div className="flex min-w-0 items-start gap-3">
+                      <FileSpreadsheet className="mt-0.5 h-5 w-5 shrink-0 text-[var(--accent)]" />
+                      <div className="min-w-0">
                         <h3 className="text-sm font-semibold text-white">
                           {file.original_name}
                         </h3>
                         <p className="text-[11px] text-slate-400">
-                          {(file.size_bytes / 1024).toFixed(1)} KB • {profile?.row_count ?? 0} rows • {profile?.column_count ?? 0} columns
+                          {(file.size_bytes / 1024).toFixed(1)} KB · {profile?.row_count ?? 0} rows · {profile?.column_count ?? 0} columns
+                        </p>
+                        <p className={`mt-1 text-xs ${file.status === "error" || profile?.error ? "text-red-300" : "text-emerald-300"}`}>
+                          {file.status === "error" || profile?.error ? "Needs attention" : statusLabel(file.status)}
                         </p>
                         {file.status === "error" || profile?.error ? (
                           <p className="mt-1 text-[11px] text-red-400">
@@ -164,7 +169,7 @@ export default function FilesPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleStartAnalysis(file.id)}
-                        className="flex items-center gap-1.5 rounded-lg border border-indigo-400/25 bg-indigo-500/10 px-3 py-1.5 text-xs font-medium text-indigo-200 transition hover:bg-indigo-500/20"
+                        className="flex items-center gap-1.5 rounded-md border border-white/15 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-[var(--accent)]/60 hover:text-white"
                       >
                         <MessageSquare className="h-3.5 w-3.5" />
                         Analyze in Chat
@@ -175,13 +180,14 @@ export default function FilesPage() {
                         disabled={deletingFileId === file.id}
                         aria-label={`Delete ${file.original_name}`}
                         title={`Delete ${file.original_name}`}
-                        className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-950/50 hover:text-red-300 disabled:cursor-wait disabled:opacity-50"
+                        className="rounded-md p-2 text-slate-400 transition hover:bg-red-950/50 hover:text-red-300 disabled:cursor-wait disabled:opacity-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setExpandedFileId(isExpanded ? null : file.id)}
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"
+                        aria-label={`${isExpanded ? "Collapse" : "Expand"} ${file.original_name} profile`}
+                        className="rounded-md p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
                       >
                         {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                       </button>
@@ -202,9 +208,9 @@ export default function FilesPage() {
                         )}
                       </div>
 
-                      <div className="overflow-x-auto rounded-lg border border-slate-800/80">
+                      <div className="data-table overflow-x-auto rounded-lg border border-slate-800/80">
                         <table className="w-full text-left text-xs">
-                          <thead className="bg-white/[0.03] text-slate-300">
+                          <thead className="text-slate-300">
                             <tr>
                               <th className="px-3 py-2 font-semibold">Column Name</th>
                               <th className="px-3 py-2 font-semibold">Inferred Type</th>
@@ -217,10 +223,13 @@ export default function FilesPage() {
                             {profile.columns?.map((col) => (
                               <tr key={col.name} className="hover:bg-slate-800/30">
                                 <td className="px-3 py-2 font-medium text-white">{col.name}</td>
-                                <td className="px-3 py-2 font-mono text-indigo-300">{col.inferred_type}</td>
-                                <td className="px-3 py-2 text-slate-400">{col.null_count}</td>
-                                <td className="px-3 py-2 text-slate-400">{col.unique_count}</td>
-                                <td className="px-3 py-2 font-mono text-[11px] text-slate-400">
+                                <td className="px-3 py-2 font-mono text-[var(--accent)]">{col.inferred_type}</td>
+                                <td className="px-3 py-2 text-right tabular-nums text-slate-400">{col.null_count}</td>
+                                <td className="px-3 py-2 text-right tabular-nums text-slate-400">{col.unique_count}</td>
+                                <td
+                                  className="max-w-[320px] truncate px-3 py-2 font-mono text-[11px] text-slate-400"
+                                  title={col.sample_values?.slice(0, 3).join(", ") || "No sample values"}
+                                >
                                   {col.sample_values?.slice(0, 3).join(", ") || "—"}
                                 </td>
                               </tr>
