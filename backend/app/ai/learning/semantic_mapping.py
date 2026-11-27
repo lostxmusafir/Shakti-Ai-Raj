@@ -61,6 +61,24 @@ class SemanticMapper:
         ]
     }
 
+    MEASURE_TOKENS = {
+        "profit", "revenue", "sales", "income", "amount", "amt", "cost", "salary",
+        "pay", "price", "value", "fee", "budget", "margin", "discount", "tax",
+        "balance", "debit", "credit", "expense", "spend", "earning", "earnings",
+        "commission", "bonus", "refund", "units", "quantity", "qty", "count",
+        "hours", "duration", "score", "rate", "ratio", "pct", "percent",
+        "percentage", "weight", "size", "bytes", "kb", "mb", "gb", "tb",
+        "bandwidth", "traffic", "volume", "transferred", "transfer",
+    }
+
+    @staticmethod
+    def _slug(text: str) -> str:
+        return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_") or "metric"
+
+    @staticmethod
+    def _col_tokens(col: str) -> List[str]:
+        return re.findall(r"[a-z]+", re.sub(r"([a-z])([A-Z])", r"\1 \2", col).lower())
+
     @classmethod
     def normalize_question(cls, question: str) -> str:
         q = question.strip().lower()
@@ -115,11 +133,17 @@ class SemanticMapper:
         intent = "DATA_ANALYSIS"
         result_shape = None
 
-        # Build column roles dictionary
+        # Build column roles and inferred types without defaulting missing roles to "dimension"
         col_roles: Dict[str, str] = {}
+        col_types: Dict[str, str] = {}
         for c in prof.get("columns", []):
             c_name = str(c.get("name", ""))
-            col_roles[c_name] = c.get("role", "dimension")
+            if not c_name:
+                continue
+            if c.get("role"):
+                col_roles[c_name] = str(c["role"])
+            if c.get("inferred_type"):
+                col_types[c_name] = str(c["inferred_type"])
 
         # -------------------------------------------------------------
         # 1. Cross-family Queries (e.g. record types overview / comparison)
@@ -254,17 +278,46 @@ class SemanticMapper:
         # -------------------------------------------------------------
         # 4. Generic Dimension & Measure Helpers (Schema-driven)
         # -------------------------------------------------------------
+        def _is_temporal_col(col: str) -> bool:
+            if col_roles.get(col) == "timestamp" or col_types.get(col) == "datetime":
+                return True
+            if col not in col_roles:
+                cl = col.lower()
+                tokens = set(cls._col_tokens(col))
+                if (
+                    (tokens & {"date", "time", "timestamp", "datetime"})
+                    or cl.endswith(("_at", "date", "time"))
+                    or cl in {"created_at", "updated_at"}
+                ):
+                    return True
+            return False
+
+        def _is_likely_measure(col: str) -> bool:
+            tokens = cls._col_tokens(col)
+            is_id_like = bool(tokens and tokens[-1] in {"id", "no", "code", "key"})
+            if col in col_roles:
+                return col_roles[col] in ("measure", "sparse_measure")
+            if col in col_types:
+                return col_types[col] in ("integer", "float") and not is_id_like
+            if _is_temporal_col(col) or is_id_like:
+                return False
+            return bool(set(tokens) & cls.MEASURE_TOKENS)
+
         def _match_dimension() -> Optional[str]:
             for c in active_cols:
-                role = col_roles.get(c, "dimension")
-                if role in ("measure", "sparse_measure", "timestamp"):
+                if _is_temporal_col(c) or _is_likely_measure(c):
+                    continue
+                if col_roles.get(c, "dimension") in ("measure", "sparse_measure", "timestamp"):
                     continue
                 cl = c.lower()
                 # Exact or spaced name match
-                if cl in q_norm or cl.replace("_", " ") in q_norm:
+                if (
+                    re.search(rf"\b{re.escape(cl)}\b", q_norm)
+                    or re.search(rf"\b{re.escape(cl.replace('_', ' '))}\b", q_norm)
+                ):
                     return c
                 # Natural token match (e.g., DestinationDomain -> domain/domains, EmployeeName -> employee)
-                parts = [p for p in re.findall(r"[a-z]+", re.sub(r"([a-z])([A-Z])", r"\1 \2", c).lower()) if len(p) >= 4]
+                parts = [p for p in cls._col_tokens(c) if len(p) >= 4]
                 for p in parts:
                     if p in ("name", "level", "type", "time", "date", "size"):
                         continue
@@ -273,24 +326,39 @@ class SemanticMapper:
             return None
 
         def _match_measure() -> Optional[str]:
-            num_candidates = [
-                c for c in active_cols
-                if col_roles.get(c, "") in ("measure", "sparse_measure")
-                or any(
-                    cp.get("name") == c and cp.get("inferred_type") in ("integer", "float")
-                    for cp in prof.get("columns", [])
-                )
-            ]
+            num_candidates = [c for c in active_cols if _is_likely_measure(c)]
+            if not num_candidates:
+                return None
+            # 1. Exact or underscore-spaced name match with word boundaries
             for c in num_candidates:
                 cl = c.lower()
-                if cl in q_norm or cl.replace("_", " ") in q_norm:
+                if (
+                    re.search(rf"\b{re.escape(cl)}\b", q_norm)
+                    or re.search(rf"\b{re.escape(cl.replace('_', ' '))}\b", q_norm)
+                ):
                     return c
-            # Domain-agnostic volume / bandwidth / transfer synonym match
-            if any(k in q_norm for k in ("bandwidth", "data transfer", "transferred", "traffic", "volume", "mb", "gb", "kb", "bytes")):
+            # 2. Significant token match
+            generic_measure_tokens = {
+                "total", "avg", "sum", "net", "gross", "num", "val", "value",
+                "sold", "paid", "made", "earned", "spent", "sent",
+            }
+            for c in num_candidates:
+                tokens = [t for t in cls._col_tokens(c) if len(t) >= 3 and t not in generic_measure_tokens]
+                for t in tokens:
+                    if re.search(rf"\b{re.escape(t)}s?\b", q_norm):
+                        return c
+            # 3. Domain-agnostic volume / bandwidth / transfer synonym match
+            if any(k in q_norm for k in ("bandwidth", "data transfer", "transferred", "traffic", "volume", "mb", "gb", "kb", "bytes", "data size")):
                 for c in num_candidates:
                     cl = c.lower()
                     if any(u in cl for u in ("mb", "gb", "kb", "bytes", "transfer", "bandwidth", "size")):
                         return c
+            # 4. Unambiguous monetary synonym fallback
+            monetary_terms = set(cls.KEYWORD_CONCEPTS["MONETARY_AMOUNT"])
+            if any(re.search(rf"\b{re.escape(m)}\b", q_norm) for m in monetary_terms):
+                monetary_cols = [c for c in num_candidates if set(cls._col_tokens(c)) & monetary_terms]
+                if len(monetary_cols) == 1:
+                    return monetary_cols[0]
             return None
 
         is_breakdown = (
@@ -300,21 +368,46 @@ class SemanticMapper:
         matched_dim = _match_dimension()
         matched_meas = _match_measure()
 
+        is_avg_query = any(re.search(rf"\b{w}\b", q_norm) for w in ("average", "avg", "mean", "ausat"))
+        is_explicit_count = (
+            any(
+                re.search(rf"\b{w}\b", q_norm)
+                for w in ("count", "rows", "records", "entries", "events", "incidents", "transactions", "unique", "distinct")
+            )
+            or any(p in q_norm for p in ("how many", "kitne", "kitni"))
+        )
+
+        def _build_agg(measure_col: Optional[str]) -> tuple[str, List[Dict[str, Any]], str, List[str]]:
+            if measure_col and not is_explicit_count:
+                agg_func = "avg" if is_avg_query else "sum"
+                agg_prefix = "avg" if agg_func == "avg" else "total"
+                agg_alias = f"{agg_prefix}_{cls._slug(measure_col)}"
+                mapped_cols["measure"] = measure_col
+                mapped_cols[measure_col.lower()] = measure_col
+                return (
+                    agg_alias,
+                    [{"function": agg_func, "column": measure_col, "alias": agg_alias}],
+                    agg_alias,
+                    [matched_dim, measure_col] if matched_dim else [measure_col],
+                )
+            return (
+                "count",
+                [{"function": "count", "column": "*", "alias": "count"}],
+                matched_dim or "count",
+                [matched_dim] if matched_dim else ["count"],
+            )
+
         if is_breakdown and matched_dim:
             mapped_cols["dimension"] = matched_dim
-            alias_name = f"total_{cls._slug(matched_meas)}" if hasattr(cls, "_slug") else "count"
-            if matched_meas and any(k in q_norm for k in ("bandwidth", "data", "sum", "total", "amount", "revenue", "sales", "mb", "gb")):
-                aggs = [{"function": "sum", "column": matched_meas, "alias": "total_value"}]
-                sort = {"column": "total_value", "ascending": False, "limit": 50}
-            else:
-                aggs = [{"function": "count", "column": "*", "alias": "count"}]
-                sort = {"column": "count", "ascending": False, "limit": 50}
+            agg_alias, aggs, target_concept, req_concepts = _build_agg(matched_meas)
+            sort = {"column": agg_alias, "ascending": False, "limit": 50}
             return SemanticResolution(
                 intent="grouped_distribution",
-                target_concept=matched_dim,
+                target_concept=target_concept,
                 result_shape="grouped_rows",
-                requested_concepts=[matched_dim] + ([matched_meas] if matched_meas else []),
+                requested_concepts=req_concepts,
                 record_family=selected_family_name,
+                limit=50,
                 mapped_columns=mapped_cols,
                 suggested_aggregates=aggs,
                 suggested_filters=filters,
@@ -323,48 +416,63 @@ class SemanticMapper:
                 notes=[f"Grouped distribution by '{matched_dim}'"],
             )
 
-        # Generic Top-N / Ranking (e.g., "Sabse zyada bandwidth kis department ne consume ki?", "Top 5 domains")
-        has_ranking = any(k in q_norm for k in cls.KEYWORD_CONCEPTS["RANKING_TOP"])
+        # Generic Top-N / Bottom-N Ranking (e.g., "Sabse zyada bandwidth kis department ne consume ki?", "Lowest profit")
+        has_top_ranking = any(
+            re.search(rf"\b{re.escape(k)}\b", q_norm) for k in cls.KEYWORD_CONCEPTS["RANKING_TOP"]
+        )
+        has_bottom_ranking = any(
+            re.search(rf"\b{re.escape(k)}\b", q_norm) for k in cls.KEYWORD_CONCEPTS["RANKING_BOTTOM"]
+        )
+        has_ranking = has_top_ranking or has_bottom_ranking
+        sort_ascending = bool(has_bottom_ranking and not has_top_ranking)
         if has_ranking and matched_dim and not ("debit" in q_norm and "credit" in q_norm):
             mapped_cols["dimension"] = matched_dim
-            top_limit = 5 if "top 5" in q_norm else (10 if "top 10" in q_norm else (1 if "sabse zyada" in q_norm or "most" in q_norm or "highest" in q_norm else 5))
-            if matched_meas:
-                mapped_cols["measure"] = matched_meas
-                agg_alias = "total_value"
-                aggs = [{"function": "sum", "column": matched_meas, "alias": agg_alias}]
+            limit_match = re.search(r"\b(?:top|bottom)\s+(\d+)\b", q_norm)
+            singular_terms = (
+                "sabse zyada", "most", "highest", "maximum", "max", "sabse bada",
+                "sabse kam", "least", "lowest", "minimum", "min", "chhota",
+            )
+            if limit_match:
+                top_limit = int(limit_match.group(1))
+            elif any(re.search(rf"\b{re.escape(t)}\b", q_norm) for t in singular_terms):
+                top_limit = 1
             else:
-                agg_alias = "count"
-                aggs = [{"function": "count", "column": "*", "alias": agg_alias}]
+                top_limit = 5
+            agg_alias, aggs, target_concept, req_concepts = _build_agg(matched_meas)
             return SemanticResolution(
                 intent="top_n",
-                target_concept=matched_dim,
+                target_concept=target_concept,
                 result_shape="ranked_rows",
-                requested_concepts=[matched_dim] + ([matched_meas] if matched_meas else []),
+                requested_concepts=req_concepts,
                 record_family=selected_family_name,
                 limit=top_limit,
                 mapped_columns=mapped_cols,
                 suggested_aggregates=aggs,
                 suggested_filters=filters,
-                suggested_sort={"column": agg_alias, "ascending": False, "limit": top_limit},
+                suggested_sort={"column": agg_alias, "ascending": sort_ascending, "limit": top_limit},
                 suggested_group_by=[matched_dim],
                 notes=[f"Ranked '{matched_dim}' by '{agg_alias}'"],
             )
 
-        # Generic scalar SUM when measure is matched with total/overall/sum (no group_by)
-        if matched_meas and not matched_dim and any(k in q_norm for k in ("total", "overall", "sum")) and not any(
-            k in q_norm for k in ("count", "rows", "records", "events", "entries", "debit", "credit")
+        # Generic scalar SUM/AVG when measure is matched with total/overall/sum/avg (no group_by)
+        if (
+            matched_meas
+            and not matched_dim
+            and not is_explicit_count
+            and not ("debit" in q_norm and "credit" in q_norm)
+            and (is_avg_query or any(re.search(rf"\b{w}\b", q_norm) for w in ("total", "overall", "sum")))
         ):
-            mapped_cols["measure"] = matched_meas
+            agg_alias, aggs, target_concept, req_concepts = _build_agg(matched_meas)
             return SemanticResolution(
                 intent="scalar_count",
-                target_concept=matched_meas,
+                target_concept=target_concept,
                 result_shape="scalar_metric",
-                requested_concepts=[matched_meas],
+                requested_concepts=req_concepts,
                 record_family=selected_family_name,
                 mapped_columns=mapped_cols,
-                suggested_aggregates=[{"function": "sum", "column": matched_meas, "alias": f"total_{re.sub(r'[^a-z0-9]+', '_', matched_meas.lower()).strip('_')}"}],
+                suggested_aggregates=aggs,
                 suggested_filters=filters,
-                notes=[f"Scalar sum of '{matched_meas}'"],
+                notes=[f"Scalar aggregate of '{matched_meas}'"],
             )
 
         # -------------------------------------------------------------
@@ -538,11 +646,16 @@ class SemanticMapper:
         # -------------------------------------------------------------
         # 11. Ranking / Sorting
         # -------------------------------------------------------------
-        if not sort and any(k in q_lower for k in cls.KEYWORD_CONCEPTS["RANKING_TOP"]):
+        has_top_11 = any(re.search(rf"\b{re.escape(k)}\b", q_norm) for k in cls.KEYWORD_CONCEPTS["RANKING_TOP"])
+        has_bottom_11 = any(re.search(rf"\b{re.escape(k)}\b", q_norm) for k in cls.KEYWORD_CONCEPTS["RANKING_BOTTOM"])
+        if not sort and (has_top_11 or has_bottom_11):
             sort_target = aggs[-1]["alias"] if aggs else (mapped_cols.get("data_size") or mapped_cols.get("profit") or mapped_cols.get("revenue"))
             if sort_target:
-                sort = {"column": sort_target, "ascending": False, "limit": 5 if "top 5" in q_lower else (10 if "top 10" in q_lower else 1)}
-                notes.append(f"Sort descending by {sort_target}")
+                asc_11 = bool(has_bottom_11 and not has_top_11)
+                limit_match_11 = re.search(r"\b(?:top|bottom)\s+(\d+)\b", q_norm)
+                limit_11 = int(limit_match_11.group(1)) if limit_match_11 else (5 if "top 5" in q_lower else (10 if "top 10" in q_lower else 1))
+                sort = {"column": sort_target, "ascending": asc_11, "limit": limit_11}
+                notes.append(f"Sort {'ascending' if asc_11 else 'descending'} by {sort_target}")
 
         # Intent detection
         if "policy" in q_lower or any(k in q_lower for k in cls.KEYWORD_CONCEPTS["POLICY_COMPLIANCE"]):

@@ -124,11 +124,16 @@ function AuiUserMessage({ files }: { files: StoredFile[] }) {
 }
 
 function AuiAssistantMessage({ knownFiles }: { knownFiles: KnownFile[] }) {
+  const isOptimistic = useAuiState((s) => Boolean(s.message.metadata?.isOptimistic));
   const raw = useAuiState((s) => s.message.metadata?.custom?.raw as ChatMessage | undefined);
   const textPart = useAuiState((s) => {
     const first = s.message.content.find((p) => p.type === "text");
     return first && "text" in first ? first.text : "";
   });
+
+  if (isOptimistic || (!raw && !textPart.trim())) {
+    return null;
+  }
 
   return (
     <MessagePrimitive.Root
@@ -250,6 +255,7 @@ export default function AssistantThread({
               {pendingInterrupt && onResumeInterrupt ? (
                 <div className="w-full">
                   <InterruptCard
+                    key={pendingInterrupt.interrupt_id}
                     interrupt={pendingInterrupt}
                     submitting={interruptSubmitting}
                     resolvedLabel={resolvedInterruptLabel}
@@ -418,9 +424,10 @@ export default function AssistantThread({
                     {busy && onCancelInterrupt ? (
                       <button
                         type="button"
+                        disabled={interruptSubmitting}
                         onClick={() => onCancelInterrupt()}
                         aria-label="Stop"
-                        className="grid size-7 place-items-center rounded-lg bg-white text-slate-950 transition-opacity hover:bg-slate-200"
+                        className="grid size-7 place-items-center rounded-lg bg-white text-slate-950 transition-opacity hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <SquareIcon className="size-3 fill-current" />
                       </button>

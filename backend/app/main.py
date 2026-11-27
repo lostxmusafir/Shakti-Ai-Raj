@@ -10,6 +10,7 @@ from app.db.mongodb import MongoDBManager
 from app.auth.service import auth_service
 from app.policies.service import policy_service
 from app.api.v1.api import api_router
+from app.ai.orchestration.orchestrator import orchestrator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,10 +26,15 @@ async def lifespan(app: FastAPI):
     await auth_service.ensure_seed_admin()
     await policy_service.ensure_seed_policies()
     logger.info("Universal AI Analyst backend initialization complete.")
-    yield
-    # Shutdown
-    logger.info("Shutting down Universal AI Analyst backend service...")
-    await MongoDBManager.disconnect()
+    try:
+        yield
+    finally:
+        # Shutdown
+        logger.info("Shutting down Universal AI Analyst backend service...")
+        try:
+            await orchestrator.workflow.close()
+        finally:
+            await MongoDBManager.disconnect()
 
 app = FastAPI(
     title="Universal AI Analyst API",

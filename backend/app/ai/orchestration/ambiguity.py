@@ -116,25 +116,59 @@ class AmbiguityDetector:
                         "context": {"original_question": q, "concept": "record_family"},
                     }
 
-        # 2. Ambiguous metric (e.g. "Amount kitna hai?" with Transaction Amount, Claim Amount, Invoice Amount)
-        if "metric" not in resolved_concepts and re.search(r"\bamount\b", q_lower):
-            amount_cols = [
-                c["name"]
-                for c in scoped_cols
-                if c.get("inferred_type") in ("integer", "float")
-                and any(kw in c["name"].lower() for kw in ("amount", "amt", "price", "value", "cost", "fare", "fee"))
+        # 2. Ask for a measure when the question names no measure or its metric has no direct column.
+        if "metric" not in resolved_concepts:
+            numeric_cols = [
+                c["name"] for c in scoped_cols
+                if c.get("role") in ("measure", "sparse_measure")
+                or c.get("inferred_type") in ("integer", "float")
             ]
-            # Only interrupt if >=2 amount columns exist AND user didn't name a specific one
-            explicit_match = any(col.lower() in q_lower for col in amount_cols)
-            if len(amount_cols) >= 2 and not explicit_match:
+            amount_cols = [
+                c for c in numeric_cols
+                if any(kw in c.lower() for kw in ("amount", "amt", "price", "value", "cost", "fare", "fee"))
+            ]
+            explicit_measure = any(
+                col.lower() in q_lower or col.lower().replace("_", " ") in q_lower
+                for col in numeric_cols
+            )
+            has_size_unit = any(
+                re.search(rf"\b{unit}\b", q_lower)
+                for unit in ("kb", "mb", "gb", "byte", "bytes")
+            )
+            unit_measure_cols = [
+                col for col in numeric_cols
+                if any(token in col.lower() for token in ("size", "data", "bytes", "volume", "bandwidth", "transfer"))
+                or re.search(r"\b(?:kb|mb|gb|bytes?)\b", col.lower())
+            ]
+            if has_size_unit and len(unit_measure_cols) == 1:
+                explicit_measure = True
+            count_request = any(
+                term in q_lower
+                for term in ("count", "how many", "kitne", "kitni", "records", "rows", "entries", "transactions", "incidents")
+            )
+            financial_request = any(
+                term in q_lower
+                for term in ("amount", "revenue", "profit", "sales", "income", "cost", "salary", "kamai", "kharch")
+            )
+            vague_total = not count_request and not explicit_measure and any(
+                term in q_lower for term in ("total", "kitna", "how much", "kya hai")
+            )
+            unmatched_financial = financial_request and not explicit_measure
+            options = amount_cols if "amount" in q_lower and len(amount_cols) > 1 else numeric_cols
+            ask_for_metric = bool(options) and (
+                (unmatched_financial and not ("amount" in q_lower and len(amount_cols) < 2))
+                or (vague_total and len(numeric_cols) > 1)
+                or ("amount" in q_lower and len(amount_cols) > 1 and not explicit_measure)
+            )
+            if ask_for_metric:
                 return {
                     "interrupt_id": f"intr_{uuid.uuid4().hex[:12]}",
                     "type": "choice",
                     "reason": "AMBIGUOUS_METRIC",
-                    "question": "Which amount column do you want to analyze?",
+                    "question": "Which numeric measure should I use?",
                     "options": [
                         {"id": cls._slug(col), "label": col, "value": col}
-                        for col in amount_cols
+                        for col in options
                     ],
                     "context": {"original_question": q, "concept": "metric"},
                 }

@@ -23,6 +23,69 @@ def test_semantic_mapper_finance():
     assert res.mapped_columns["profit"] == "Profit"
     assert any(a["column"] == "Profit" for a in res.suggested_aggregates)
     assert res.suggested_sort is not None
+    assert res.suggested_sort["column"] in {a["alias"] for a in res.suggested_aggregates}
+
+
+def test_semantic_mapper_finance_column_order_invariance():
+    cols = ["Profit", "Country", "Product", "Units Sold", "Sales", "Date"]
+    res = SemanticMapper.resolve_semantics("Which country generated the highest profit?", cols)
+
+    assert res.suggested_group_by == ["Country"]
+    assert res.mapped_columns["dimension"] == "Country"
+    assert res.mapped_columns["measure"] == "Profit"
+    assert res.mapped_columns["profit"] == "Profit"
+    assert res.suggested_aggregates == [{"function": "sum", "column": "Profit", "alias": "total_profit"}]
+    assert res.suggested_sort == {"column": "total_profit", "ascending": False, "limit": 1}
+
+
+def test_semantic_mapper_ignores_temporal_column_as_dimension_without_profile():
+    cols = ["Date", "Country", "Profit"]
+    res = SemanticMapper.resolve_semantics("Which country generated the highest profit to date?", cols)
+
+    assert res.suggested_group_by == ["Country"]
+    assert res.mapped_columns["dimension"] == "Country"
+
+
+def test_semantic_mapper_ranking_bottom():
+    cols = ["Country", "Product", "Units Sold", "Sales", "Profit", "Date"]
+    res1 = SemanticMapper.resolve_semantics("Which product generated the lowest profit?", cols)
+    assert res1.intent == "top_n"
+    assert res1.suggested_group_by == ["Product"]
+    assert res1.mapped_columns["profit"] == "Profit"
+    assert res1.suggested_sort is not None
+    assert res1.suggested_sort["ascending"] is True
+    assert res1.suggested_sort["limit"] == 1
+    assert res1.suggested_sort["column"] in {a["alias"] for a in res1.suggested_aggregates}
+
+    res2 = SemanticMapper.resolve_semantics("Sabse kam sales kis country me hai?", cols)
+    assert res2.suggested_group_by == ["Country"]
+    assert res2.mapped_columns["sales"] == "Sales"
+    assert res2.suggested_sort is not None
+    assert res2.suggested_sort["ascending"] is True
+    assert res2.suggested_sort["limit"] == 1
+
+
+def test_semantic_mapper_avg_vs_sum_and_non_monetary_measure():
+    cols = ["Country", "Product", "Units Sold", "Sales", "Profit", "Date"]
+    res_avg = SemanticMapper.resolve_semantics("Which country generated the highest average profit?", cols)
+    assert res_avg.suggested_aggregates[0]["function"] == "avg"
+    assert res_avg.suggested_aggregates[0]["column"] == "Profit"
+    assert res_avg.suggested_sort is not None
+    assert res_avg.suggested_sort["column"] == res_avg.suggested_aggregates[0]["alias"]
+
+    res_wise = SemanticMapper.resolve_semantics("Country wise average sales", cols)
+    assert res_wise.intent == "grouped_distribution"
+    assert res_wise.suggested_group_by == ["Country"]
+    assert res_wise.mapped_columns["sales"] == "Sales"
+    assert res_wise.suggested_aggregates[0]["function"] == "avg"
+    assert res_wise.suggested_aggregates[0]["column"] == "Sales"
+
+    reordered_cols = ["Units Sold", "Country", "Product", "Sales", "Profit", "Date"]
+    res_units = SemanticMapper.resolve_semantics("Which country had the highest units sold?", reordered_cols)
+    assert res_units.suggested_group_by == ["Country"]
+    assert res_units.mapped_columns["units sold"] == "Units Sold"
+    assert res_units.suggested_aggregates[0]["function"] == "sum"
+    assert res_units.suggested_aggregates[0]["column"] == "Units Sold"
 
 def test_semantic_mapper_retail_hindi():
     cols = ["InvoiceNo", "StockCode", "Description", "Quantity", "UnitPrice", "CustomerID", "Country"]

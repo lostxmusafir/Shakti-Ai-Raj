@@ -139,7 +139,7 @@ async def test_01_total_records_count(shared_fixtures):
     orch = shared_fixtures["orchestrator"]
 
     # Dual Independent calculation: DuckDB + Polars
-    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}')").fetchone()[0]
+    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}')").fetchall()[0][0]
     ind_polars = pl.read_csv(p).height
     assert ind_duck == ind_polars == 5000
 
@@ -160,7 +160,7 @@ async def test_02_blocked_incidents_count(shared_fixtures):
     p = shared_fixtures["inc_path"]
     orch = shared_fixtures["orchestrator"]
 
-    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Action='Blocked'").fetchone()[0]
+    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Action='Blocked'").fetchall()[0][0]
     ind_pandas = len(pd.read_csv(p).query("Action == 'Blocked'"))
     assert ind_duck == ind_pandas == 5
 
@@ -181,7 +181,7 @@ async def test_03_permitted_incidents_count(shared_fixtures):
     p = shared_fixtures["inc_path"]
     orch = shared_fixtures["orchestrator"]
 
-    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Action='Permitted'").fetchone()[0]
+    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Action='Permitted'").fetchall()[0][0]
     ind_polars = pl.read_csv(p).filter(pl.col("Action") == "Permitted").height
     assert ind_duck == ind_polars == 4995
 
@@ -202,7 +202,7 @@ async def test_04_unique_employees_count(shared_fixtures):
     p = shared_fixtures["inc_path"]
     orch = shared_fixtures["orchestrator"]
 
-    ind_duck = duckdb.sql(f"SELECT COUNT(DISTINCT Source) FROM read_csv_auto('{p.replace(chr(92), '/')}')").fetchone()[0]
+    ind_duck = duckdb.sql(f"SELECT COUNT(DISTINCT Source) FROM read_csv_auto('{p.replace(chr(92), '/')}')").fetchall()[0][0]
     ind_pandas = pd.read_csv(p)["Source"].nunique()
     assert ind_duck == ind_pandas == 118
 
@@ -223,7 +223,7 @@ async def test_05_total_customers_count(shared_fixtures):
     p = shared_fixtures["tx_path"]
     orch = shared_fixtures["orchestrator"]
 
-    ind_duck = duckdb.sql(f"SELECT COUNT(DISTINCT CustomerID) FROM read_csv_auto('{p.replace(chr(92), '/')}')").fetchone()[0]
+    ind_duck = duckdb.sql(f"SELECT COUNT(DISTINCT CustomerID) FROM read_csv_auto('{p.replace(chr(92), '/')}')").fetchall()[0][0]
     ind_polars = pl.read_csv(p)["CustomerID"].n_unique()
     assert ind_duck == ind_polars == 6
 
@@ -248,7 +248,7 @@ async def test_06_debit_entries_count(shared_fixtures):
     p = shared_fixtures["tx_path"]
     orch = shared_fixtures["orchestrator"]
 
-    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Debit IS NOT NULL AND Debit <> 0").fetchone()[0]
+    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Debit IS NOT NULL AND Debit <> 0").fetchall()[0][0]
     df = pd.read_csv(p)
     ind_pandas = len(df[df["Debit"].notna() & (df["Debit"] != 0)])
     assert ind_duck == ind_pandas == 4
@@ -270,7 +270,7 @@ async def test_07_credit_entries_count(shared_fixtures):
     p = shared_fixtures["tx_path"]
     orch = shared_fixtures["orchestrator"]
 
-    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Credit IS NOT NULL AND Credit <> 0").fetchone()[0]
+    ind_duck = duckdb.sql(f"SELECT COUNT(*) FROM read_csv_auto('{p.replace(chr(92), '/')}') WHERE Credit IS NOT NULL AND Credit <> 0").fetchall()[0][0]
     df = pd.read_csv(p)
     ind_pandas = len(df[df["Credit"].notna() & (df["Credit"] != 0)])
     assert ind_duck == ind_pandas == 3
@@ -296,7 +296,7 @@ async def test_08_debit_credit_entries_separately(shared_fixtures):
         f"SELECT COUNT(*) FILTER (WHERE Debit IS NOT NULL AND Debit <> 0), "
         f"COUNT(*) FILTER (WHERE Credit IS NOT NULL AND Credit <> 0) "
         f"FROM read_csv_auto('{p.replace(chr(92), '/')}')"
-    ).fetchone()
+    ).fetchall()[0]
     assert ind == (4, 3)
 
     await _run_and_assert(

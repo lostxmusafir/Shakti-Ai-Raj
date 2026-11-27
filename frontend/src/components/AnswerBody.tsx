@@ -62,14 +62,14 @@ export default function AnswerBody({
     return files.length === 1 ? [{ name: files[0].original_name, rows: files[0].row_count ?? null }] : [];
   }, [provenance, verification, files]);
 
-  const narrative = parsed.isRawSummary || !parsed.narrative ? describeResult(view, result?.row_count) : parsed.narrative;
-  const failed = info.state === "failed";
-
   // While tokens are still arriving there is no result or verification yet;
   // showing those affordances would imply an answer that does not exist.
   if (streaming) {
-    return <MessageMarkdown content={narrative} streaming className={className} />;
+    return <MessageMarkdown content={parsed.narrative} streaming className={className} />;
   }
+
+  const narrative = parsed.isRawSummary || !parsed.narrative ? describeResult(view, result?.row_count) : parsed.narrative;
+  const failed = info.state === "failed";
 
   const exportCsv = () => {
     if (view.kind === "table") {

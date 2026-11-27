@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import weakref
 from typing import List, Dict, Any, AsyncGenerator, TypeVar, Type, Optional
 import httpx
 from pydantic import BaseModel
@@ -43,16 +44,24 @@ class MistralAIProvider:
         self.timeout = timeout
         
         self._key_index = 0
-        self._lock = asyncio.Lock()
+        self._locks: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Lock]" = weakref.WeakKeyDictionary()
         self._stats: Dict[str, Dict[str, int]] = {
             k: {"requests": 0, "errors": 0, "rate_limits": 0, "success": 0} for k in self.api_keys
         }
+
+    def _get_lock(self) -> asyncio.Lock:
+        loop = asyncio.get_running_loop()
+        lock = self._locks.get(loop)
+        if lock is None:
+            lock = asyncio.Lock()
+            self._locks[loop] = lock
+        return lock
 
     async def get_next_key(self) -> str:
         """Select the next key in round-robin fashion."""
         if not self.api_keys:
             raise ValueError("No Mistral API keys configured.")
-        async with self._lock:
+        async with self._get_lock():
             key = self.api_keys[self._key_index % len(self.api_keys)]
             self._key_index += 1
             return key

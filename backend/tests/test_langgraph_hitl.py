@@ -330,5 +330,12 @@ def test_mixed_data_cases_A_B_C_D(multi_amount_csv, mixed_records_csv):
     assert intr_c is None
 
     # Test D: Ambiguous date field -> interrupts
-    intr_d = AmbiguityDetector.detect("Last month ka revenue batao", {"f_m": f_multi})
+    intr_d = AmbiguityDetector.detect("Last month ka Transaction Amount kitna hai?", {"f_m": f_multi})
     assert intr_d is not None and intr_d["reason"] == "AMBIGUOUS_DATE"
+
+
+def test_vague_total_asks_which_measure(mixed_records_csv):
+    f_mixed = _make_stored_file("f_vague", mixed_records_csv)
+    intr = AmbiguityDetector.detect("Total kitna hai?", {"f_vague": f_mixed})
+    assert intr is not None and intr["reason"] == "AMBIGUOUS_METRIC"
+    assert len(intr["options"]) > 1
