@@ -43,10 +43,10 @@ class SemanticMapper:
         ],
         "MONETARY_AMOUNT": [
             "revenue", "profit", "sales", "gross sales", "amount", "cost", "salary", "payroll", "gross pay",
-            "kharch", "kamai", "daam"
+            "kharch", "kamai", "munafa", "daam"
         ],
         "RANKING_TOP": [
-            "sabse zyada", "most", "highest", "top", "bada", "maximum", "max", "sabse bada"
+            "sabse zyada", "sabse adhik", "most", "highest", "top", "bada", "maximum", "max", "sabse bada"
         ],
         "RANKING_BOTTOM": [
             "sabse kam", "least", "lowest", "bottom", "minimum", "min", "chhota"
@@ -118,6 +118,12 @@ class SemanticMapper:
             r"\bmahino\b": "month",
             r"\bmonthly\b": "month",
             r"\bannual\b": "year",
+            r"\bmunafa\b": "profit",
+            r"\bdesh\b": "country",
+            r"\badhik\b": "zyada",
+            r"\bsrot\b": "source",
+            r"\bkul\b": "total",
+            r"\bvibhag\b": "department",
         }
         for pat, repl in typos.items():
             q = re.sub(pat, repl, q)

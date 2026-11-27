@@ -41,6 +41,13 @@ class AnalysisOrchestrator:
         self.workflow = LangGraphAnalystWorkflow(self)
 
     @staticmethod
+    def _is_count_like_question(question: str) -> bool:
+        q = SemanticMapper.normalize_question(question)
+        if any(term in q for term in ("kitne", "kitni", "count", "how many", "number of")):
+            return True
+        return "missing" in q and not any(term in q for term in ("show", "list", "details", "which", "kaun"))
+
+    @staticmethod
     def _entry_count_plan(question: str, file_ids: List[str], files_map: Dict[str, StoredFile]) -> Optional[AnalysisPlan]:
         q = question.lower()
         if not ("debit" in q and "credit" in q and
@@ -373,7 +380,7 @@ class AnalysisOrchestrator:
         first_profile = first_file.schema_profile or {}
         available_cols = [c["name"] for c in first_profile.get("columns", [])]
         cols_lower = [c.lower() for c in available_cols]
-        q_lower = question.lower().strip()
+        q_lower = SemanticMapper.normalize_question(question)
         entry_plan = self._entry_count_plan(question, file_ids, files_map)
         if entry_plan:
             return entry_plan
@@ -385,7 +392,7 @@ class AnalysisOrchestrator:
             any(term in q_lower for term in ("maximum", "max", "highest", "largest", "biggest", "sabse bada"))
             and any(term in q_lower for term in ("transaction", "transfer", "data size"))
             and " action " not in f" {q_lower} "
-            and not any(term in q_lower for term in ("external", "bahar", "outside", "personal", "webmail"))
+            and not ("external" in q_lower and any(term in q_lower for term in ("id", "sender", "source", "file", "size", "kaunsa", "which")))
         ):
             transfer_col = next(
                 (
@@ -725,7 +732,7 @@ class AnalysisOrchestrator:
             # Anti-join detection (e.g., employees missing in payroll)
             if any(w in q_lower for w in ["missing", "not in", "nahi", "reconcile", "anti-join", "anti join"]) and common_keys:
                 join_col = common_keys[0]
-                if any(term in q_lower for term in ("kitne", "kitni", "count", "how many")):
+                if self._is_count_like_question(q_lower):
                     return AnalysisPlan(
                         intent="anti_join_count",
                         result_shape="scalar_metric",
@@ -944,7 +951,7 @@ class AnalysisOrchestrator:
             common_keys = [c for c in available_cols if c in second_cols]
             if common_keys:
                 join_col = common_keys[0]
-                if any(term in q_lower for term in ("missing", "not in", "not present", "absent")) and any(term in q_lower for term in ("kitne", "kitni", "count", "how many")):
+                if any(term in q_lower for term in ("missing", "not in", "not present", "absent")) and self._is_count_like_question(q_lower):
                     return AnalysisPlan(
                         intent="anti_join_count",
                         result_shape="scalar_metric",
