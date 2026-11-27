@@ -1,48 +1,46 @@
 {
-  "baseline": "b88effef00aa8109b10219236c038c8fabf6acc9",
+  "current_main_commit": "f2a8fd32d99cf77d99dffb96cea47d2a73ea0f81",
   "target_code_commits": [
-    "08af038"
+    "c6ceba6",
+    "3eb032b"
   ],
   "files_added": [
-    ".github/workflows/verify.yml",
-    "backend/app/core/rate_limit.py",
-    "backend/tests/test_production_hardening.py"
+    "backend/app/ai/providers/ollama_provider.py",
+    "backend/tests/test_local_persistence.py",
+    "backend/tests/test_ollama_provider.py",
+    "backend/tests/test_planner_completion_regressions.py"
   ],
   "files_modified": [
-    ".env.example",
+    ".gitignore",
+    "backend/app/ai/learning/semantic_mapping.py",
     "backend/app/ai/orchestration/orchestrator.py",
-    "backend/app/api/v1/routes/analysis.py",
-    "backend/app/api/v1/routes/auth.py",
-    "backend/app/api/v1/routes/chats.py",
-    "backend/app/api/v1/routes/files.py",
+    "backend/app/ai/providers/__init__.py",
+    "backend/app/ai/providers/gemini_provider.py",
+    "backend/app/api/v1/routes/health.py",
     "backend/app/core/config.py",
-    "backend/app/core/exceptions.py",
-    "backend/app/db/mongodb.py",
-    "backend/app/main.py",
-    "backend/app/schemas/analysis.py",
-    "backend/tests/conftest.py"
+    "backend/app/db/mongodb.py"
   ],
   "files_deleted_from_main": 0,
   "production_behavior_affected": [
-    "production startup rejects mock database and default secrets",
-    "production MongoDB connection failures no longer fall back to mock storage",
-    "login, upload, and analysis endpoints support configurable rate limits",
-    "failed background analyses expose safe status and request references",
-    "GitHub Actions runs deterministic backend and frontend verification gates"
+    "Generic Hindi/Hinglish ranking, monetary, and anti-join count planning",
+    "Optional durable JSON-backed local mock database when explicitly enabled",
+    "Optional local Ollama provider when explicitly selected"
   ],
   "existing_tests_impacted": [
-    "backend fixture resolution is stable from repository root or backend directory",
-    "new production configuration, rate-limit, and failure-visibility tests"
+    "Full backend suite",
+    "Planner regression suite",
+    "Ollama provider tests",
+    "Local persistence tests"
   ],
   "experimental_files_excluded": [
     "data/benchmark/golden/golden_examples_300.json",
-    "backend/eval/phase2/**",
-    "data/benchmark/reports/**",
-    "data/langgraph_checkpoints.sqlite*",
-    ".playwright-mcp/**"
+    "data/benchmark/reports/*",
+    "backend/eval/phase2/*",
+    "test-raj benchmark artifacts"
   ],
   "known_risks": [
-    "Production must provide MongoDB, explicit CORS origins, strong JWT/admin secrets, and rate limiting enabled.",
-    "Object-storage migration and provider key rotation remain intentionally out of scope."
+    "Ollama is optional and requires a locally installed model; no model download is performed",
+    "The local JSON adapter is disabled by default and is not a MongoDB replacement for production",
+    "The full suite reports existing aiosqlite event-loop cleanup warnings in the Excel tests"
   ]
 }
