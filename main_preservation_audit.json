@@ -1,22 +1,38 @@
 {
-  "baseline": "ac6a3618fd4ed081d195717a376caea19e514fe6",
+  "baseline": "b88effef00aa8109b10219236c038c8fabf6acc9",
   "target_code_commits": [
-    "cd3cdec",
-    "9aee06e",
-    "e130407",
-    "2e7056b",
-    "d033e16",
-    "f0d4e9d",
-    "1a97bf1",
-    "7114223"
+    "08af038"
+  ],
+  "files_added": [
+    ".github/workflows/verify.yml",
+    "backend/app/core/rate_limit.py",
+    "backend/tests/test_production_hardening.py"
+  ],
+  "files_modified": [
+    ".env.example",
+    "backend/app/ai/orchestration/orchestrator.py",
+    "backend/app/api/v1/routes/analysis.py",
+    "backend/app/api/v1/routes/auth.py",
+    "backend/app/api/v1/routes/chats.py",
+    "backend/app/api/v1/routes/files.py",
+    "backend/app/core/config.py",
+    "backend/app/core/exceptions.py",
+    "backend/app/db/mongodb.py",
+    "backend/app/main.py",
+    "backend/app/schemas/analysis.py",
+    "backend/tests/conftest.py"
   ],
   "files_deleted_from_main": 0,
   "production_behavior_affected": [
-    "generic semantic planning and multilingual query mapping",
-    "persistent human-in-the-loop analysis interrupts",
-    "free-provider tier routing",
-    "verified temporal filtering",
-    "chat and dataset profiling UI"
+    "production startup rejects mock database and default secrets",
+    "production MongoDB connection failures no longer fall back to mock storage",
+    "login, upload, and analysis endpoints support configurable rate limits",
+    "failed background analyses expose safe status and request references",
+    "GitHub Actions runs deterministic backend and frontend verification gates"
+  ],
+  "existing_tests_impacted": [
+    "backend fixture resolution is stable from repository root or backend directory",
+    "new production configuration, rate-limit, and failure-visibility tests"
   ],
   "experimental_files_excluded": [
     "data/benchmark/golden/golden_examples_300.json",
@@ -26,7 +42,7 @@
     ".playwright-mcp/**"
   ],
   "known_risks": [
-    "Provider key rotation was intentionally not changed.",
-    "The candidate contains a large additive HITL/UI delta and requires full gates before main push."
+    "Production must provide MongoDB, explicit CORS origins, strong JWT/admin secrets, and rate limiting enabled.",
+    "Object-storage migration and provider key rotation remain intentionally out of scope."
   ]
 }
