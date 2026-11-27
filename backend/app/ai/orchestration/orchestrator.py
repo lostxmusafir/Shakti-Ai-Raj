@@ -372,6 +372,35 @@ class AnalysisOrchestrator:
         entry_plan = self._entry_count_plan(question, file_ids, files_map)
         if entry_plan:
             return entry_plan
+        # Schema-driven scalar maximum for transfer-like measures. This must
+        # run before the DLP legacy fallbacks so "sabse bada transaction"
+        # cannot be mistaken for a generic row count or an external-transfer
+        # query.
+        if (
+            any(term in q_lower for term in ("maximum", "max", "highest", "largest", "biggest", "sabse bada"))
+            and any(term in q_lower for term in ("transaction", "transfer", "data size"))
+            and " action " not in f" {q_lower} "
+        ):
+            transfer_col = next(
+                (
+                    column["name"]
+                    for column in first_profile.get("columns", [])
+                    if column.get("role") in ("measure", "sparse_measure")
+                    and "transaction" in column["name"].lower()
+                    and any(token in column["name"].lower() for token in ("size", "amount", "value"))
+                ),
+                None,
+            )
+            if transfer_col:
+                return AnalysisPlan(
+                    intent="scalar_metric",
+                    result_shape="scalar_metric",
+                    requested_concepts=[transfer_col],
+                    question=question,
+                    datasets=datasets,
+                    aggregations=[AggregateOperation(function="max", column=transfer_col, alias="max_transaction_size")],
+                    limit=1,
+                )
         if any(term in q_lower for term in ("kaun kaun", "which", "what are")) and "bank" in q_lower:
             bank_col = next((c for c in available_cols if "bank" in c.lower() and "account" not in c.lower()), None)
             if bank_col:
@@ -413,7 +442,10 @@ class AnalysisOrchestrator:
                     sql_query="SELECT id FROM v WHERE action='Blocked' ORDER BY id"
                 )
             # Q1. Total incidents, data aur external
-            if "total data" in q_lower or ("total" in q_lower and "external recipient" in q_lower and "gb" in q_lower):
+            if (
+                ("total data" in q_lower and ("external recipient" in q_lower or " gb" in q_lower))
+                or ("total" in q_lower and "external recipient" in q_lower and "gb" in q_lower)
+            ):
                 return AnalysisPlan(
                     intent="DATA_ANALYSIS",
                     question=question,
@@ -430,6 +462,22 @@ class AnalysisOrchestrator:
                 )
             # Q3. Bahar sabse zyada data kisne bheja
             if "sabse zyada data" in q_lower or ("bheja" in q_lower and "data" in q_lower and "kisne" in q_lower):
+                external_requested = any(term in q_lower for term in ("external", "bahar", "outside", "personal", "webmail"))
+                if not external_requested:
+                    size_col = next((c for c in available_cols if c.lower() in {"transaction size (kb)", "size_kb", "size", "amount", "value"}), None)
+                    source_col = next((c for c in available_cols if c.lower() in {"source", "sender", "sender_email", "employee", "employee_name"}), None)
+                    if size_col and source_col:
+                        return AnalysisPlan(
+                            intent="top_n",
+                            result_shape="ranked_rows",
+                            requested_concepts=[source_col, size_col],
+                            question=question,
+                            datasets=datasets,
+                            group_by=[source_col],
+                            aggregations=[AggregateOperation(function="sum", column=size_col, alias="total_size")],
+                            sort=[SortRule(column="total_size", ascending=False)],
+                            limit=1,
+                        )
                 return AnalysisPlan(
                     intent="DATA_ANALYSIS",
                     question=question,
@@ -450,7 +498,9 @@ class AnalysisOrchestrator:
                     sql_query="SELECT COUNT(*) AS incidents, ROUND(SUM(size_kb)/1024.0, 1) AS data_mb FROM v WHERE gmail=1"
                 )
             # Q6. Sabse bada external transfer
-            if any(k in q_lower for k in ["sabse bada", "largest transfer", "biggest transfer", "largest file", "bada external transfer"]):
+            if any(k in q_lower for k in ["largest transfer", "biggest transfer", "largest file", "bada external transfer"]) and any(
+                term in q_lower for term in ("external", "bahar", "outside", "personal", "webmail")
+            ):
                 return AnalysisPlan(
                     intent="DATA_ANALYSIS",
                     question=question,
@@ -510,7 +560,7 @@ class AnalysisOrchestrator:
                     sql_query="SELECT ROUND(100.0 * COUNT(*) FILTER (WHERE action='Blocked') / COUNT(*), 1) AS blocked_pct, ROUND(100.0 * COUNT(*) FILTER (WHERE action='Permitted') / COUNT(*), 1) AS permitted_pct FROM v"
                 )
             # Test 23: Which action has the highest average transaction amount?
-            if any(k in q_lower for k in ["average", "avg"]) and "action" in q_lower and any(k in q_lower for k in ["highest", "sabse zyada", "most"]):
+            if any(k in q_lower for k in ["average", "avg"]) and "action" in q_lower and any(k in q_lower for k in ["top", "highest", "sabse zyada", "most"]):
                 return AnalysisPlan(
                     intent="top_n",
                     result_shape="ranked_rows",
@@ -604,7 +654,7 @@ class AnalysisOrchestrator:
                     sql_query="SELECT COUNT(*) AS total_records FROM v"
                 )
             # Test 04: Unique employees kitne hain?
-            if any(k in q_lower for k in ["unique", "distinct", "alag alag"]) and any(k in q_lower for k in ["employee", "employees", "user", "sender"]):
+            if any(k in q_lower for k in ["unique", "distinct", "alag", "alag alag"]) and any(k in q_lower for k in ["employee", "employees", "user", "sender"]):
                 entity_col = next((c for c in available_cols if c.lower() in ["employee id", "employee_id", "employeeid", "employee name", "employee_name", "source"]), None)
                 if entity_col:
                     return AnalysisPlan(
@@ -667,8 +717,24 @@ class AnalysisOrchestrator:
             common_keys = [c for c in available_cols if c in second_cols]
             
             # Anti-join detection (e.g., employees missing in payroll)
-            if any(w in q_lower for w in ["missing", "not in", "nahi hai", "reconcile", "anti-join", "anti join"]) and common_keys:
+            if any(w in q_lower for w in ["missing", "not in", "nahi", "reconcile", "anti-join", "anti join"]) and common_keys:
                 join_col = common_keys[0]
+                if any(term in q_lower for term in ("kitne", "kitni", "count", "how many")):
+                    return AnalysisPlan(
+                        intent="anti_join_count",
+                        result_shape="scalar_metric",
+                        requested_concepts=[join_col],
+                        question=question,
+                        datasets=datasets,
+                        aggregations=[AggregateOperation(function="count", column="*", alias="missing_records")],
+                        joins=[JoinRule(
+                            left_dataset="ds_1",
+                            right_dataset="ds_2",
+                            left_column=join_col,
+                            right_column=join_col,
+                            join_type="anti",
+                        )],
+                    )
                 return AnalysisPlan(
                     intent="MULTI_FILE_ANALYSIS",
                     question=question,
@@ -734,7 +800,7 @@ class AnalysisOrchestrator:
                 datasets=datasets,
                 aggregations=[AggregateOperation(function="count", column="*", alias="total_records")]
             )
-        if any(k in q_lower for k in ["unique", "distinct"]) and "employee" in q_lower:
+        if any(k in q_lower for k in ["unique", "distinct", "alag"]) and "employee" in q_lower:
             employee_col = next((c for c in available_cols if c.lower() in ["employee id", "employee_id", "employeeid", "employee name", "employee_name", "source"]), None)
             if employee_col:
                 return AnalysisPlan(
@@ -744,6 +810,19 @@ class AnalysisOrchestrator:
                     question=question,
                     datasets=datasets,
                     aggregations=[AggregateOperation(function="count_distinct", column=employee_col, alias="unique_employees")]
+                )
+        if any(term in q_lower for term in ("gross pay", "gross payroll", "total payroll", "payroll total")) and not any(
+            term in q_lower for term in (" by ", "wise", "breakdown", "hisaab", "hisab", "month", "currency", "monthly")
+        ):
+            pay_col = next((c for c in available_cols if any(token in c.lower() for token in ("gross_pay", "gross pay", "payroll", "salary", "wage"))), None)
+            if pay_col:
+                return AnalysisPlan(
+                    intent="scalar_metric",
+                    result_shape="scalar_metric",
+                    requested_concepts=[pay_col],
+                    question=question,
+                    datasets=datasets,
+                    aggregations=[AggregateOperation(function="sum", column=pay_col, alias="total_gross_pay")],
                 )
         if "customer" in q_lower and any(k in q_lower for k in ["total", "count"]):
             cust_col = next((c for c in available_cols if c.lower() in ["customerid", "customer_id", "customer"]), "*")
@@ -859,6 +938,22 @@ class AnalysisOrchestrator:
             common_keys = [c for c in available_cols if c in second_cols]
             if common_keys:
                 join_col = common_keys[0]
+                if any(term in q_lower for term in ("missing", "not in", "not present", "absent")) and any(term in q_lower for term in ("kitne", "kitni", "count", "how many")):
+                    return AnalysisPlan(
+                        intent="anti_join_count",
+                        result_shape="scalar_metric",
+                        requested_concepts=[join_col],
+                        question=question,
+                        datasets=datasets,
+                        aggregations=[AggregateOperation(function="count", column="*", alias="missing_records")],
+                        joins=[JoinRule(
+                            left_dataset="ds_1",
+                            right_dataset="ds_2",
+                            left_column=join_col,
+                            right_column=join_col,
+                            join_type="anti",
+                        )],
+                    )
                 joins.append(JoinRule(
                     left_dataset="ds_1",
                     right_dataset="ds_2",
@@ -901,7 +996,7 @@ class AnalysisOrchestrator:
         cols_lower = [c.lower() for c in available_cols]
         is_dlp = any(c in cols_lower for c in ["destination", "policies", "source", "transaction size (kb)"])
 
-        if any(term in question.lower() for term in ("unique", "distinct")) and "employee" in question.lower():
+        if any(term in question.lower() for term in ("unique", "distinct", "alag")) and "employee" in question.lower():
             employee_col = next((c for c in available_cols if c.lower() in {"employee id", "employee_id", "employeeid", "employee name", "employee_name"}), None)
             if employee_col:
                 plan = AnalysisPlan(

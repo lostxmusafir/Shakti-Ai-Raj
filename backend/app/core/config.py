@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE_BYTES: int = 50 * 1024 * 1024  # 50MB
 
     # AI Provider
-    AI_PROVIDER: str = "mistral"  # mistral, gemini, mock
+    AI_PROVIDER: str = "zhipu"  # zhipu, mistral, gemini, mock
     AI_MODEL: str = "ministral-8b-latest"
     AI_API_KEY: str = ""
 

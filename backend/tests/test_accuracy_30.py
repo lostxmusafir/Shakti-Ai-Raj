@@ -8,6 +8,7 @@ from typing import Dict, Any, List
 
 from app.ai.orchestration.orchestrator import AnalysisOrchestrator
 from app.ai.planning.schemas import AnalysisPlan, DatasetRef, AggregateOperation, Condition, SortRule
+from app.ai.providers.mock_provider import MockAIProvider
 from app.ai.verification.verifier import ResultVerifier
 from app.analysis.execution.duckdb_engine import DuckDBEngine
 from app.analysis.profiling.profiler import DataProfiler
@@ -64,12 +65,15 @@ def shared_fixtures(tmp_path_factory):
         schema_profile=inc_profile
     )
 
+    orch = AnalysisOrchestrator()
+    orch.ai_provider = MockAIProvider()
+
     return {
         "tx_file": tx_file,
         "tx_path": str(tx_path),
         "inc_file": inc_file,
         "inc_path": inc_path,
-        "orchestrator": AnalysisOrchestrator()
+        "orchestrator": orch,
     }
 
 

@@ -68,6 +68,62 @@ def test_selected_date_binding_is_added_to_plan(monkeypatch):
     assert plan.resolved_bindings[0]["period"] == "last_month"
 
 
+def test_temporal_scope_replaces_provider_expression_bounds(monkeypatch):
+    monkeypatch.setattr(
+        langgraph_workflow,
+        "resolve_temporal_window",
+        lambda question: {"period": "last_month", "start": "2026-10-01", "end": "2026-11-01"},
+    )
+    file = StoredFile(
+        id="f1", owner_user_id="u1", unit_id="unit1", original_name="transactions.csv",
+        content_type="text/csv", size_bytes=1, storage_key="transactions.csv",
+        schema_profile={"columns": [{"name": "invoice_date", "role": "timestamp", "inferred_type": "string"}]},
+    )
+    plan = AnalysisPlan(
+        question="Last month ka amount kitna hai?",
+        datasets=[DatasetRef(file_id="f1", alias="ds_1")],
+        filters=[Condition(
+            column="invoice_date",
+            operator="date_range",
+            value={"start": "date_trunc('month', current_date - interval '1 month')", "end": "2026-11-01"},
+        )],
+    )
+
+    LangGraphAnalystWorkflow._apply_temporal_scope(plan, plan.question, {"f1": file})
+
+    assert plan.filters[0].value == {"start": "2026-10-01", "end": "2026-11-01"}
+
+
+def test_temporal_scope_removes_duplicate_provider_date_ranges(monkeypatch):
+    monkeypatch.setattr(
+        langgraph_workflow,
+        "resolve_temporal_window",
+        lambda question: {"period": "last_month", "start": "2026-10-01", "end": "2026-11-01"},
+    )
+    file = StoredFile(
+        id="f1", owner_user_id="u1", unit_id="unit1", original_name="transactions.csv",
+        content_type="text/csv", size_bytes=1, storage_key="transactions.csv",
+        schema_profile={"columns": [{"name": "invoice_date", "role": "timestamp", "inferred_type": "string"}]},
+    )
+    plan = AnalysisPlan(
+        question="Last month ka amount kitna hai?",
+        datasets=[DatasetRef(file_id="f1", alias="ds_1")],
+        filters=[
+            Condition(column="invoice_date", operator="date_range", value={"start": "date('now', '-1 month')", "end": "date('now')"}),
+            Condition(column="invoice_date", operator="equals", value="2026-10-01"),
+            Condition(column="invoice_date", operator="date_range", value={"start": "2026-09-01", "end": "2026-10-01"}),
+        ],
+    )
+
+    LangGraphAnalystWorkflow._apply_temporal_scope(plan, plan.question, {"f1": file})
+
+    date_filters = [f for f in plan.filters if f.operator == "date_range"]
+    assert len(date_filters) == 1
+    assert date_filters[0].column == "invoice_date"
+    assert date_filters[0].value == {"start": "2026-10-01", "end": "2026-11-01"}
+    assert any(f.operator == "equals" for f in plan.filters)
+
+
 def test_verifier_rejects_count_result_that_omits_requested_metric_and_date(monkeypatch):
     monkeypatch.setattr(verifier_module, "resolve_temporal_window", lambda question: {
         "period": "last_month", "start": "2026-10-01", "end": "2026-11-01"
