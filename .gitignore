@@ -55,6 +55,8 @@ apps/frontend/.env.local
 # Temporary files & uploads
 data/uploads/*
 !data/uploads/.gitkeep
+data/local/*
+!data/local/.gitkeep
 data/benchmark/public/*
 !data/benchmark/public/.gitkeep
 data/benchmark/public/extracted/*

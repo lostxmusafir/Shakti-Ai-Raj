@@ -96,6 +96,9 @@ def get_ai_provider() -> AIProvider:
     elif provider_name == "zhipu":
         from app.ai.providers.zhipu_provider import ZhipuAIProvider
         return ZhipuAIProvider()
+    elif provider_name == "ollama":
+        from app.ai.providers.ollama_provider import OllamaAIProvider
+        return OllamaAIProvider()
     elif provider_name == "gemini" and settings.AI_API_KEY:
         return GeminiAIProvider()
     return MockAIProvider()
@@ -111,6 +114,9 @@ def get_ai_provider_for_tier(ai_tier: Optional[str] = None) -> AIProvider:
     elif tier == "low":
         from app.ai.providers.zhipu_provider import ZhipuAIProvider
         provider = ZhipuAIProvider()
+    elif tier == "local":
+        from app.ai.providers.ollama_provider import OllamaAIProvider
+        provider = OllamaAIProvider()
     else:
         provider = get_ai_provider()
     _TIER_PROVIDERS[tier] = provider

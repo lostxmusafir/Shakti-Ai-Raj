@@ -11,7 +11,11 @@ async def health_check():
         "status": "healthy" if mongo_ok else "degraded",
         "database": {
             "connected": mongo_ok,
-            "engine": "mongodb_atlas" if not MongoDBManager.is_mock else "mock_in_memory"
+            "engine": (
+                "mongodb_atlas"
+                if not MongoDBManager.is_mock
+                else "mock_persistent_file" if MongoDBManager.is_persistent else "mock_in_memory"
+            )
         },
         "services": {
             "analysis_engine": "duckdb_polars",
