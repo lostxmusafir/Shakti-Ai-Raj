@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     MONGODB_URI: str = "mongodb://localhost:27017"
     DATABASE_NAME: str = "universal_ai_analyst"
     USE_MOCK_DB: bool = True
+    # Keep local development durable without changing the production MongoDB path.
+    # Tests leave this disabled so each test process keeps the existing in-memory behavior.
+    PERSIST_LOCAL_DB: bool = False
+    LOCAL_DB_PATH: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../data/local/mock_db.json"))
 
     # Security
     JWT_SECRET_KEY: str = "dev-secret-key-change-in-production-universal-ai-analyst-2026"
@@ -31,7 +35,7 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE_BYTES: int = 50 * 1024 * 1024  # 50MB
 
     # AI Provider
-    AI_PROVIDER: str = "zhipu"  # zhipu, mistral, gemini, mock
+    AI_PROVIDER: str = "zhipu"  # zhipu, mistral, gemini, ollama, mock
     AI_MODEL: str = "ministral-8b-latest"
     AI_API_KEY: str = ""
 
@@ -47,6 +51,11 @@ class Settings(BaseSettings):
     ZHIPU_API_KEYS: Annotated[List[str], NoDecode] = []
     ZHIPU_BASE_URL: str = "https://open.bigmodel.cn/api/paas/v4"
     ZHIPU_DEFAULT_MODEL: str = "glm-4.5-flash"
+
+    # Optional free/local Ollama provider. It never downloads a model automatically.
+    OLLAMA_BASE_URL: str = "http://127.0.0.1:11434"
+    OLLAMA_DEFAULT_MODEL: str = "qwen2.5:3b"
+    OLLAMA_TIMEOUT_SECONDS: float = 60.0
 
     @field_validator("MISTRAL_API_KEYS", "ZHIPU_API_KEYS", mode="before")
     @classmethod
