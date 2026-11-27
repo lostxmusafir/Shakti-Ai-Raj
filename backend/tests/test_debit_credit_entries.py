@@ -28,7 +28,7 @@ async def test_entry_counts_have_two_scalar_metrics(tmp_path, question):
     assert not plan.group_by and not plan.filters
     assert "GROUP BY" not in plan.sql_query.upper()
     result = DuckDBEngine.execute(plan, files, {file.id: str(path)})
-    independent = duckdb.sql(f"SELECT COUNT(*) FILTER (WHERE Debit <> 0), COUNT(*) FILTER (WHERE Credit <> 0) FROM read_csv_auto('{path.as_posix()}')").fetchone()
+    independent = duckdb.sql(f"SELECT COUNT(*) FILTER (WHERE Debit <> 0), COUNT(*) FILTER (WHERE Credit <> 0) FROM read_csv_auto('{path.as_posix()}')").fetchall()[0]
     assert result["rows"] == [{"debit_entries": independent[0], "credit_entries": independent[1]}]
     assert result["rows"] == [{"debit_entries": 2, "credit_entries": 2}]
     assert ResultVerifier.verify(plan, result, files)["passed"] is True

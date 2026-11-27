@@ -33,6 +33,18 @@ class QueryCompiler:
             elif op == "less_than_or_equal":
                 where_parts.append(f"{col_id} <= ?")
                 params.append(cond.value)
+            elif op == "date_range" and isinstance(cond.value, dict):
+                start, end = cond.value.get("start"), cond.value.get("end")
+                if not start or not end:
+                    raise ValueError("Date range requires inclusive start and exclusive end dates.")
+                date_expr = (
+                    f"COALESCE(TRY_CAST(CAST({col_id} AS VARCHAR) AS TIMESTAMPTZ), "
+                    f"TRY_STRPTIME(CAST({col_id} AS VARCHAR), "
+                    "['%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%d %b %Y, %H:%M:%S GMT%z', "
+                    "'%d %b %Y, %I:%M:%S %p GMT%z', '%m/%d/%Y', '%d/%m/%Y']))"
+                )
+                where_parts.append(f"({date_expr} >= ? AND {date_expr} < ?)")
+                params.extend([start, end])
             elif op == "contains":
                 where_parts.append(f"CAST({col_id} AS VARCHAR) ILIKE ?")
                 params.append(f"%{cond.value}%")

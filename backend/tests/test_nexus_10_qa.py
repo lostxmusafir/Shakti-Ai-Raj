@@ -1,14 +1,25 @@
 import os
 import pytest
+from app.core.config import settings
 from app.models.file import StoredFile
 from app.models.analysis import AnalysisRun
 from app.ai.orchestration.context import AIContext
 from app.ai.orchestration.orchestrator import orchestrator
 from app.analysis.profiling.profiler import DataProfiler
 from app.db.repository import BaseRepository
+from app.storage.local import storage_service
 
 @pytest.mark.asyncio
-async def test_nexus_dynamics_10_qa_benchmark():
+async def test_nexus_dynamics_10_qa_benchmark(tmp_path, monkeypatch):
+    uploads_dir = tmp_path / "uploads"
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    ckpt_db = tmp_path / "nexus_checkpoints.sqlite"
+
+    await orchestrator.workflow.close()
+    monkeypatch.setattr(settings, "STORAGE_DIR", str(uploads_dir))
+    monkeypatch.setattr(storage_service, "base_dir", os.path.abspath(str(uploads_dir)))
+    monkeypatch.setattr(orchestrator.workflow, "_db_path", str(ckpt_db))
+
     file_repo = BaseRepository("files", StoredFile)
     analysis_repo = BaseRepository("analysis_runs", AnalysisRun)
     
@@ -19,8 +30,6 @@ async def test_nexus_dynamics_10_qa_benchmark():
     profile = DataProfiler.profile_file(csv_path, "NexusDynamics_Incidents_5000.csv")
     assert profile["row_count"] == 5000
     
-    from app.storage.local import storage_service
-
     with open(csv_path, "rb") as f:
         storage_key = await storage_service.save_file("NexusDynamics_Incidents_5000.csv", f.read())
 
@@ -128,28 +137,31 @@ async def test_nexus_dynamics_10_qa_benchmark():
         }
     ]
 
-    for idx, tc in enumerate(qa_test_cases, start=1):
-        analysis_run = AnalysisRun(
-            chat_id="test_chat",
-            message_id=f"msg_q{idx}",
-            user_id="test_admin",
-            unit_id="test_unit",
-            question=tc["q"],
-            input_file_ids=[stored_file.id],
-            status="queued"
-        )
-        saved_run = await analysis_repo.create(analysis_run)
+    try:
+        for idx, tc in enumerate(qa_test_cases, start=1):
+            analysis_run = AnalysisRun(
+                chat_id="test_chat",
+                message_id=f"msg_q{idx}",
+                user_id="test_admin",
+                unit_id="test_unit",
+                question=tc["q"],
+                input_file_ids=[stored_file.id],
+                status="queued"
+            )
+            saved_run = await analysis_repo.create(analysis_run)
 
-        res = await orchestrator.run(
-            analysis_id=saved_run.id,
-            ctx=ctx,
-            question=tc["q"],
-            file_ids=[stored_file.id]
-        )
+            res = await orchestrator.run(
+                analysis_id=saved_run.id,
+                ctx=ctx,
+                question=tc["q"],
+                file_ids=[stored_file.id]
+            )
 
-        assert res["status"] == "completed", f"Q{idx} failed to complete: {res}"
-        assert tc["check"](res), f"Q{idx} failed verification: {res['result']['rows']}"
-        for token in tc["expected_tokens"]:
-            token_alt = token.replace(",", "")
-            assert token in res["explanation"] or token_alt in res["explanation"], f"Q{idx} explanation missing expected token '{token}': {res['explanation']}"
-        print(f"✅ Q{idx} Passed: {tc['q']} -> {res['result']['rows']}")
+            assert res["status"] == "completed", f"Q{idx} failed to complete: {res}"
+            assert tc["check"](res), f"Q{idx} failed verification: {res['result']['rows']}"
+            for token in tc["expected_tokens"]:
+                token_alt = token.replace(",", "")
+                assert token in res["explanation"] or token_alt in res["explanation"], f"Q{idx} explanation missing expected token '{token}': {res['explanation']}"
+            print(f"✅ Q{idx} Passed: {tc['q']} -> {res['result']['rows']}")
+    finally:
+        await orchestrator.workflow.close()

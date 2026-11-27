@@ -1,9 +1,14 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { CheckCircle2, HelpCircle, ShieldAlert, XCircle } from "lucide-react";
 import type { PendingInterruptPayload } from "@/lib/api";
 import { cn } from "@/lib/cn";
+import {
+  canTriggerInterruptAction,
+  shouldRenderInlineCancel,
+  validateFreeTextInput,
+} from "@/lib/interrupt";
 
 interface InterruptCardProps {
   interrupt: PendingInterruptPayload;
@@ -24,30 +29,71 @@ export default function InterruptCard({
 }: InterruptCardProps) {
   const [freeText, setFreeText] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
+  const actionLockRef = useRef(false);
 
   const isDone = Boolean(resolvedLabel) || cancelled;
   const isConfirmation = interrupt.type === "confirmation";
+  const options = interrupt.options ?? [];
+  const showChoiceCancel = shouldRenderInlineCancel({
+    type: interrupt.type,
+    hasCancelHandler: Boolean(onCancel),
+    options,
+  });
 
   const handleOptionClick = async (optionId: string) => {
-    if (submitting || isDone) return;
+    if (!canTriggerInterruptAction({ submitting, isDone, actionLocked: actionLockRef.current })) {
+      return;
+    }
+    actionLockRef.current = true;
     setLocalError(null);
-    await onSubmit(optionId);
+    try {
+      await onSubmit(optionId);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Failed to submit clarification.");
+    } finally {
+      actionLockRef.current = false;
+    }
   };
 
   const handleFreeTextSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (submitting || isDone) return;
-    const trimmed = freeText.trim();
-    if (!trimmed) {
-      setLocalError("Please enter a value before continuing.");
+    if (!canTriggerInterruptAction({ submitting, isDone, actionLocked: actionLockRef.current })) {
       return;
     }
+    const validation = validateFreeTextInput(freeText);
+    if (!validation.valid) {
+      setLocalError(validation.error);
+      return;
+    }
+    actionLockRef.current = true;
     setLocalError(null);
-    await onSubmit(trimmed);
+    try {
+      await onSubmit(validation.value);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Failed to submit clarification.");
+    } finally {
+      actionLockRef.current = false;
+    }
+  };
+
+  const handleCancelClick = async () => {
+    if (!onCancel || !canTriggerInterruptAction({ submitting, isDone, actionLocked: actionLockRef.current })) {
+      return;
+    }
+    actionLockRef.current = true;
+    setLocalError(null);
+    try {
+      await onCancel();
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Failed to cancel clarification.");
+    } finally {
+      actionLockRef.current = false;
+    }
   };
 
   return (
     <div
+      aria-busy={submitting}
       className={cn(
         "rounded-xl border px-4 py-3.5 text-[13px] transition",
         cancelled
@@ -86,8 +132,13 @@ export default function InterruptCard({
               <input
                 type="text"
                 value={freeText}
-                onChange={(e) => setFreeText(e.target.value)}
+                onChange={(e) => {
+                  setFreeText(e.target.value);
+                  if (localError) setLocalError(null);
+                }}
                 placeholder={interrupt.placeholder || "Type your answer..."}
+                aria-label={interrupt.question}
+                aria-invalid={Boolean(localError)}
                 disabled={submitting || isDone}
                 className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-[12.5px] text-slate-100 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none disabled:opacity-50"
               />
@@ -102,7 +153,7 @@ export default function InterruptCard({
                 <button
                   type="button"
                   disabled={submitting || isDone}
-                  onClick={() => onCancel()}
+                  onClick={() => handleCancelClick()}
                   className="rounded-lg border border-slate-700 px-2.5 py-1.5 text-[12px] text-slate-400 transition hover:bg-slate-800 hover:text-slate-200 disabled:opacity-50"
                 >
                   Cancel
@@ -113,7 +164,7 @@ export default function InterruptCard({
 
           {!isDone && (interrupt.type === "choice" || interrupt.type === "confirmation") ? (
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              {interrupt.options.map((opt) => (
+              {options.map((opt) => (
                 <button
                   key={opt.id}
                   type="button"
@@ -131,10 +182,24 @@ export default function InterruptCard({
                   {opt.label}
                 </button>
               ))}
+              {showChoiceCancel && onCancel ? (
+                <button
+                  type="button"
+                  disabled={submitting || isDone}
+                  onClick={() => handleCancelClick()}
+                  className="rounded-lg border border-slate-700 px-2.5 py-1.5 text-[12px] text-slate-400 transition hover:bg-slate-800 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              ) : null}
             </div>
           ) : null}
 
-          {localError ? <div className="text-[11.5px] text-red-400">{localError}</div> : null}
+          {localError ? (
+            <div role="alert" className="text-[11.5px] text-red-400">
+              {localError}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

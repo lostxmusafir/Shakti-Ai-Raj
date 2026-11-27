@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState, use } from "react";
+import { useCallback, useEffect, useRef, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
-import { api, User, ChatSession, ChatMessage, StoredFile, PendingInterruptPayload } from "@/lib/api";
+import { api, ApiError, User, ChatSession, ChatMessage, StoredFile, PendingInterruptPayload } from "@/lib/api";
+import { classifyPollStatus, resolveInterruptOutcome, shouldRetryPoll } from "@/lib/interrupt";
 import Sidebar from "@/components/Sidebar";
 import AssistantThread from "@/components/AssistantThread";
 import { cn } from "@/lib/cn";
@@ -51,7 +52,12 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const restoredInterruptIdRef = useRef<string | null>(null);
+  const resumeInFlightRef = useRef(false);
+  const cancelInFlightRef = useRef(false);
+
   useEffect(() => {
+    let cancelled = false;
     async function loadData() {
       try {
         const [me, chatList, msgList, fileList, pendingState] = await Promise.all([
@@ -61,38 +67,60 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
           api.listFiles(),
           api.getPendingInterrupt(chatId).catch(() => ({ pending: false, analysis_id: null, interrupt: null })),
         ]);
+        if (cancelled) return;
         setUser(me);
         setChats(chatList);
         setMessages(msgList);
         setFiles(fileList);
         setSelectedFileIds((current) => (current.length ? current : fileList.slice(0, 1).map((file) => file.id)));
         if (pendingState?.pending && pendingState.analysis_id && pendingState.interrupt) {
+          restoredInterruptIdRef.current = pendingState.analysis_id;
           setActiveAnalysisId(pendingState.analysis_id);
           setAnalysisStatus("interrupted");
           setPendingInterrupt(pendingState.interrupt);
           setResolvedInterruptLabel(null);
           setInterruptCancelled(false);
+        } else {
+          restoredInterruptIdRef.current = null;
         }
       } catch {
+        if (cancelled) return;
         router.push("/login");
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
     loadData();
+    return () => {
+      cancelled = true;
+    };
   }, [chatId, router]);
 
   useEffect(() => {
-    if (!activeAnalysisId) return;
+    if (!activeAnalysisId || restoredInterruptIdRef.current === activeAnalysisId) return;
 
     const eventSource = new EventSource(api.getEventsUrl(activeAnalysisId));
-    let settled = false;
+    let closed = false;
+    let pollStarted = false;
+    let pollFailures = 0;
+    const MAX_POLL_FAILURES = 4;
+    let timer: number | null = null;
+
+    const stopPolling = () => {
+      if (timer !== null) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
+    };
 
     const refresh = () => {
       api.getMessages(chatId).then(setMessages).catch(() => undefined);
     };
 
     eventSource.addEventListener("analysis.status", (event: MessageEvent) => {
+      if (closed) return;
       try {
         setAnalysisStatus(JSON.parse(event.data).status);
       } catch {
@@ -101,6 +129,7 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
     });
 
     eventSource.addEventListener("assistant.delta", (event: MessageEvent) => {
+      if (closed) return;
       try {
         const delta = JSON.parse(event.data).delta;
         if (typeof delta === "string" && delta) {
@@ -112,7 +141,9 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
     });
 
     eventSource.addEventListener("analysis.interrupted", (event: MessageEvent) => {
-      settled = true;
+      closed = true;
+      stopPolling();
+      setStreamText(null);
       try {
         const data = JSON.parse(event.data);
         setAnalysisStatus("interrupted");
@@ -126,7 +157,9 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
     });
 
     eventSource.addEventListener("analysis.cancelled", () => {
-      settled = true;
+      closed = true;
+      stopPolling();
+      setStreamText(null);
       setAnalysisStatus("cancelled");
       setInterruptCancelled(true);
       setActiveAnalysisId(null);
@@ -134,7 +167,8 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
     });
 
     eventSource.addEventListener("analysis.completed", () => {
-      settled = true;
+      closed = true;
+      stopPolling();
       setAnalysisStatus("completed");
       setStreamText(null);
       setPendingInterrupt(null);
@@ -145,9 +179,12 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
     });
 
     eventSource.addEventListener("analysis.failed", (event: MessageEvent) => {
-      settled = true;
+      closed = true;
+      stopPolling();
       setAnalysisStatus("failed");
       setStreamText(null);
+      setPendingInterrupt(null);
+      setResolvedInterruptLabel(null);
       setActiveAnalysisId(null);
       setError("The analysis could not be completed. Your question was kept in the thread.");
       eventSource.close();
@@ -159,30 +196,88 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
       }
     });
 
-    eventSource.onerror = () => {
-      if (settled) return;
-      eventSource.close();
-      const timer = window.setInterval(async () => {
-        try {
-          const analysis = await api.getAnalysis(activeAnalysisId);
-          setAnalysisStatus(analysis.status);
-          if (analysis.status === "completed" || analysis.status === "failed") {
-            window.clearInterval(timer);
-            setStreamText(null);
-            setActiveAnalysisId(null);
-            if (analysis.status === "failed") {
-              setError("The analysis could not be completed. Your question was kept in the thread.");
-            }
-            refresh();
-          }
-        } catch {
-          window.clearInterval(timer);
+    const poll = async () => {
+      if (closed) return;
+      try {
+        const analysis = await api.getAnalysis(activeAnalysisId);
+        if (closed) return;
+        pollFailures = 0;
+        setAnalysisStatus(analysis.status);
+        const pollKind = classifyPollStatus(analysis.status);
+        if (pollKind === "interrupted") {
+          closed = true;
+          stopPolling();
+          setStreamText(null);
+          setPendingInterrupt(analysis.pending_interrupt ?? null);
+          setResolvedInterruptLabel(null);
+          setInterruptCancelled(false);
+          return;
         }
-      }, 1500);
+        if (pollKind === "cancelled") {
+          closed = true;
+          stopPolling();
+          setStreamText(null);
+          setInterruptCancelled(true);
+          setActiveAnalysisId(null);
+          return;
+        }
+        if (pollKind === "completed") {
+          closed = true;
+          stopPolling();
+          setStreamText(null);
+          setPendingInterrupt(null);
+          setResolvedInterruptLabel(null);
+          setActiveAnalysisId(null);
+          refresh();
+          return;
+        }
+        if (pollKind === "failed") {
+          closed = true;
+          stopPolling();
+          setStreamText(null);
+          setPendingInterrupt(null);
+          setResolvedInterruptLabel(null);
+          setActiveAnalysisId(null);
+          setError("The analysis could not be completed. Your question was kept in the thread.");
+          refresh();
+          return;
+        }
+        if (!closed) {
+          timer = window.setTimeout(poll, 1500);
+        }
+      } catch (err) {
+        if (closed) return;
+        const statusCode = err instanceof ApiError ? err.status : null;
+        if (shouldRetryPoll(statusCode, pollFailures, MAX_POLL_FAILURES)) {
+          pollFailures += 1;
+          timer = window.setTimeout(poll, 1500);
+          return;
+        }
+        closed = true;
+        stopPolling();
+        setStreamText(null);
+        setPendingInterrupt(null);
+        setResolvedInterruptLabel(null);
+        setActiveAnalysisId(null);
+        setAnalysisStatus("failed");
+        setError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Lost connection while checking analysis status.",
+        );
+      }
+    };
+
+    eventSource.onerror = () => {
+      if (closed || pollStarted) return;
+      pollStarted = true;
+      eventSource.close();
+      timer = window.setTimeout(poll, 1500);
     };
 
     return () => {
-      settled = true;
+      closed = true;
+      stopPolling();
       eventSource.close();
     };
   }, [activeAnalysisId, chatId]);
@@ -194,6 +289,7 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
       setPendingInterrupt(null);
       setResolvedInterruptLabel(null);
       setInterruptCancelled(false);
+      restoredInterruptIdRef.current = null;
       const optimistic: ChatMessage = {
         id: `opt_${Date.now()}`,
         chat_id: chatId,
@@ -207,7 +303,10 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
 
       try {
         const response = await api.sendMessage(chatId, content, fileIds, aiTier);
-        if (response.analysis_id) setActiveAnalysisId(response.analysis_id);
+        if (response.analysis_id) {
+          restoredInterruptIdRef.current = null;
+          setActiveAnalysisId(response.analysis_id);
+        }
       } catch (err) {
         setAnalysisStatus("");
         setError(err instanceof Error ? err.message : "Failed to send message.");
@@ -227,21 +326,37 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
 
   const handleResumeInterrupt = useCallback(
     async (response: string) => {
-      if (!activeAnalysisId || !pendingInterrupt) return;
+      if (!activeAnalysisId || !pendingInterrupt || resumeInFlightRef.current || cancelInFlightRef.current) {
+        return;
+      }
+      resumeInFlightRef.current = true;
       setInterruptSubmitting(true);
       setError(null);
-      const matchedOpt = pendingInterrupt.options?.find((o) => o.id === response);
-      setResolvedInterruptLabel(matchedOpt?.label || response);
       try {
         const res = await api.resumeAnalysis(activeAnalysisId, pendingInterrupt.interrupt_id, response);
-        if (res.status === "interrupted" && res.interrupt) {
-          setPendingInterrupt(res.interrupt);
+        const outcome = resolveInterruptOutcome(res);
+        if (outcome.kind === "next_interrupt") {
+          setPendingInterrupt(outcome.interrupt);
           setResolvedInterruptLabel(null);
           setAnalysisStatus("interrupted");
-        } else if (res.status === "cancelled") {
+        } else if (outcome.kind === "keep_interrupt") {
+          setResolvedInterruptLabel(null);
+          setAnalysisStatus("interrupted");
+        } else if (outcome.kind === "cancelled") {
+          setStreamText(null);
+          setResolvedInterruptLabel(null);
           setInterruptCancelled(true);
           setActiveAnalysisId(null);
+          setAnalysisStatus("cancelled");
+        } else if (outcome.kind === "failed") {
+          setStreamText(null);
+          setPendingInterrupt(null);
+          setResolvedInterruptLabel(null);
+          setActiveAnalysisId(null);
+          setAnalysisStatus("failed");
+          setError(res.error || "The analysis could not be completed. Your question was kept in the thread.");
         } else {
+          setStreamText(null);
           setPendingInterrupt(null);
           setResolvedInterruptLabel(null);
           setActiveAnalysisId(null);
@@ -252,7 +367,28 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
       } catch (err) {
         setResolvedInterruptLabel(null);
         setError(err instanceof Error ? err.message : "Failed to resume analysis.");
+        if (err instanceof ApiError && err.status === 409) {
+          try {
+            const pendingState = await api.getPendingInterrupt(chatId);
+            if (pendingState?.pending && pendingState.analysis_id && pendingState.interrupt) {
+              restoredInterruptIdRef.current = pendingState.analysis_id;
+              setActiveAnalysisId(pendingState.analysis_id);
+              setPendingInterrupt(pendingState.interrupt);
+              setAnalysisStatus("interrupted");
+              setInterruptCancelled(false);
+            } else {
+              setPendingInterrupt(null);
+              setActiveAnalysisId(null);
+              setAnalysisStatus("");
+              const updatedMsgs = await api.getMessages(chatId);
+              setMessages(updatedMsgs);
+            }
+          } catch {
+            /* preserve error banner if resync fails */
+          }
+        }
       } finally {
+        resumeInFlightRef.current = false;
         setInterruptSubmitting(false);
       }
     },
@@ -260,16 +396,20 @@ export default function ChatDetailPage({ params }: { params: Promise<{ chatId: s
   );
 
   const handleCancelInterrupt = useCallback(async () => {
-    if (!activeAnalysisId) return;
+    if (!activeAnalysisId || resumeInFlightRef.current || cancelInFlightRef.current) return;
+    cancelInFlightRef.current = true;
     setInterruptSubmitting(true);
     try {
       await api.cancelAnalysis(activeAnalysisId);
+      setStreamText(null);
+      setResolvedInterruptLabel(null);
       setInterruptCancelled(true);
       setActiveAnalysisId(null);
       setAnalysisStatus("cancelled");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to cancel analysis.");
     } finally {
+      cancelInFlightRef.current = false;
       setInterruptSubmitting(false);
     }
   }, [activeAnalysisId]);

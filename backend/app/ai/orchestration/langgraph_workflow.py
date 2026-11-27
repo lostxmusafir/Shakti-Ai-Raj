@@ -1,5 +1,7 @@
+import asyncio
 import os
 import logging
+import weakref
 from typing import Any, Dict, List, Optional, TypedDict
 
 import aiosqlite
@@ -12,7 +14,8 @@ from app.ai.learning.semantic_mapping import SemanticMapper
 from app.ai.orchestration.ambiguity import AmbiguityDetector
 from app.ai.orchestration.intent import IntentClassifier
 from app.ai.orchestration.state import AnalysisState
-from app.ai.planning.schemas import AnalysisPlan
+from app.ai.orchestration.temporal import resolve_temporal_window
+from app.ai.planning.schemas import AnalysisPlan, Condition
 from app.ai.planning.validator import PlanValidator
 from app.ai.verification.verifier import ResultVerifier
 from app.analysis.execution.duckdb_engine import DuckDBEngine
@@ -58,56 +61,97 @@ class LangGraphAnalystWorkflow:
         self._conn: Optional[aiosqlite.Connection] = None
         self._checkpointer: Optional[Any] = checkpointer
         self._graph = None
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
+        self._ensure_locks: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Lock]" = weakref.WeakKeyDictionary()
         # Pure in-memory context cache keyed by thread_id for file metadata during graph runs;
         # reloaded from DB on resume if server restarted.
         self._runtime_cache: Dict[str, Dict[str, Any]] = {}
 
+    def _get_ensure_lock(self) -> asyncio.Lock:
+        loop = asyncio.get_running_loop()
+        lock = self._ensure_locks.get(loop)
+        if lock is None:
+            lock = asyncio.Lock()
+            self._ensure_locks[loop] = lock
+        return lock
+
+    async def _reset_managed_checkpointer(self) -> None:
+        conn = self._conn
+        self._conn = None
+        if conn is not None:
+            try:
+                await conn.close()
+            except Exception as exc:
+                logger.warning(f"Failed to close stale aiosqlite connection cleanly: {exc}")
+                try:
+                    conn.stop()
+                except Exception:
+                    pass
+        self._checkpointer = self._external_checkpointer
+        self._graph = None
+        self._loop = None
+
     async def _ensure_graph(self):
-        if self._graph is not None:
+        async with self._get_ensure_lock():
+            running_loop = asyncio.get_running_loop()
+
+            if self._external_checkpointer is not None:
+                self._checkpointer = self._external_checkpointer
+                if self._graph is not None:
+                    return self._graph
+            else:
+                if (
+                    self._graph is not None
+                    and self._loop is running_loop
+                    and not self._loop.is_closed()
+                ):
+                    return self._graph
+
+                await self._reset_managed_checkpointer()
+                db_dir = os.path.dirname(self._db_path)
+                if db_dir:
+                    os.makedirs(db_dir, exist_ok=True)
+                self._conn = await aiosqlite.connect(self._db_path)
+                self._checkpointer = AsyncSqliteSaver(self._conn)
+                await self._checkpointer.setup()
+
+            builder = StateGraph(AnalystGraphState)
+            builder.add_node("understand_question", self._node_understand_question)
+            builder.add_node("inspect_schema", self._node_inspect_schema)
+            builder.add_node("resolve_record_family", self._node_resolve_record_family)
+            builder.add_node("resolve_semantics", self._node_resolve_semantics)
+            builder.add_node("maybe_interrupt", self._node_maybe_interrupt)
+            builder.add_node("build_plan", self._node_build_plan)
+            builder.add_node("validate_plan", self._node_validate_plan)
+            builder.add_node("execute_plan", self._node_execute_plan)
+            builder.add_node("verify_result", self._node_verify_result)
+            builder.add_node("generate_answer", self._node_generate_answer)
+
+            builder.add_edge(START, "understand_question")
+            builder.add_edge("understand_question", "inspect_schema")
+            builder.add_edge("inspect_schema", "resolve_record_family")
+            builder.add_edge("resolve_record_family", "resolve_semantics")
+            builder.add_edge("resolve_semantics", "maybe_interrupt")
+
+            builder.add_conditional_edges(
+                "maybe_interrupt",
+                self._route_after_interrupt,
+                {
+                    "cancelled": END,
+                    "check_again": "maybe_interrupt",
+                    "proceed": "build_plan",
+                },
+            )
+
+            builder.add_edge("build_plan", "validate_plan")
+            builder.add_edge("validate_plan", "execute_plan")
+            builder.add_edge("execute_plan", "verify_result")
+            builder.add_edge("verify_result", "generate_answer")
+            builder.add_edge("generate_answer", END)
+
+            self._graph = builder.compile(checkpointer=self._checkpointer)
+            self._loop = running_loop
             return self._graph
-
-        if self._checkpointer is None:
-            os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
-            self._conn = await aiosqlite.connect(self._db_path)
-            self._checkpointer = AsyncSqliteSaver(self._conn)
-            await self._checkpointer.setup()
-
-        builder = StateGraph(AnalystGraphState)
-        builder.add_node("understand_question", self._node_understand_question)
-        builder.add_node("inspect_schema", self._node_inspect_schema)
-        builder.add_node("resolve_record_family", self._node_resolve_record_family)
-        builder.add_node("resolve_semantics", self._node_resolve_semantics)
-        builder.add_node("maybe_interrupt", self._node_maybe_interrupt)
-        builder.add_node("build_plan", self._node_build_plan)
-        builder.add_node("validate_plan", self._node_validate_plan)
-        builder.add_node("execute_plan", self._node_execute_plan)
-        builder.add_node("verify_result", self._node_verify_result)
-        builder.add_node("generate_answer", self._node_generate_answer)
-
-        builder.add_edge(START, "understand_question")
-        builder.add_edge("understand_question", "inspect_schema")
-        builder.add_edge("inspect_schema", "resolve_record_family")
-        builder.add_edge("resolve_record_family", "resolve_semantics")
-        builder.add_edge("resolve_semantics", "maybe_interrupt")
-
-        builder.add_conditional_edges(
-            "maybe_interrupt",
-            self._route_after_interrupt,
-            {
-                "cancelled": END,
-                "check_again": "maybe_interrupt",
-                "proceed": "build_plan",
-            },
-        )
-
-        builder.add_edge("build_plan", "validate_plan")
-        builder.add_edge("validate_plan", "execute_plan")
-        builder.add_edge("execute_plan", "verify_result")
-        builder.add_edge("verify_result", "generate_answer")
-        builder.add_edge("generate_answer", END)
-
-        self._graph = builder.compile(checkpointer=self._checkpointer)
-        return self._graph
 
     async def _load_files_for_state(self, state: AnalystGraphState):
         thread_id = state["thread_id"]
@@ -206,7 +250,47 @@ class LangGraphAnalystWorkflow:
             for b in bindings:
                 if b.get("concept") == "record_family" and b.get("binding"):
                     plan.record_family = b["binding"]
+        self._apply_temporal_scope(plan, state["question"], files_map)
         return {"plan_dict": plan.model_dump()}
+
+    @staticmethod
+    def _apply_temporal_scope(plan: AnalysisPlan, question: str, files_map: Dict[str, StoredFile]) -> None:
+        window = resolve_temporal_window(question)
+        if not window:
+            return
+
+        bindings = list(plan.resolved_bindings or [])
+        date_binding = next((b for b in bindings if b.get("concept") == "date_column"), None)
+        file_profile = files_map[plan.datasets[0].file_id].schema_profile or {}
+        date_columns = [
+            c["name"] for c in file_profile.get("columns", [])
+            if c.get("role") == "timestamp"
+            or c.get("inferred_type") == "datetime"
+            or any(token in c.get("name", "").lower() for token in ("date", "time", "timestamp"))
+        ]
+
+        if date_binding:
+            date_column = date_binding.get("binding")
+        else:
+            mentioned = [c for c in date_columns if c.lower() in question.lower()]
+            candidates = mentioned or date_columns
+            if len(candidates) != 1:
+                raise ValueError("A date column must be selected before applying a time period.")
+            date_column = candidates[0]
+            date_binding = {
+                "concept": "date_column",
+                "binding": date_column,
+                "resolved_by": "schema",
+            }
+            bindings.append(date_binding)
+
+        if plan.sql_query:
+            raise ValueError("A time-filtered request requires a structured plan so its date filter can be verified.")
+
+        date_binding.update(window)
+        plan.resolved_bindings = bindings
+        if not any(f.operator == "date_range" and f.column == date_column for f in plan.filters):
+            plan.filters.append(Condition(column=date_column, operator="date_range", value={"start": window["start"], "end": window["end"]}))
 
     async def _node_validate_plan(self, state: AnalystGraphState) -> Dict[str, Any]:
         await self.orchestrator._emit_status(state["analysis_id"], AnalysisState.VALIDATING_PLAN.value)
@@ -289,6 +373,13 @@ class LangGraphAnalystWorkflow:
             intr = snap.interrupts[0]
             return getattr(intr, "value", intr)
         return None
+
+    async def close(self) -> None:
+        await self._reset_managed_checkpointer()
+        self._runtime_cache.clear()
+
+    async def aclose(self) -> None:
+        await self.close()
 
     @staticmethod
     def _format_output(out: Dict[str, Any]) -> Dict[str, Any]:

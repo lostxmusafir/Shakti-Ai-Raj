@@ -138,9 +138,12 @@ export interface AnalysisResult {
   message_id?: string;
   user_id: string;
   status: string;
+  thread_id?: string | null;
   intent: string;
   question: string;
   plan?: any;
+  pending_interrupt?: PendingInterruptPayload | null;
+  resolved_bindings?: Record<string, unknown>[];
   result?: {
     engine?: string;
     columns?: string[];
@@ -159,6 +162,30 @@ export interface AnalysisResult {
   provenance?: AnalysisProvenance;
   created_at: string;
   completed_at?: string;
+}
+
+export interface ResumeAnalysisResponse {
+  analysis_id: string;
+  status: string;
+  interrupt?: PendingInterruptPayload | null;
+  idempotent_replay?: boolean;
+  explanation?: string;
+  result?: AnalysisResult["result"] | null;
+  verification?: AnalysisResult["verification"] | null;
+  provenance?: AnalysisProvenance | null;
+  error?: string;
+}
+
+export class ApiError extends Error {
+  status: number;
+  code?: string;
+
+  constructor(message: string, status: number, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -223,20 +250,24 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
     if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
       window.location.replace("/login");
     }
-    throw new Error("Authentication session expired.");
+    throw new ApiError("Authentication session expired.", 401);
   }
 
   if (!response.ok) {
     let errorMsg = `Request failed with status ${response.status}`;
+    let errorCode: string | undefined;
     try {
       const errorJson = await response.json();
       if (errorJson.error?.message) {
         errorMsg = errorJson.error.message;
+        if (typeof errorJson.error?.code === "string") {
+          errorCode = errorJson.error.code;
+        }
       } else if (errorJson.detail) {
         errorMsg = typeof errorJson.detail === "string" ? errorJson.detail : JSON.stringify(errorJson.detail);
       }
     } catch {}
-    throw new Error(errorMsg);
+    throw new ApiError(errorMsg, response.status, errorCode);
   }
 
   if (response.status === 204) return null;
@@ -357,8 +388,8 @@ export const api = {
   async resumeAnalysis(
     analysisId: string,
     interruptId: string,
-    response: any
-  ): Promise<any> {
+    response: unknown
+  ): Promise<ResumeAnalysisResponse> {
     return fetchWithAuth(`/api/v1/analysis/${analysisId}/resume`, {
       method: "POST",
       body: JSON.stringify({ interrupt_id: interruptId, response }),

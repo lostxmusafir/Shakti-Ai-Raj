@@ -1,8 +1,10 @@
+import re
 from datetime import datetime, timezone
 from typing import Dict, Any, List
 
 from app.ai.planning.schemas import AnalysisPlan
 from app.models.file import StoredFile
+from app.ai.orchestration.temporal import resolve_temporal_window
 
 
 class ResultVerifier:
@@ -147,6 +149,83 @@ class ResultVerifier:
         if semantic_ok and recompute_status == "failed":
             semantic_ok = False
             failure_reason = "Arithmetic recomputation mismatch with independent calculation"
+
+        resolved_bindings = getattr(plan, "resolved_bindings", None) or []
+        date_binding = next((b for b in resolved_bindings if b.get("concept") == "date_column"), None)
+        temporal_window = resolve_temporal_window(plan.question)
+        temporal_ok = True
+        temporal_details = "No relative date filter was requested"
+        if temporal_window:
+            date_filter = next((
+                f for f in plan.filters
+                if f.operator == "date_range" and (not date_binding or f.column == date_binding.get("binding"))
+            ), None)
+            expected_window = {
+                "period": (date_binding or {}).get("period", temporal_window["period"]),
+                "start": (date_binding or {}).get("start", temporal_window["start"]),
+                "end": (date_binding or {}).get("end", temporal_window["end"]),
+            }
+            temporal_ok = bool(
+                date_binding
+                and date_filter
+                and date_filter.value == {"start": expected_window["start"], "end": expected_window["end"]}
+                and expected_window["period"] == temporal_window["period"]
+            )
+            temporal_details = (
+                "Selected date column and requested period are present in the plan"
+                if temporal_ok else "Requested relative date period is missing or inconsistent in the plan"
+            )
+            if not temporal_ok and semantic_ok:
+                semantic_ok = False
+                failure_reason = "TEMPORAL_FILTER_MISMATCH"
+        checks.append({
+            "gate": "V7_TEMPORAL",
+            "name": "requested_time_window_and_date_column",
+            "status": "passed" if temporal_ok else "failed",
+            "details": temporal_details,
+        })
+
+        monetary_terms = ("revenue", "profit", "sales", "income", "amount", "cost", "salary", "kamai", "kharch")
+        count_terms = ("count", "how many", "kitne", "kitni", "entries", "transactions", "records", "rows", "incidents")
+        metric_requested = any(re.search(rf"\b{re.escape(term)}\b", q) for term in monetary_terms)
+        count_requested = any(term in q for term in count_terms)
+        measure_aggregates = [
+            agg for agg in plan.aggregations
+            if agg.column and agg.column != "*" and agg.function.lower() in {"sum", "avg", "min", "max", "median"}
+        ]
+        sql_measure_aggregate = bool(
+            plan.sql_query
+            and re.search(r"\b(?:sum|avg|average|min|max|median)\s*\(\s*(?!\*)[^)]*\)", plan.sql_query, re.IGNORECASE)
+        )
+        metric_binding = next((b for b in resolved_bindings if b.get("concept") == "metric"), None)
+        generic_amount = bool(re.search(r"\bamount\b", q))
+        has_measure = bool(measure_aggregates) or sql_measure_aggregate
+        metric_ok = not metric_requested or count_requested or has_measure
+        if metric_ok and metric_requested and not count_requested:
+            if metric_binding:
+                metric_ok = (
+                    any(agg.column == metric_binding.get("binding") for agg in measure_aggregates)
+                    or (sql_measure_aggregate and generic_amount)
+                )
+            else:
+                metric_words = {term for term in monetary_terms if re.search(rf"\b{re.escape(term)}\b", q)}
+                agg_names = " ".join(
+                    f"{agg.column or ''} {agg.alias or ''}".lower() for agg in measure_aggregates
+                ) + " " + " ".join(plan.requested_concepts).lower()
+                metric_ok = generic_amount and has_measure or any(term in agg_names for term in metric_words)
+        metric_details = (
+            "Requested monetary concept is represented by a measure aggregation"
+            if metric_ok else "Requested monetary concept was replaced by a count or unrelated measure"
+        )
+        if not metric_ok and semantic_ok:
+            semantic_ok = False
+            failure_reason = "METRIC_RESULT_MISMATCH"
+        checks.append({
+            "gate": "V7_METRIC",
+            "name": "requested_metric_matches_aggregation",
+            "status": "passed" if metric_ok else "failed",
+            "details": metric_details,
+        })
 
         semantic_status = "SEMANTIC_PASS" if semantic_ok else "SEMANTIC_FAIL"
         checks.append({
