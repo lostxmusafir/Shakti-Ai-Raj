@@ -79,6 +79,38 @@ class AmbiguityDetector:
             if active_col_names is None or c.get("name") in active_col_names
         ]
 
+        timeline_request = any(term in q_lower for term in (
+            "timeline", "travel", "traveled", "travelled", "fira", "ghanta", "ghante",
+            "hours spent", "kitna time", "same time", "same timestamp", "simultaneous",
+            "two places", "two locations", "different locations", "do jagah", "ek hi waqt",
+            "ek hi time", "impossible travel", "location conflict", "overlap",
+        ))
+        resolved_time_column = "timeline_timestamp" in resolved_concepts
+        timestamp_columns = [
+            c for c in scoped_cols
+            if c.get("role") == "timestamp" or c.get("inferred_type") in ("datetime", "date")
+        ]
+        has_start_end = (
+            any(re.search(r"\b(start|begin|check ?in|clock ?in|from)\b", c["name"].lower().replace("_", " ")) for c in timestamp_columns)
+            and any(re.search(r"\b(end|finish|check ?out|clock ?out|to)\b", c["name"].lower().replace("_", " ")) for c in timestamp_columns)
+        )
+        explicit_time_column = any(
+            c["name"].lower() in q_lower or c["name"].lower().replace("_", " ") in q_lower
+            for c in timestamp_columns
+        )
+        if timeline_request and not resolved_time_column and not has_start_end and len(timestamp_columns) > 1 and not explicit_time_column:
+            return {
+                "interrupt_id": f"intr_{uuid.uuid4().hex[:12]}",
+                "type": "choice",
+                "reason": "AMBIGUOUS_TIMESTAMP_COLUMN",
+                "question": "Which timestamp should define each person's timeline?",
+                "options": [
+                    {"id": cls._slug(c["name"]), "label": c["name"], "value": c["name"]}
+                    for c in timestamp_columns[:8]
+                ],
+                "context": {"original_question": q, "concept": "timeline_timestamp"},
+            }
+
         # 1. Ambiguous record family in mixed dataset
         if is_mixed and len(families) >= 2 and "record_family" not in resolved_concepts:
             # High-confidence family signals should NOT interrupt
@@ -326,6 +358,10 @@ class AmbiguityDetector:
                     q = f"Average {col} amount kitna hai?"
             elif concept == "date_column":
                 q = f"{q} [date column: {val}]"
+            elif concept == "timeline_timestamp":
+                q = f"{q} [timestamp column: {val}]"
+            elif concept == "timeline_timestamp":
+                q = f"{q} [timestamp column: {val}]"
             elif concept == "record_family":
                 q = f"{q} [record family: {val}]"
             elif concept == "internal_domain":
