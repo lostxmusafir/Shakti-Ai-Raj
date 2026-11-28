@@ -378,6 +378,11 @@ class AnalysisOrchestrator:
         datasets = [DatasetRef(file_id=fid, alias=f"ds_{idx+1}") for idx, fid in enumerate(file_ids)]
         first_file = files_map[file_ids[0]]
         first_profile = first_file.schema_profile or {}
+        if len(file_ids) == 1:
+            from app.ai.planning.timeline_planner import TimelinePlanner
+            timeline_plan = TimelinePlanner.build_if_applicable(question, file_ids[0], first_profile)
+            if timeline_plan:
+                return PlanValidator.validate_plan(timeline_plan, files_map)
         available_cols = [c["name"] for c in first_profile.get("columns", [])]
         cols_lower = [c.lower() for c in available_cols]
         q_lower = SemanticMapper.normalize_question(question)
@@ -1005,6 +1010,11 @@ class AnalysisOrchestrator:
 
         first_file = files_map[file_ids[0]]
         first_profile = first_file.schema_profile or {}
+        if len(file_ids) == 1:
+            from app.ai.planning.timeline_planner import TimelinePlanner
+            timeline_plan = TimelinePlanner.build_if_applicable(question, file_ids[0], first_profile)
+            if timeline_plan:
+                return PlanValidator.validate_plan(timeline_plan, files_map)
         available_cols = [c["name"] for c in first_profile.get("columns", [])]
         cols_lower = [c.lower() for c in available_cols]
         is_dlp = any(c in cols_lower for c in ["destination", "policies", "source", "transaction size (kb)"])
@@ -1391,6 +1401,54 @@ class AnalysisOrchestrator:
     ) -> str:
 
         row_count = engine_result["row_count"]
+
+        if validated_plan.intent == "timeline_consistency":
+            mode = next((skill.split(":", 1)[1] for skill in validated_plan.skills if skill.startswith("timeline_mode:")), "events")
+            has_location = any(skill in validated_plan.skills for skill in ("timeline_has_location:true", "timeline_has_coordinates:true"))
+            threshold_skill = next((skill.split(":", 1)[1] for skill in validated_plan.skills if skill.startswith("timeline_speed_threshold_kmh:")), "")
+            speed_threshold = float(threshold_skill) if threshold_skill else None
+            total_people = int(engine_result["rows"][0].get("total_people", row_count)) if engine_result["rows"] else 0
+            summaries = []
+            for row in engine_result["rows"][:20]:
+                person = row.get("person", "(unknown person)")
+                span = row.get("elapsed_span_hours")
+                span_text = f"{span:g} hours" if isinstance(span, (int, float)) else "not available"
+                line = f"**{person}**: observed span {span_text} ({row.get('first_observed')} to {row.get('last_observed')})"
+                if mode == "interval":
+                    active = row.get("active_hours")
+                    active_text = f"{active:g} hours" if isinstance(active, (int, float)) else "not available"
+                    line += f"; combined active intervals {active_text}"
+                    if row.get("overlapping_location_conflict"):
+                        line += "; **possible overlapping-location conflict**"
+                else:
+                    line += "; active/travel time cannot be inferred from point timestamps alone"
+                    conflicts = int(row.get("simultaneous_location_conflict_count") or 0)
+                    if conflicts:
+                        line += f"; **{conflicts} simultaneous-location conflict(s)**"
+                    elif has_location:
+                        line += "; no simultaneous different-location conflict detected"
+                    else:
+                        line += "; location conflicts were not assessed because no location or coordinate columns were available"
+                    max_speed = row.get("max_required_travel_speed_kmh")
+                    if isinstance(max_speed, (int, float)):
+                        line += f"; highest observed coordinate-derived travel rate {max_speed:g} km/h"
+                    over_threshold = row.get("travel_legs_over_threshold")
+                    if speed_threshold is not None and isinstance(over_threshold, (int, float)):
+                        line += f"; {int(over_threshold)} leg(s) exceed the user-specified {speed_threshold:g} km/h threshold"
+                summaries.append(line)
+            if not summaries:
+                answer = "No usable person/timestamp records were found in the selected columns."
+            else:
+                answer = "Person-wise timeline results:\n\n" + "\n\n".join(summaries)
+            if total_people > len(engine_result["rows"]):
+                answer += f"\n\nShowing {len(engine_result['rows'])} of {total_people} people; narrow the query to inspect additional people."
+            if mode == "events":
+                answer += "\n\nAn elapsed span is first observation to last observation, not proof of continuous movement."
+                if has_location and any("timeline_has_coordinates:true" == skill for skill in validated_plan.skills) and speed_threshold is None:
+                    answer += " Coordinate-derived travel rates are observations only; provide a travel-mode speed threshold before classifying a leg as implausible."
+            answer += "\n\nA conflict is a data-quality signal, not proof of misconduct. Check source accuracy, duplicate records, and timezone before drawing a conclusion. Timezone-naive timestamps use the database session timezone."
+            answer += f"\n\n📊 **Verified DuckDB timeline audit** ({engine_result['duration_ms']}ms, {engine_result.get('source_row_count', 0):,} source rows)"
+            return answer
         
         # Call LLM to provide natural language executive answer answering the user's specific question
         explainer_messages = [

@@ -12,6 +12,16 @@ class IntentClassifier:
         ]):
             return "POLICY_EVALUATION"
             
+        conceptual_time_travel = any(phrase in q for phrase in (
+            "time travel", "time machine", "grandfather paradox", "bootstrap paradox",
+        ))
+        data_anchors = (
+            "sheet", "spreadsheet", "dataset", "file", "timestamp", "time stamp",
+            "row", "column", "record", "location", "employee", "travel log",
+        )
+        if conceptual_time_travel and not any(anchor in q for anchor in data_anchors):
+            return "GENERAL_CHAT"
+
         if not file_ids:
             return "GENERAL_CHAT"
             
